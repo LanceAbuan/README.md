@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Send } from "lucide-react";
+import { Send, CheckCircle, AlertCircle } from "lucide-react";
 import { getIcon } from "@/lib/icons";
 import { contactLinks, contactEmail } from "@/data/contact";
 
@@ -15,26 +15,39 @@ export function Contact() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("sending");
+    setErrorMsg("");
 
     const form = e.currentTarget;
     const formData = new FormData(form);
-    const name = formData.get("name");
-    const email = formData.get("email");
-    const message = formData.get("message");
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const message = formData.get("message") as string;
 
-    const subject = encodeURIComponent(`Portfolio contact from ${name as string}`);
-    const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
-    window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, message }),
+      });
 
-    setTimeout(() => {
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error ?? "Something went wrong.");
+      }
+
       setStatus("sent");
       form.reset();
-      setTimeout(() => setStatus("idle"), 3000);
-    }, 1000);
+      setTimeout(() => setStatus("idle"), 4000);
+    } catch (err) {
+      setStatus("error");
+      setErrorMsg(err instanceof Error ? err.message : "Failed to send.");
+      setTimeout(() => setStatus("idle"), 4000);
+    }
   };
 
   return (
@@ -50,11 +63,11 @@ export function Contact() {
             Contact
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
-            Let's connect
+            Let&apos;s connect
           </h2>
           <p className="text-neutral-600 dark:text-neutral-400 max-w-lg leading-relaxed">
             Have a project in mind, want to collaborate, or just want to say hi?
-            Drop me a message and I'll get back to you.
+            Drop me a message and I&apos;ll get back to you.
           </p>
         </motion.div>
 
@@ -97,6 +110,27 @@ export function Contact() {
                   </a>
                 );
               })}
+              <div className="pt-2">
+                <a
+                  href={`mailto:${contactEmail}`}
+                  className="flex items-center gap-3 p-3 rounded-xl border border-neutral-200/50 dark:border-neutral-700/50 bg-white/30 dark:bg-neutral-900/30 hover:bg-white/60 dark:hover:bg-neutral-800/60 transition-colors group"
+                >
+                  <svg
+                    className="h-5 w-5 text-neutral-400 group-hover:text-foreground transition-colors"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <span className="text-sm font-medium">{contactEmail}</span>
+                </a>
+              </div>
             </div>
           </motion.div>
 
@@ -114,6 +148,7 @@ export function Contact() {
                 name="name"
                 placeholder="Your name"
                 required
+                disabled={status === "sending" || status === "sent"}
                 className="bg-white/50 dark:bg-neutral-900/50"
               />
             </div>
@@ -125,6 +160,7 @@ export function Contact() {
                 type="email"
                 placeholder="you@example.com"
                 required
+                disabled={status === "sending" || status === "sent"}
                 className="bg-white/50 dark:bg-neutral-900/50"
               />
             </div>
@@ -133,12 +169,21 @@ export function Contact() {
               <Textarea
                 id="message"
                 name="message"
-                placeholder="What's on your mind?"
+                placeholder="What&apos;s on your mind?"
                 required
                 rows={5}
+                disabled={status === "sending" || status === "sent"}
                 className="bg-white/50 dark:bg-neutral-900/50 resize-none"
               />
             </div>
+
+            {status === "error" && (
+              <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                <span>{errorMsg}</span>
+              </div>
+            )}
+
             <Button
               type="submit"
               disabled={status === "sending" || status === "sent"}
@@ -147,7 +192,9 @@ export function Contact() {
               {status === "sending" ? (
                 "Sending..."
               ) : status === "sent" ? (
-                "Message sent ✓"
+                <>
+                  <CheckCircle className="mr-2 h-3.5 w-3.5" /> Message sent
+                </>
               ) : (
                 <>
                   Send Message <Send className="ml-2 h-3.5 w-3.5" />
