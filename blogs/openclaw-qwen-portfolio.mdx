@@ -1,0 +1,65 @@
+---
+title: "Building My Portfolio with OpenClaw + Qwen 27B"
+date: "2026-05-22"
+excerpt: "How I used OpenClaw with a local Qwen 27B model to build an entire portfolio site using human-in-the-loop development."
+tags: ["OpenClaw", "Qwen", "AI", "Next.js", "Development"]
+---
+
+## The Setup
+
+I built this portfolio using [OpenClaw](https://github.com/openclaw/openclaw) running a **Qwen3.6-27B-Q4_K_M** model locally via `llama.cpp` with **MTP** (Multi-Token Prediction) enabled.
+
+That means the LLM is running entirely on my machine. No API calls. No cloud. Just a 32K context window and speculative decoding pushing tokens fast enough to make the workflow actually fun.
+
+## Human-in-the-Loop
+
+The idea was simple: **let the AI do the writing, I do the reviewing.**
+
+The flow looked like this:
+
+1. I describe what I want in plain English — "build a portfolio site with Next.js and shadcn/ui"
+2. The AI writes the code, creates files, runs builds, fixes errors
+3. I review the output via pull requests — every change goes through a PR
+4. I merge what looks good, reject what doesn't, and iterate
+
+It's not autonomous coding. It's more like pair programming where the AI is the driver and I'm the navigator. I set the direction, catch mistakes, and make the final calls.
+
+## Why This Approach Works
+
+### Speed without sacrificing control
+
+The AI writes code fast — much faster than I type. But instead of trusting it blindly, the PR workflow means every change is visible and reversible. If something's wrong, I just don't merge it.
+
+### Local execution means zero latency
+
+Running Qwen 27B locally with MTP means I'm not waiting on API roundtrips. The model drafts tokens speculatively and verifies them on the fly. The latency is just GPU inference time.
+
+### Branch discipline prevents spaghetti
+
+I forced a rule: **no direct pushes to main**. Every feature gets its own branch and PR. This means the AI can't accidentally break the main branch or overwrite good code. If it messes up, the damage is contained to one branch.
+
+## What Got Built
+
+- Full Next.js 16 portfolio with App Router
+- MDX-powered blog
+- Animated particle background (canvas-based, 60fps)
+- Data-driven section components
+- SEO (sitemap, robots.txt, JSON-LD, OG tags)
+- Contact form with API route
+- Dark mode with smooth transitions
+
+All of it through conversation. No IDE, no manual file creation. Just describing what I want and reviewing the output.
+
+## Lessons Learned
+
+**Context limits are real.** 32K is tight for a full codebase. The AI occasionally forgets earlier decisions when the conversation gets long. I had to reiterate some rules a few times.
+
+**The AI will make mistakes.** Import paths, API changes, missing types — the build catches most of them, but not all. That's why the human-in-the-loop matters. I'm the quality gate.
+
+**It's actually faster than writing it myself.** For a project like this — UI-heavy, lots of boilerplate — the AI excels. It's fast at generating components, wiring up state, and fixing lint errors. I probably saved 2-3 days of work.
+
+## The Bottom Line
+
+This whole portfolio — every line of code, every component, every data file — was written by an AI running locally on my machine. But it exists because I reviewed, directed, and approved it.
+
+The AI is the tool. I'm the architect.

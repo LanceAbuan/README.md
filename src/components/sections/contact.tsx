@@ -6,35 +6,52 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Send } from "lucide-react";
+import { Send, CheckCircle, AlertCircle } from "lucide-react";
 import { getIcon } from "@/lib/icons";
-import { contactLinks, contactEmail } from "@/data/contact";
+import { contactLinks } from "@/data/contact";
+
+type Status = "idle" | "sending" | "sent" | "error";
 
 export function Contact() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [status, setStatus] = useState<Status>("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("sending");
+    setErrorMsg("");
 
     const form = e.currentTarget;
     const formData = new FormData(form);
-    const name = formData.get("name");
-    const email = formData.get("email");
-    const message = formData.get("message");
 
-    const subject = encodeURIComponent(`Portfolio contact from ${name as string}`);
-    const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
-    window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.get("name"),
+          email: formData.get("email"),
+          message: formData.get("message"),
+          honeypot: formData.get("website"),
+        }),
+      });
 
-    setTimeout(() => {
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to send message");
+      }
+
       setStatus("sent");
       form.reset();
-      setTimeout(() => setStatus("idle"), 3000);
-    }, 1000);
+      setTimeout(() => setStatus("idle"), 4000);
+    } catch (err) {
+      setStatus("error");
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong");
+    }
   };
 
   return (
@@ -50,11 +67,11 @@ export function Contact() {
             Contact
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
-            Let's connect
+            Let&apos;s connect
           </h2>
           <p className="text-neutral-600 dark:text-neutral-400 max-w-lg leading-relaxed">
-            Have a project in mind, want to collaborate, or just want to say hi?
-            Drop me a message and I'll get back to you.
+            Have a project in mind, want to collaborate, or just want to say
+            hi? Drop me a message and I&apos;ll get back to you.
           </p>
         </motion.div>
 
@@ -107,6 +124,11 @@ export function Contact() {
             onSubmit={handleSubmit}
             className="space-y-4"
           >
+            <div className="sr-only">
+              <Label htmlFor="website">Leave this empty</Label>
+              <Input id="website" name="website" tabIndex={-1} autoComplete="off" />
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
               <Input
@@ -133,12 +155,20 @@ export function Contact() {
               <Textarea
                 id="message"
                 name="message"
-                placeholder="What's on your mind?"
+                placeholder="What&apos;s on your mind?"
                 required
                 rows={5}
                 className="bg-white/50 dark:bg-neutral-900/50 resize-none"
               />
             </div>
+
+            {status === "error" && (
+              <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                <span>{errorMsg}</span>
+              </div>
+            )}
+
             <Button
               type="submit"
               disabled={status === "sending" || status === "sent"}
@@ -147,7 +177,10 @@ export function Contact() {
               {status === "sending" ? (
                 "Sending..."
               ) : status === "sent" ? (
-                "Message sent ✓"
+                <>
+                  <CheckCircle className="mr-2 h-3.5 w-3.5" />
+                  Message sent
+                </>
               ) : (
                 <>
                   Send Message <Send className="ml-2 h-3.5 w-3.5" />

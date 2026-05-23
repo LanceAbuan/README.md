@@ -14,7 +14,7 @@ export interface BlogMeta {
 
 export function getBlogSlugs(): string[] {
   if (!fs.existsSync(blogsDir)) return [];
-  return fs.readdirSync(blogsDir).filter((file) => file.endsWith(".mdx") || file.endsWith(".md"));
+  return fs.readdirSync(blogsDir).filter((f) => f.endsWith(".mdx") || f.endsWith(".md"));
 }
 
 export function getBlogMeta(slug: string): BlogMeta {
@@ -32,8 +32,7 @@ export function getBlogMeta(slug: string): BlogMeta {
 }
 
 export function getAllBlogMetas(): BlogMeta[] {
-  const slugs = getBlogSlugs();
-  return slugs
-    .map((slug) => getBlogMeta(slug.replace(/\.mdx?$/, "")))
+  return getBlogSlugs()
+    .map((s) => getBlogMeta(s.replace(/\.mdx?$/, "")))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
