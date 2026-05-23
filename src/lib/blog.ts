@@ -1,0 +1,39 @@
+import fs from "fs";
+import path from "path";
+import matter from "gray-matter";
+
+const blogsDir = path.join(process.cwd(), "blogs");
+
+export interface BlogMeta {
+  slug: string;
+  title: string;
+  date: string;
+  excerpt?: string;
+  tags?: string[];
+}
+
+export function getBlogSlugs(): string[] {
+  if (!fs.existsSync(blogsDir)) return [];
+  return fs.readdirSync(blogsDir).filter((file) => file.endsWith(".mdx") || file.endsWith(".md"));
+}
+
+export function getBlogMeta(slug: string): BlogMeta {
+  const filePath = path.join(blogsDir, `${slug}.mdx`);
+  const fileContents = fs.readFileSync(filePath, "utf8");
+  const { data } = matter(fileContents);
+
+  return {
+    slug,
+    title: (data.title as string) || slug,
+    date: (data.date as string) || new Date().toISOString(),
+    excerpt: (data.excerpt as string) || "",
+    tags: (data.tags as string[]) || [],
+  };
+}
+
+export function getAllBlogMetas(): BlogMeta[] {
+  const slugs = getBlogSlugs();
+  return slugs
+    .map((slug) => getBlogMeta(slug.replace(/\.mdx?$/, "")))
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
