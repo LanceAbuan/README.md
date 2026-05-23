@@ -23,7 +23,9 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const meta = getBlogMeta(slug);
 
-  const filePath = path.join(process.cwd(), "blogs", `${slug}.mdx`);
+  const filePathMdx = path.join(process.cwd(), "blogs", `${slug}.mdx`);
+  const filePathMd = path.join(process.cwd(), "blogs", `${slug}.md`);
+  const filePath = fs.existsSync(filePathMdx) ? filePathMdx : filePathMd;
   const source = fs.readFileSync(filePath, "utf8");
 
   return (
