@@ -18,7 +18,10 @@ export function getBlogSlugs(): string[] {
 }
 
 export function getBlogMeta(slug: string): BlogMeta {
-  const filePath = path.join(blogsDir, `${slug}.mdx`);
+  // Try .mdx first, fall back to .md
+  const filePathMdx = path.join(blogsDir, `${slug}.mdx`);
+  const filePathMd = path.join(blogsDir, `${slug}.md`);
+  const filePath = fs.existsSync(filePathMdx) ? filePathMdx : filePathMd;
   const fileContents = fs.readFileSync(filePath, "utf8");
   const { data } = matter(fileContents);
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,16 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
   const activeSection = useActiveSection();
+
+  // Resolve anchor links: on "/" use "#about", on other pages use "/#about"
+  const resolveHref = (href: string) => {
+    if (href.startsWith("#")) {
+      return pathname === "/" ? href : `/${href}`;
+    }
+    return href;
+  };
 
   const isActive = (href: string) => {
     const id = href.replace("#", "");
@@ -46,21 +56,24 @@ export function Navbar() {
 
           {/* Desktop */}
           <div className="hidden md:flex items-center gap-1">
-            {NAV_LINKS.map((link) => (
-              <Link key={link.href} href={link.href}>
-                <Button
-                  variant={isActive(link.href) ? "default" : "ghost"}
-                  size="sm"
-                  className={`text-xs font-medium h-8 px-3 ${
-                    isActive(link.href)
-                      ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                      : ""
-                  }`}
-                >
-                  {link.label}
-                </Button>
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const href = resolveHref(link.href);
+              return (
+                <Link key={link.href} href={href}>
+                  <Button
+                    variant={isActive(link.href) ? "default" : "ghost"}
+                    size="sm"
+                    className={`text-xs font-medium h-8 px-3 ${
+                      isActive(link.href)
+                        ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
+                        : ""
+                    }`}
+                  >
+                    {link.label}
+                  </Button>
+                </Link>
+              );
+            })}
             <div className="w-px h-4 bg-neutral-200 dark:bg-neutral-700 mx-1" />
             <a
               href="/resume.pdf"
@@ -88,19 +101,22 @@ export function Navbar() {
             />
             <SheetContent side="top" className="pt-6 pb-4">
               <div className="flex flex-col gap-2">
-                {NAV_LINKS.map((link) => (
-                  <SheetClose
-                    key={link.href}
-                    render={
-                      <Link
-                        href={link.href}
-                        className="px-4 py-3 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-sm font-medium inline-block"
-                      >
-                        {link.label}
-                      </Link>
-                    }
-                  />
-                ))}
+                {NAV_LINKS.map((link) => {
+                  const href = resolveHref(link.href);
+                  return (
+                    <SheetClose
+                      key={link.href}
+                      render={
+                        <Link
+                          href={href}
+                          className="px-4 py-3 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-sm font-medium inline-block"
+                        >
+                          {link.label}
+                        </Link>
+                      }
+                    />
+                  );
+                })}
                 <div className="flex items-center justify-between pt-2">
                   <ThemeToggle />
                   <a
