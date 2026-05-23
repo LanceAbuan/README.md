@@ -4,9 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import { Menu, Download } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { motion } from "framer-motion";
+import { useActiveSection } from "@/hooks/use-active-section";
 
 const NAV_LINKS = [
   { href: "#about", label: "About" },
@@ -19,6 +21,12 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const activeSection = useActiveSection();
+
+  const isActive = (href: string) => {
+    const id = href.replace("#", "");
+    return id && activeSection === id;
+  };
 
   return (
     <motion.nav
@@ -29,7 +37,10 @@ export function Navbar() {
     >
       <div className="backdrop-blur-xl bg-white/70 dark:bg-neutral-900/70 border border-neutral-200/50 dark:border-neutral-700/50 rounded-2xl shadow-sm">
         <div className="flex items-center justify-between px-4 py-2">
-          <Link href="/" className="text-sm font-semibold tracking-tight hover:opacity-70 transition-opacity">
+          <Link
+            href="/"
+            className="text-sm font-semibold tracking-tight hover:opacity-70 transition-opacity"
+          >
             lance
           </Link>
 
@@ -37,36 +48,73 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-1">
             {NAV_LINKS.map((link) => (
               <Link key={link.href} href={link.href}>
-                <Button variant="ghost" size="sm" className="text-xs font-medium h-8 px-3">
+                <Button
+                  variant={isActive(link.href) ? "default" : "ghost"}
+                  size="sm"
+                  className={`text-xs font-medium h-8 px-3 ${
+                    isActive(link.href)
+                      ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
+                      : ""
+                  }`}
+                >
                   {link.label}
                 </Button>
               </Link>
             ))}
             <div className="w-px h-4 bg-neutral-200 dark:bg-neutral-700 mx-1" />
+            <a
+              href="/resume.pdf"
+              download
+              className={buttonVariants({
+                variant: "ghost",
+                size: "icon",
+                className: "h-8 w-8",
+              })}
+              aria-label="Download resume"
+            >
+              <Download className="h-3.5 w-3.5" />
+            </a>
             <ThemeToggle />
           </div>
 
           {/* Mobile */}
           <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger render={
-              <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden">
-                <Menu className="h-4 w-4" />
-              </Button>
-            } />
+            <SheetTrigger
+              render={
+                <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden">
+                  <Menu className="h-4 w-4" />
+                </Button>
+              }
+            />
             <SheetContent side="top" className="pt-6 pb-4">
               <div className="flex flex-col gap-2">
                 {NAV_LINKS.map((link) => (
-                  <SheetClose key={link.href} render={
-                    <Link
-                      href={link.href}
-                      className="px-4 py-3 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-sm font-medium inline-block"
-                    >
-                      {link.label}
-                    </Link>
-                  } />
+                  <SheetClose
+                    key={link.href}
+                    render={
+                      <Link
+                        href={link.href}
+                        className="px-4 py-3 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-sm font-medium inline-block"
+                      >
+                        {link.label}
+                      </Link>
+                    }
+                  />
                 ))}
-                <div className="flex justify-end pt-2">
+                <div className="flex items-center justify-between pt-2">
                   <ThemeToggle />
+                  <a
+                    href="/resume.pdf"
+                    download
+                    className={buttonVariants({
+                      variant: "ghost",
+                      size: "icon",
+                      className: "h-8 w-8",
+                    })}
+                    aria-label="Download resume"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                  </a>
                 </div>
               </div>
             </SheetContent>
