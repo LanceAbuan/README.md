@@ -2,9 +2,19 @@ import type { ExperienceItem } from "@/types";
 
 export const experiences: ExperienceItem[] = [
   {
+    company: "Saltech Systems",
+    role: "Software Developer — AI & Agentic Workflows",
+    period: "2026 — Present",
+    type: "Full-time",
+    location: "Irving, TX",
+    description:
+      "Developing AI tools and agentic workflows for enterprise automation. Building intelligent systems that orchestrate complex business processes, integrate LLM-powered agents, and deliver measurable productivity gains.",
+    skills: ["Python", "LLM Integration", "Agentic Workflows", "RAG", "API Design", "React", "TypeScript"],
+  },
+  {
     company: "Paycom",
     role: "Software Developer IV",
-    period: "Dec 2022 — Feb 2026",
+    period: "Dec 2022 — 2026",
     type: "Full-time",
     location: "Irving, TX",
     description:
