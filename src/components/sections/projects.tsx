@@ -7,47 +7,55 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { ExternalLink, GitFork, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { projects, githubProfileUrl } from "@/data/projects";
 
-const projects = [
-  {
-    name: "Godot Microbe Simulator",
-    description:
-      "Interactive microbiology simulator featuring a hex-grid environment, procedurally generated infinite world, NPC systems, and dynamic resource creation. Used in classroom curriculum for hands-on learning.",
-    tags: ["Godot", "GDScript", "Procedural Generation", "Education"],
-    github: "https://github.com/LanceAbuan/godot-microbe-sim",
-    demo: null,
-    featured: true,
-  },
-  {
-    name: "Arrow Rust Benchmark",
-    description:
-      "Performance benchmarking suite for Apache Arrow in Rust, comparing different serialization and query execution strategies.",
-    tags: ["Rust", "Apache Arrow", "Benchmarking", "Systems"],
-    github: "https://github.com/LanceAbuan/arrow-rs-benchmark",
-    demo: null,
-    featured: false,
-  },
-  {
-    name: "OpenClaw macOS Build",
-    description:
-      "Build configuration and tooling for OpenClaw on macOS, including native plugin support and cross-platform compatibility layers.",
-    tags: ["Rust", "macOS", "Build Tools", "OpenClaw"],
-    github: "https://github.com/LanceAbuan/openclaw-macos-build",
-    demo: null,
-    featured: false,
-  },
-  {
-    name: "Web Poker",
-    description:
-      "Browser-based Texas Hold'em poker game with real-time multiplayer functionality and AI opponents.",
-    tags: ["TypeScript", "WebSockets", "Game Dev", "Real-time"],
-    github: "https://github.com/LanceAbuan/web-poker",
-    demo: null,
-    featured: false,
-  },
-];
+export function Projects() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-function ProjectCard({ project, index }: { project: (typeof projects)[0]; index: number }) {
+  return (
+    <section id="projects" className="py-24 px-6" ref={ref}>
+      <div className="max-w-5xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="flex items-end justify-between mb-12"
+        >
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
+              Projects
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              Things I've built
+            </h2>
+          </div>
+          <Link
+            href={githubProfileUrl}
+            target="_blank"
+            className={buttonVariants({ variant: "ghost", className: "hidden sm:flex items-center gap-1 text-sm" })}
+          >
+            View all <ArrowUpRight className="h-3.5 w-3.5" />
+          </Link>
+        </motion.div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {projects.map((project, i) => (
+            <ProjectCard key={i} project={project} index={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProjectCard({
+  project,
+  index,
+}: {
+  project: (typeof projects)[number];
+  index: number;
+}) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
 
@@ -71,12 +79,18 @@ function ProjectCard({ project, index }: { project: (typeof projects)[0]; index:
             </CardTitle>
             <div className="flex items-center gap-1">
               {project.demo && (
-                <Link href={project.demo} className={buttonVariants({ variant: "ghost", size: "icon", className: "h-7 w-7" })}>
+                <Link
+                  href={project.demo}
+                  className={buttonVariants({ variant: "ghost", size: "icon", className: "h-7 w-7" })}
+                >
                   <ExternalLink className="h-3.5 w-3.5" />
                   <span className="sr-only">Live demo</span>
                 </Link>
               )}
-              <Link href={project.github} className={buttonVariants({ variant: "ghost", size: "icon", className: "h-7 w-7" })}>
+              <Link
+                href={project.github}
+                className={buttonVariants({ variant: "ghost", size: "icon", className: "h-7 w-7" })}
+              >
                 <GitFork className="h-3.5 w-3.5" />
                 <span className="sr-only">GitHub</span>
               </Link>
@@ -97,41 +111,5 @@ function ProjectCard({ project, index }: { project: (typeof projects)[0]; index:
         </CardContent>
       </Card>
     </motion.div>
-  );
-}
-
-export function Projects() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
-  return (
-    <section id="projects" className="py-24 px-6" ref={ref}>
-      <div className="max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="flex items-end justify-between mb-12"
-        >
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
-              Projects
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-              Things I've built
-            </h2>
-          </div>
-          <Link href="https://github.com/LanceAbuan" target="_blank" className={buttonVariants({ variant: "ghost", className: "hidden sm:flex items-center gap-1 text-sm" })}>
-            View all <ArrowUpRight className="h-3.5 w-3.5" />
-          </Link>
-        </motion.div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((project, i) => (
-            <ProjectCard key={i} project={project} index={i} />
-          ))}
-        </div>
-      </div>
-    </section>
   );
 }
