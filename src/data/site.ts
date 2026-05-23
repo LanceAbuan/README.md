@@ -20,7 +20,7 @@ export const siteConfig = {
     github: "https://github.com/LanceAbuan",
     linkedin: "https://linkedin.com/in/lanceabuan",
     twitter: "https://x.com/lanceabuan",
-    email: "mailto:hello@lanceabuan.com",
+    email: "mailto:lance@lanceabuan.tech",
   },
   author: {
     name: "Lance Abuan",
