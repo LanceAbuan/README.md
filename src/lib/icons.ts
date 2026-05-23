@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  Brain,
   Briefcase,
   GraduationCap,
   MapPin,
@@ -9,6 +10,7 @@ import {
 } from "lucide-react";
 
 const iconMap: Record<string, LucideIcon> = {
+  brain: Brain,
   briefcase: Briefcase,
   "graduation-cap": GraduationCap,
   "map-pin": MapPin,

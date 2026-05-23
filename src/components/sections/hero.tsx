@@ -36,10 +36,10 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
-          Currently a Software Developer at{" "}
-          <span className="font-medium text-foreground">Paycom</span>, working on
-          large-scale enterprise systems, legacy modernization, and data pipeline
-          architecture.
+          Currently developing AI tools and agentic workflows at{" "}
+          <span className="font-medium text-foreground">Saltech Systems</span>.
+          Building intelligent systems that automate complex workflows and push
+          the boundaries of what AI agents can do.
         </motion.p>
 
         <motion.div
