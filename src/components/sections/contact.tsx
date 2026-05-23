@@ -6,13 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { GitFork, Mail, Send, ExternalLink } from "lucide-react";
-
-const contactLinks = [
-  { icon: GitFork, label: "GitHub", href: "https://github.com/LanceAbuan" },
-  { icon: ExternalLink, label: "LinkedIn", href: "https://linkedin.com/in/lanceabuan" },
-  { icon: Mail, label: "Email", href: "mailto:lance.abuan@gmail.com" },
-];
+import { Send } from "lucide-react";
+import { getIcon } from "@/lib/icons";
+import { contactLinks, contactEmail } from "@/data/contact";
 
 export function Contact() {
   const ref = useRef(null);
@@ -30,10 +26,9 @@ export function Contact() {
     const email = formData.get("email");
     const message = formData.get("message");
 
-    // Build a mailto link as fallback; replace with your preferred form backend
     const subject = encodeURIComponent(`Portfolio contact from ${name as string}`);
     const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
-    window.location.href = `mailto:lance.abuan@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
 
     setTimeout(() => {
       setStatus("sent");
@@ -64,7 +59,6 @@ export function Contact() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Contact Links */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -75,35 +69,37 @@ export function Contact() {
               <h3 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
                 Find me on
               </h3>
-              {contactLinks.map((link, i) => (
-                <a
-                  key={i}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 rounded-xl border border-neutral-200/50 dark:border-neutral-700/50 bg-white/30 dark:bg-neutral-900/30 hover:bg-white/60 dark:hover:bg-neutral-800/60 transition-colors group"
-                >
-                  <link.icon className="h-5 w-5 text-neutral-400 group-hover:text-foreground transition-colors" />
-                  <span className="text-sm font-medium">{link.label}</span>
-                  <svg
-                    className="h-3.5 w-3.5 ml-auto text-neutral-300 dark:text-neutral-600 group-hover:text-foreground transition-colors"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+              {contactLinks.map((link, i) => {
+                const Icon = getIcon(link.icon);
+                return (
+                  <a
+                    key={i}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-xl border border-neutral-200/50 dark:border-neutral-700/50 bg-white/30 dark:bg-neutral-900/30 hover:bg-white/60 dark:hover:bg-neutral-800/60 transition-colors group"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 17L17 7M17 7H7M17 7v10"
-                    />
-                  </svg>
-                </a>
-              ))}
+                    <Icon className="h-5 w-5 text-neutral-400 group-hover:text-foreground transition-colors" />
+                    <span className="text-sm font-medium">{link.label}</span>
+                    <svg
+                      className="h-3.5 w-3.5 ml-auto text-neutral-300 dark:text-neutral-600 group-hover:text-foreground transition-colors"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 17L17 7M17 7H7M17 7v10"
+                      />
+                    </svg>
+                  </a>
+                );
+              })}
             </div>
           </motion.div>
 
-          {/* Contact Form */}
           <motion.form
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
