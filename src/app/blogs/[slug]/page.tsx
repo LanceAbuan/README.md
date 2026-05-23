@@ -1,10 +1,13 @@
+import type { Metadata } from "next";
 import { getBlogMeta, getBlogSlugs } from "@/lib/blog";
+import { siteConfig } from "@/data/site";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import fs from "fs";
 import path from "path";
+import matter from "gray-matter";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { useMDXComponents } from "@/mdx-components";
@@ -19,6 +22,21 @@ export async function generateStaticParams() {
   }));
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const meta = getBlogMeta(slug);
+  return {
+    title: `${meta.title} — ${siteConfig.name}`,
+    description: meta.excerpt,
+    openGraph: {
+      title: meta.title,
+      description: meta.excerpt,
+      type: "article",
+      publishedTime: meta.date,
+    },
+  };
+}
+
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const meta = getBlogMeta(slug);
@@ -26,7 +44,9 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   const filePathMdx = path.join(process.cwd(), "blogs", `${slug}.mdx`);
   const filePathMd = path.join(process.cwd(), "blogs", `${slug}.md`);
   const filePath = fs.existsSync(filePathMdx) ? filePathMdx : filePathMd;
-  const source = fs.readFileSync(filePath, "utf8");
+  const fileContents = fs.readFileSync(filePath, "utf8");
+  // Strip frontmatter before passing to MDXRemote
+  const { content: source } = matter(fileContents);
 
   return (
     <>
@@ -43,7 +63,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
             <header className="mb-8">
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
-                {meta.title}
+                {meta.title || slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
               </h1>
               <div className="flex items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
                 <time>
