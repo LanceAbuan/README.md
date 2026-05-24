@@ -51,7 +51,7 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="py-24 px-6" ref={ref}>
+    <section id="contact" className="py-24 px-6" ref={ref} aria-label="Contact">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

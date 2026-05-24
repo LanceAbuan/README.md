@@ -14,7 +14,7 @@ export function Projects() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="projects" className="py-24 px-6" ref={ref}>
+    <section id="projects" className="py-24 px-6" ref={ref} aria-label="Projects">
       <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

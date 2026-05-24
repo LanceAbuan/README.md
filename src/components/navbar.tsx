@@ -44,6 +44,8 @@ export function Navbar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-2xl"
+      role="navigation"
+      aria-label="Main navigation"
     >
       <div className="backdrop-blur-xl bg-white/70 dark:bg-neutral-900/70 border border-neutral-200/50 dark:border-neutral-700/50 rounded-2xl shadow-sm">
         <div className="flex items-center justify-between px-4 py-2">
