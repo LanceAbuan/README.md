@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { getBlogMeta, getBlogSlugs } from "@/lib/blog";
 import { siteConfig } from "@/data/site";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: meta.excerpt,
       type: "article",
       publishedTime: meta.date,
+      url: `${siteConfig.url}/blogs/${slug}`,
+    },
+    alternates: {
+      canonical: `/blogs/${slug}`,
     },
   };
 }
@@ -73,6 +78,12 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                     day: "numeric",
                   })}
                 </time>
+                {meta.readingTime && (
+                  <>
+                    <span>·</span>
+                    <span>{meta.readingTime} min read</span>
+                  </>
+                )}
                 {meta.tags && meta.tags.length > 0 && (
                   <>
                     <span>·</span>
@@ -88,6 +99,24 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
               </div>
             </header>
 
+            <Script
+              id="json-ld-article"
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
+                  "@context": "https://schema.org",
+                  "@type": "Article",
+                  headline: meta.title,
+                  description: meta.excerpt,
+                  datePublished: meta.date,
+                  author: {
+                    "@type": "Person",
+                    name: siteConfig.author.name,
+                  },
+                  url: `${siteConfig.url}/blogs/${slug}`,
+                }),
+              }}
+            />
             <article className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-foreground prose-code:bg-neutral-100 dark:prose-code:bg-neutral-800 prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm">
               <MDXRemote source={source} options={{ mdxOptions: { remarkPlugins: [[remarkGfm]] } }} components={useMDXComponents({})} />
             </article>

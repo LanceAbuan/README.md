@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import { getAllBlogMetas } from "@/lib/blog";
+import { siteConfig } from "@/data/site";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -7,6 +9,21 @@ import { ArrowLeft } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/background";
+
+export const metadata: Metadata = {
+  title: "Blog — Lance Abuan",
+  description:
+    "Read Lance Abuan's blog posts about software engineering, AI tools, agentic workflows, and systems programming.",
+  alternates: {
+    canonical: "/blogs",
+  },
+  openGraph: {
+    title: "Blog",
+    description: "Thoughts on software, systems, and the stuff I'm working on.",
+    url: `${siteConfig.url}/blogs`,
+    type: "website",
+  },
+};
 
 export default function BlogIndex() {
   const posts = getAllBlogMetas();
@@ -48,6 +65,12 @@ export default function BlogIndex() {
                           month: "long",
                           day: "numeric",
                         })}
+                        {post.readingTime && (
+                          <>
+                            <span> · </span>
+                            <span>{post.readingTime} min read</span>
+                          </>
+                        )}
                       </p>
                     </div>
                   </div>

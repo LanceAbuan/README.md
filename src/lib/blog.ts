@@ -10,6 +10,7 @@ export interface BlogMeta {
   date: string;
   excerpt?: string;
   tags?: string[];
+  readingTime?: number;
 }
 
 export function getBlogSlugs(): string[] {
@@ -25,12 +26,16 @@ export function getBlogMeta(slug: string): BlogMeta {
   const fileContents = fs.readFileSync(filePath, "utf8");
   const { data } = matter(fileContents);
 
+  const words = fileContents.split(/\s+/).length;
+  const readingTime = Math.max(1, Math.round(words / 225));
+
   return {
     slug,
     title: (data.title as string) || slug,
     date: (data.date as string) || new Date().toISOString(),
     excerpt: (data.excerpt as string) || "",
     tags: (data.tags as string[]) || [],
+    readingTime,
   };
 }
 
