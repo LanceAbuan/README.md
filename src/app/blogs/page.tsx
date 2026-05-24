@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getAllBlogMetas } from "@/lib/blog";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,20 @@ import { ArrowLeft } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/background";
+import { siteConfig } from "@/data/site";
+
+export const metadata: Metadata = {
+  title: "Blog",
+  description: "Thoughts on software, systems, AI, and the stuff I'm working on. Technical articles and project writeups by Lance Abuan.",
+  alternates: {
+    canonical: `${siteConfig.url}/blogs`,
+  },
+  openGraph: {
+    title: "Blog — Lance Abuan",
+    description: "Technical articles and project writeups.",
+    url: `${siteConfig.url}/blogs`,
+  },
+};
 
 export default function BlogIndex() {
   const posts = getAllBlogMetas();
@@ -15,7 +30,16 @@ export default function BlogIndex() {
     <>
       <AnimatedBackground />
       <Navbar />
-      <main>
+
+      {/* Skip navigation link for accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-neutral-900 focus:text-white focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-500"
+      >
+        Skip to main content
+      </a>
+
+      <main id="main-content" aria-label="Blog posts">
         <div className="min-h-screen pt-24 pb-16 px-6">
           <div className="max-w-3xl mx-auto">
             <Link href="/">
