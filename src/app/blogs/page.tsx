@@ -8,6 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/background";
+import { ThemeSettings } from "@/components/theme-settings";
 import { siteConfig } from "@/data/site";
 
 export const metadata: Metadata = {
@@ -99,6 +100,7 @@ export default function BlogIndex() {
       </div>
         </div>
       </main>
+      <ThemeSettings />
       <Footer />
     </>
   );

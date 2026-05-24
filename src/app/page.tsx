@@ -7,6 +7,7 @@ import { Projects } from "@/components/sections/projects";
 import { Skills } from "@/components/sections/skills";
 import { Contact } from "@/components/sections/contact";
 import { Footer } from "@/components/footer";
+import { ThemeSettings } from "@/components/theme-settings";
 // siteConfig is imported here for future per-page metadata customization
 
 export default function Home() {
@@ -31,6 +32,7 @@ export default function Home() {
         <Skills />
         <Contact />
       </main>
+      <ThemeSettings />
       <Footer />
     </>
   );

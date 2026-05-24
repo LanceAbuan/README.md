@@ -15,6 +15,7 @@ import { useMDXComponents } from "@/mdx-components";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/background";
+import { ThemeSettings } from "@/components/theme-settings";
 
 export async function generateStaticParams() {
   const slugs = getBlogSlugs();
@@ -143,6 +144,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
           </div>
         </div>
       </main>
+      <ThemeSettings />
       <Footer />
 
       <Script
