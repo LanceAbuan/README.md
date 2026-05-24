@@ -27,7 +27,7 @@ export function Projects() {
               Projects
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-              Things I've built
+              Things I&apos;ve built
             </h2>
           </div>
           <Link
