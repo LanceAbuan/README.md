@@ -15,9 +15,6 @@ const nextConfig: NextConfig = {
   // Compression
   compress: true,
 
-  // React compiler for performance (Next.js 16)
-  reactCompiler: true,
-
   // Experimental: optimize package preloading
   experimental: {
     optimizePackageImports: ["lucide-react", "framer-motion"],
