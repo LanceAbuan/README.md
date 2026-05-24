@@ -34,7 +34,14 @@ export function AnimatedBackground() {
   const particlesRef = useRef<Particle[]>([]);
   const fractalsRef = useRef<Fractal[]>([]);
 
+  // Skip rendering entirely if user prefers reduced motion
+  const reducedMotion = typeof window !== "undefined"
+    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    : false;
+
   useEffect(() => {
+    if (reducedMotion) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d")!;
