@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { getBlogMeta, getBlogSlugs } from "@/lib/blog";
+import { getBlogPost, getBlogSlugs } from "@/lib/blog";
 import { siteConfig } from "@/data/site";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { useMDXComponents } from "@/mdx-components";
@@ -17,8 +14,13 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { AnimatedBackground } from "@/components/layout/background";
 
+/**
+ * MDX component map — created at module scope to avoid
+ * calling hooks inside an async Server Component.
+ */
 const mdxComponents = useMDXComponents({});
 
+/** Generate static params for all blog slugs. */
 export async function generateStaticParams() {
   const slugs = getBlogSlugs();
   return slugs.map((slug) => ({
@@ -26,9 +28,11 @@ export async function generateStaticParams() {
   }));
 }
 
+/** Generate page metadata from blog frontmatter. */
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const meta = getBlogMeta(slug);
+  const { meta } = getBlogPost(slug);
+
   return {
     title: `${meta.title} — ${siteConfig.name}`,
     description: meta.excerpt,
@@ -46,16 +50,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+/**
+ * Individual blog post page.
+ *
+ * Uses getBlogPost() to fetch both metadata and MDX source in one call,
+ * eliminating duplicate file I/O and matter parsing that was previously
+ * scattered across the component.
+ */
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const meta = getBlogMeta(slug);
-
-  const filePathMdx = path.join(process.cwd(), "blogs", `${slug}.mdx`);
-  const filePathMd = path.join(process.cwd(), "blogs", `${slug}.md`);
-  const filePath = fs.existsSync(filePathMdx) ? filePathMdx : filePathMd;
-  const fileContents = fs.readFileSync(filePath, "utf8");
-  // Strip frontmatter before passing to MDXRemote
-  const { content: source } = matter(fileContents);
+  const { meta, source } = getBlogPost(slug);
 
   return (
     <>
@@ -70,6 +74,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
               </Button>
             </Link>
 
+            {/* Post header: title, date, reading time, tags */}
             <header className="mb-8">
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
                 {meta.title || slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
@@ -103,6 +108,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
               </div>
             </header>
 
+            {/* Structured data for search engines */}
             <Script
               id="json-ld-article"
               type="application/ld+json"
@@ -122,6 +128,8 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                 }),
               }}
             />
+
+            {/* Render MDX content */}
             <BlogMDX source={source} components={mdxComponents} />
           </div>
         </div>
@@ -133,12 +141,18 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
 /**
  * Client-side blog content renderer.
- * Separated from the async server page to avoid hook-in-async-server-component errors.
+ *
+ * Separated from the async server page to avoid hook-in-async-server-component
+ * errors. Receives pre-parsed components from module scope.
  */
 function BlogMDX({ source, components }: { source: string; components: MDXComponents }) {
   return (
     <article className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-foreground prose-code:bg-neutral-100 dark:prose-code:bg-neutral-800 prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm">
-      <MDXRemote source={source} options={{ mdxOptions: { remarkPlugins: [[remarkGfm]] } }} components={components} />
+      <MDXRemote
+        source={source}
+        options={{ mdxOptions: { remarkPlugins: [[remarkGfm]] } }}
+        components={components}
+      />
     </article>
   );
 }
