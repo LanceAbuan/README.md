@@ -51,3 +51,38 @@ export function getAllBlogMetas(): BlogMeta[] {
     .map((slug) => getBlogMeta(slug.replace(/\.mdx?$/, "")))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
+
+/**
+ * Full blog post data: metadata + raw source content (frontmatter stripped).
+ * Centralizes file I/O + matter parsing so page components don't
+ * duplicate it.
+ */
+export interface BlogPost {
+  meta: BlogMeta;
+  source: string;
+}
+
+/**
+ * Read a blog post file and return both its metadata and source content.
+ * Tries `.mdx` first, falls back to `.md`.
+ */
+export function getBlogPost(slug: string): BlogPost {
+  const filePathMdx = path.join(blogsDir, `${slug}.mdx`);
+  const filePathMd = path.join(blogsDir, `${slug}.md`);
+  const filePath = fs.existsSync(filePathMdx) ? filePathMdx : filePathMd;
+  const fileContents = fs.readFileSync(filePath, "utf8");
+  const { data, content: source } = matter(fileContents);
+
+  return {
+    meta: {
+      slug,
+      title: (data.title as string) || slug,
+      date: (data.date as string) || new Date().toISOString(),
+      modified: (data.modified as string | undefined) ??
+        new Date(fs.statSync(filePath).mtime).toISOString(),
+      excerpt: (data.excerpt as string) || "",
+      tags: (data.tags as string[]) || [],
+    },
+    source,
+  };
+}

@@ -1,19 +1,16 @@
 import type { Metadata } from "next";
-import { getBlogMeta, getBlogSlugs } from "@/lib/blog";
+import { getBlogMeta, getBlogPost, getBlogSlugs } from "@/lib/blog";
 import { siteConfig } from "@/data/site";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { useMDXComponents } from "@/mdx-components";
-import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
-import { AnimatedBackground } from "@/components/background";
+import { Navbar } from "@/components/layout/navbar";
+import { Footer } from "@/components/layout/footer";
+import { AnimatedBackground } from "@/components/layout/background";
 
 export async function generateStaticParams() {
   const slugs = getBlogSlugs();
@@ -39,14 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const meta = getBlogMeta(slug);
-
-  const filePathMdx = path.join(process.cwd(), "blogs", `${slug}.mdx`);
-  const filePathMd = path.join(process.cwd(), "blogs", `${slug}.md`);
-  const filePath = fs.existsSync(filePathMdx) ? filePathMdx : filePathMd;
-  const fileContents = fs.readFileSync(filePath, "utf8");
-  // Strip frontmatter before passing to MDXRemote
-  const { content: source } = matter(fileContents);
+  const { meta, source } = getBlogPost(slug);
 
   return (
     <>
