@@ -15,11 +15,11 @@ export const metadata: Metadata = {
   description:
     "Read Lance Abuan&apos;s blog posts about software engineering, AI tools, agentic workflows, and systems programming.",
   alternates: {
-    canonical: "/blogs",
+    canonical: `${siteConfig.url}/blogs`,
   },
   openGraph: {
     title: "Blog",
-    description: "Thoughts on software, systems, and the stuff I'm working on.",
+    description: "Thoughts on software, systems, and the stuff I&apos;m working on.",
     url: `${siteConfig.url}/blogs`,
     type: "website",
   },

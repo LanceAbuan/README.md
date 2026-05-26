@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       url: `${siteConfig.url}/blogs/${slug}`,
     },
     alternates: {
-      canonical: `/blogs/${slug}`,
+      canonical: `${siteConfig.url}/blogs/${slug}`,
     },
   };
 }
@@ -71,7 +71,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                 {meta.title || slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
               </h1>
               <div className="flex items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
-                <time>
+                <time dateTime={meta.date}>
                   {new Date(meta.date).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
