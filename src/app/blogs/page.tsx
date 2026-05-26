@@ -26,7 +26,7 @@ export default function BlogIndex() {
 
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">Blog</h1>
         <p className="text-neutral-500 dark:text-neutral-400 mb-12">
-          Thoughts on software, systems, and the stuff I'm working on.
+          Thoughts on software, systems, and the stuff I&apos;m working on.
         </p>
 
         <div className="space-y-4">
