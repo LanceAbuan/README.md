@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft } from "lucide-react";
-import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
-import { AnimatedBackground } from "@/components/background";
+import { Navbar } from "@/components/layout/navbar";
+import { Footer } from "@/components/layout/footer";
+import { AnimatedBackground } from "@/components/layout/background";
 
 const posts = getAllBlogMetas();
 const latestDate = posts.length > 0

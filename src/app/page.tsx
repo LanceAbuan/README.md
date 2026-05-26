@@ -1,13 +1,13 @@
 import Script from "next/script";
-import { Navbar } from "@/components/navbar";
-import { AnimatedBackground } from "@/components/background";
+import { Navbar } from "@/components/layout/navbar";
+import { AnimatedBackground } from "@/components/layout/background";
 import { Hero } from "@/components/sections/hero";
 import { About } from "@/components/sections/about";
 import { Experience } from "@/components/sections/experience";
 import { Projects } from "@/components/sections/projects";
 import { Skills } from "@/components/sections/skills";
 import { Contact } from "@/components/sections/contact";
-import { Footer } from "@/components/footer";
+import { Footer } from "@/components/layout/footer";
 
 /**
  * FAQ structured data for the home page.

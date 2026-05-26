@@ -13,9 +13,9 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { useMDXComponents } from "@/mdx-components";
 import type { MDXComponents } from "mdx/types";
-import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
-import { AnimatedBackground } from "@/components/background";
+import { Navbar } from "@/components/layout/navbar";
+import { Footer } from "@/components/layout/footer";
+import { AnimatedBackground } from "@/components/layout/background";
 
 const mdxComponents = useMDXComponents({});
 
