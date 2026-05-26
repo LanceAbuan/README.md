@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import { getAllBlogMetas } from "@/lib/blog";
+import { siteConfig } from "@/data/site";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -8,9 +10,27 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/background";
 
-export default function BlogIndex() {
-  const posts = getAllBlogMetas();
+const posts = getAllBlogMetas();
+const latestDate = posts.length > 0
+  ? new Date(Math.max(...posts.map((p) => new Date(p.modified ?? p.date).getTime())))
+  : new Date();
 
+export const metadata: Metadata = {
+  title: "Blog — Lance Abuan",
+  description:
+    "Read Lance Abuan&apos;s blog posts about software engineering, AI tools, agentic workflows, and systems programming.",
+  alternates: {
+    canonical: `${siteConfig.url}/blogs`,
+  },
+  openGraph: {
+    title: "Blog",
+    description: "Thoughts on software, systems, and the stuff I&apos;m working on.",
+    url: `${siteConfig.url}/blogs`,
+    type: "website",
+  },
+};
+
+export default function BlogIndex() {
   return (
     <>
       <AnimatedBackground />
@@ -26,7 +46,7 @@ export default function BlogIndex() {
 
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">Blog</h1>
         <p className="text-neutral-500 dark:text-neutral-400 mb-12">
-          Thoughts on software, systems, and the stuff I'm working on.
+          Thoughts on software, systems, and the stuff I&apos;m working on.
         </p>
 
         <div className="space-y-4">
@@ -48,6 +68,12 @@ export default function BlogIndex() {
                           month: "long",
                           day: "numeric",
                         })}
+                        {post.readingTime && (
+                          <>
+                            <span> · </span>
+                            <span>{post.readingTime} min read</span>
+                          </>
+                        )}
                       </p>
                     </div>
                   </div>

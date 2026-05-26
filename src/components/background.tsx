@@ -118,7 +118,7 @@ export function AnimatedBackground() {
           const angle = (Math.PI / 3) * i - Math.PI / 6;
           const px = x + r * Math.cos(angle);
           const py = y + r * Math.sin(angle);
-          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
         }
         ctx.closePath();
         ctx.stroke();
@@ -186,7 +186,6 @@ export function AnimatedBackground() {
       for (const p of particles) {
         // Pulse
         p.pulse += 0.02;
-        const pulseAlpha = p.alpha + Math.sin(p.pulse) * 0.08;
 
         // Mouse repulsion
         const mdx = p.x - mouseRef.current.x;

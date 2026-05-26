@@ -24,7 +24,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <span className="block">Hi, I'm Lance Abuan</span>
+          <span className="block">Hi, I&apos;m Lance Abuan</span>
           <span className="block text-neutral-400 dark:text-neutral-500 mt-2">
             I build things that scale
           </span>
