@@ -27,7 +27,6 @@ export const metadata: Metadata = {
     description: "Thoughts on software, systems, and the stuff I&apos;m working on.",
     url: `${siteConfig.url}/blogs`,
     type: "website",
-    updatedTime: latestDate.toISOString(),
   },
 };
 
