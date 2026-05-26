@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,10 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Send, CheckCircle, AlertCircle } from "lucide-react";
 import { getIcon } from "@/lib/icons";
 import { contactLinks, contactEmail } from "@/data/contact";
+import { useSectionReveal } from "@/components/section-reveal";
 
 export function Contact() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { ref, isInView } = useSectionReveal();
 
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");

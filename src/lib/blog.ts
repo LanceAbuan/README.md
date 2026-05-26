@@ -12,11 +12,19 @@ export interface BlogMeta {
   tags?: string[];
 }
 
+/**
+ * Read all blog slugs from the `blogs/` directory.
+ * Returns filenames with extensions (`.mdx` / `.md`).
+ */
 export function getBlogSlugs(): string[] {
   if (!fs.existsSync(blogsDir)) return [];
   return fs.readdirSync(blogsDir).filter((file) => file.endsWith(".mdx") || file.endsWith(".md"));
 }
 
+/**
+ * Parse frontmatter for a single blog post and return its metadata.
+ * Tries `.mdx` first, falls back to `.md`.
+ */
 export function getBlogMeta(slug: string): BlogMeta {
   // Try .mdx first, fall back to .md
   const filePathMdx = path.join(blogsDir, `${slug}.mdx`);
@@ -34,6 +42,9 @@ export function getBlogMeta(slug: string): BlogMeta {
   };
 }
 
+/**
+ * Fetch metadata for all blog posts, sorted newest-first.
+ */
 export function getAllBlogMetas(): BlogMeta[] {
   const slugs = getBlogSlugs();
   return slugs

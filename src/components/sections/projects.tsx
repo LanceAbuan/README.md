@@ -1,17 +1,16 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { ExternalLink, GitFork, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { projects, githubProfileUrl } from "@/data/projects";
+import { useSectionReveal } from "@/components/section-reveal";
 
 export function Projects() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { ref, isInView } = useSectionReveal();
 
   return (
     <section id="projects" className="py-24 px-6" ref={ref}>

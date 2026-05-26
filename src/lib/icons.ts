@@ -19,6 +19,10 @@ const iconMap: Record<string, LucideIcon> = {
   "external-link": ExternalLink,
 };
 
+/**
+ * Look up a Lucide icon component by kebab-case name.
+ * Returns `Mail` as fallback for unknown names.
+ */
 export function getIcon(name: string): LucideIcon {
   return iconMap[name] || Mail;
 }

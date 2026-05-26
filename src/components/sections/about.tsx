@@ -1,14 +1,13 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { getIcon } from "@/lib/icons";
 import { aboutData } from "@/data/about";
+import { useSectionReveal } from "@/components/section-reveal";
 
 export function About() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { ref, isInView } = useSectionReveal();
 
   return (
     <section id="about" className="py-24 px-6" ref={ref}>
