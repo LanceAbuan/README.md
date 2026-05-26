@@ -29,15 +29,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${meta.title} — ${siteConfig.name}`,
     description: meta.excerpt,
+    alternates: {
+      canonical: `${siteConfig.url}/blogs/${slug}`,
+    },
     openGraph: {
       title: meta.title,
       description: meta.excerpt,
       type: "article",
       publishedTime: meta.date,
+      modifiedTime: meta.modified,
       url: `${siteConfig.url}/blogs/${slug}`,
-    },
-    alternates: {
-      canonical: `${siteConfig.url}/blogs/${slug}`,
     },
   };
 }
@@ -109,6 +110,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                   headline: meta.title,
                   description: meta.excerpt,
                   datePublished: meta.date,
+                  dateModified: meta.modified ?? meta.date,
                   author: {
                     "@type": "Person",
                     name: siteConfig.author.name,

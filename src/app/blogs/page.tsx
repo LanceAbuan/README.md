@@ -10,6 +10,11 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/background";
 
+const posts = getAllBlogMetas();
+const latestDate = posts.length > 0
+  ? new Date(Math.max(...posts.map((p) => new Date(p.modified ?? p.date).getTime())))
+  : new Date();
+
 export const metadata: Metadata = {
   title: "Blog — Lance Abuan",
   description:
@@ -22,12 +27,11 @@ export const metadata: Metadata = {
     description: "Thoughts on software, systems, and the stuff I&apos;m working on.",
     url: `${siteConfig.url}/blogs`,
     type: "website",
+    updatedTime: latestDate.toISOString(),
   },
 };
 
 export default function BlogIndex() {
-  const posts = getAllBlogMetas();
-
   return (
     <>
       <AnimatedBackground />
