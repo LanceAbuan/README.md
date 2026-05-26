@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  // Defer rendering until client mount to avoid hydration mismatch.
+  // A minimal placeholder prevents the SSR/client theme mismatch.
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

@@ -16,6 +16,8 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/background";
 
+const mdxComponents = useMDXComponents({});
+
 export async function generateStaticParams() {
   const slugs = getBlogSlugs();
   return slugs.map((slug) => ({
