@@ -13,6 +13,7 @@ export interface SectionRevealProps {
   variants?: Variants;
   className?: string;
   once?: boolean;
+  /** @default "-100px" */
   margin?: string;
 }
 
@@ -30,7 +31,8 @@ export function SectionReveal({
   margin = "-100px",
 }: SectionRevealProps) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once, margin });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isInView = useInView(ref, { once, margin: margin as any });
 
   const animVariants: Variants = variants ?? {
     initial: defaultInitial,
@@ -57,10 +59,12 @@ export function SectionReveal({
  */
 export function useSectionReveal(options?: {
   once?: boolean;
+  /** @default "-100px" */
   margin?: string;
 }) {
   const ref = useRef(null);
   const { once = true, margin = "-100px" } = options ?? {};
-  const isInView = useInView(ref, { once, margin });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isInView = useInView(ref, { once, margin: margin as any });
   return { ref, isInView };
 }

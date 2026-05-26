@@ -8,6 +8,7 @@ export interface BlogMeta {
   slug: string;
   title: string;
   date: string;
+  modified?: string;
   excerpt?: string;
   tags?: string[];
 }
