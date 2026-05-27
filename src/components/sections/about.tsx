@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { getIcon } from "@/lib/icons";
-import { useSectionReveal } from "@/components/section-reveal";
+import { useSectionReveal, SectionScrollArrow } from "@/components/section-reveal";
 import { useTheme } from "next-themes";
 import { aboutData } from "@/data/about";
 import { cn } from "@/lib/utils";
@@ -107,31 +107,25 @@ export function About() {
                 );
               })}
             </motion.div>
+
+            <SectionScrollArrow targetId="experience" isInView={isInView} />
           </div>
-        ) : (
-          /* Default / Terminal layout */
-          <div className={cn(
-            "gap-8 mt-8",
-            isTerminal ? "space-y-6" : "grid md:grid-cols-2",
-          )}>
+        ) : isTerminal ? (
+          /* Terminal layout */
+          <div className="gap-8 mt-8 space-y-6">
             {/* Bio paragraphs */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.15 }}
-              className={cn(
-                "space-y-4 leading-relaxed",
-                isTerminal
-                  ? "text-[#00aa30] font-mono text-sm"
-                  : "text-neutral-600 dark:text-neutral-400",
-              )}
+              className="space-y-4 leading-relaxed text-[#00aa30] font-mono text-sm"
             >
               {aboutData.paragraphs.map((paragraph, i) => (
                 <HighlightedParagraph
                   key={i}
                   {...paragraph}
-                  isTerminal={isTerminal}
-                  isNewspaper={isNewspaper}
+                  isTerminal={true}
+                  isNewspaper={false}
                 />
               ))}
             </motion.div>
@@ -150,8 +144,74 @@ export function About() {
                     key={i}
                     stat={stat}
                     Icon={Icon}
-                    isTerminal={isTerminal}
-                    isNewspaper={isNewspaper}
+                    isTerminal={true}
+                    isNewspaper={false}
+                  />
+                );
+              })}
+            </motion.div>
+
+            {/* Terminal scroll arrow */}
+            <motion.div
+              className="mt-12 animate-bounce flex justify-center cursor-pointer"
+              initial={{ opacity: 0 }}
+              animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.4, delay: 0.5 }}
+              onClick={() => {
+                document.getElementById("experience")?.scrollIntoView({ behavior: "smooth" });
+              }}
+            >
+              <svg
+                className="w-5 h-5 text-[#00ff41]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                />
+              </svg>
+            </motion.div>
+          </div>
+        ) : (
+          /* Default layout */
+          <div className="gap-8 mt-8 grid md:grid-cols-2">
+            {/* Bio paragraphs */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className="space-y-4 leading-relaxed text-neutral-600 dark:text-neutral-400"
+            >
+              {aboutData.paragraphs.map((paragraph, i) => (
+                <HighlightedParagraph
+                  key={i}
+                  {...paragraph}
+                  isTerminal={false}
+                  isNewspaper={false}
+                />
+              ))}
+            </motion.div>
+
+            {/* Stat cards */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="grid grid-cols-2 gap-3"
+            >
+              {aboutData.stats.map((stat, i) => {
+                const Icon = getIcon(stat.icon);
+                return (
+                  <AboutStatCard
+                    key={i}
+                    stat={stat}
+                    Icon={Icon}
+                    isTerminal={false}
+                    isNewspaper={false}
                   />
                 );
               })}
@@ -229,12 +289,12 @@ function AboutStatCard({
 
   if (isNewspaper) {
     return (
-      <div className="newspaper-card text-center">
-        <Icon className="h-4 w-4 text-[#5c2e0e] mx-auto mb-1" />
+      <div className="newspaper-card text-center flex flex-col items-center justify-center">
+        <Icon className="h-4 w-4 text-[#5c2e0e] mx-auto mb-1 flex-shrink-0" />
         <span className="text-[10px] text-[#7a6b5a] uppercase tracking-wider font-serif block">
           {stat.label}
         </span>
-        <span className="text-2xl font-bold font-serif text-[#1a1208] newspaper-letterpress">
+        <span className="text-sm font-bold font-serif text-[#1a1208] newspaper-letterpress leading-tight break-words">
           {stat.value}
         </span>
       </div>

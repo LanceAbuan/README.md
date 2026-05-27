@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useSectionReveal } from "@/components/section-reveal";
+import { useSectionReveal, SectionScrollArrow } from "@/components/section-reveal";
 import { useTheme } from "next-themes";
 import { skillCategories } from "@/data/skills";
 import { cn } from "@/lib/utils";
@@ -57,7 +57,7 @@ export function Skills() {
 
         <div className={cn(
           "grid sm:grid-cols-2 gap-6",
-          isNewspaper && "newspaper-columns-2 sm:grid-cols-1",
+          isNewspaper && "grid-cols-1 sm:grid-cols-2",
         )}>
           {skillCategories.map((cat, ci) => (
             <SkillCategoryCard
@@ -70,6 +70,34 @@ export function Skills() {
             />
           ))}
         </div>
+
+        {isNewspaper && <SectionScrollArrow targetId="contact" isInView={isInView} />}
+
+        {isTerminal && (
+          <motion.div
+            className="mt-12 animate-bounce flex justify-center cursor-pointer"
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.4, delay: 0.5 }}
+            onClick={() => {
+              document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+            }}
+          >
+            <svg
+              className="w-5 h-5 text-[#00ff41]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+              />
+            </svg>
+          </motion.div>
+        )}
       </div>
     </section>
   );
@@ -125,11 +153,13 @@ function SkillCategoryCard({
           </h3>
           <hr className="newspaper-rule" />
           {/* Skills as comma-separated editorial list */}
-          <div className="font-serif text-sm text-[#3d2b1f] leading-relaxed">
+          <div className="font-serif text-sm text-[#3d2b1f] leading-relaxed break-words overflow-hidden">
             {category.items.map((skill, i) => (
-              <span key={i}>
+              <span key={i} className="whitespace-nowrap">
                 {skill}
-                {i < category.items.length - 1 ? " &middot; " : ""}
+                {i < category.items.length - 1 ? <>
+                  <span className="mx-1.5 text-[#c4b59e]">·</span>
+                </> : ""}
               </span>
             ))}
           </div>

@@ -101,3 +101,41 @@ export function useSectionReveal(options?: {
   const isInView = useInView(ref as any, { once, margin: margin as any });
   return { ref, isInView };
 }
+
+/**
+ * Scroll-down arrow that smooth-scrolls to a target section.
+ * Placed at the bottom of each newspaper section to guide navigation.
+ */
+export function SectionScrollArrow({
+  targetId,
+  isInView,
+}: {
+  targetId: string;
+  isInView: boolean;
+}) {
+  return (
+    <motion.div
+      className="flex justify-center mt-12 cursor-pointer animate-bounce"
+      initial={{ opacity: 0 }}
+      animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+      transition={{ duration: 0.4, delay: 0.5 }}
+      onClick={() => {
+        document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+      }}
+    >
+      <svg
+        className="w-5 h-5 text-[#7a6b5a]"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M19 14l-7 7m0 0l-7-7m7 7V3"
+        />
+      </svg>
+    </motion.div>
+  );
+}

@@ -211,11 +211,35 @@
   z-index: 9999;
   background: repeating-linear-gradient(
     0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 255, 65, 0.015) 2px,
-    rgba(0, 255, 65, 0.015) 4px
+    rgba(0, 0, 0, 0.12) 0px,
+    rgba(0, 0, 0, 0.12) 1px,
+    transparent 1px,
+    transparent 3px
   );
+}
+
+/* CRT screen flicker animation */
+@keyframes crt-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.8; }
+  94% { opacity: 1; }
+  96% { opacity: 0.9; }
+  97% { opacity: 1; }
+}
+
+.terminal::after {
+  animation: crt-flicker 4s infinite linear;
+}
+
+/* Subtle vignette for CRT bezel effect */
+.terminal .background-container::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9996;
+  box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.5);
 }
 
 /* CRT text glow */
@@ -386,9 +410,12 @@
   border: 1px solid #c4b59e !important;
   border-radius: 0 !important;
   background: #efe8da !important;
-  padding: 1.25rem !important;
+  padding: 1rem !important;
   position: relative;
-  overflow: visible !important;
+  overflow: hidden !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .newspaper .newspaper-card::before {
@@ -680,6 +707,13 @@
 
 .newspaper .newspaper-body-columns p:first-child {
   text-indent: 0;
+}
+
+/* Mobile: single column to prevent layout thrashing */
+@media (max-width: 640px) {
+  .newspaper .newspaper-body-columns {
+    columns: 1;
+  }
 }
 
 /* Thumbnail / lede image placeholder styling */

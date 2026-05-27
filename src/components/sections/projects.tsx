@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { ExternalLink, GitFork, ArrowUpRight, Terminal } from "lucide-react";
 import Link from "next/link";
-import { useSectionReveal } from "@/components/section-reveal";
+import { useSectionReveal, SectionScrollArrow } from "@/components/section-reveal";
 import { useTheme } from "next-themes";
 import { projects, githubProfileUrl } from "@/data/projects";
 import { cn } from "@/lib/utils";
@@ -109,6 +109,34 @@ export function Projects() {
             </Link>
           </motion.div>
         )}
+
+        {isNewspaper && <SectionScrollArrow targetId="skills" isInView={isInView} />}
+
+        {isTerminal && (
+          <motion.div
+            className="mt-12 animate-bounce flex justify-center cursor-pointer"
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.4, delay: 0.5 }}
+            onClick={() => {
+              document.getElementById("skills")?.scrollIntoView({ behavior: "smooth" });
+            }}
+          >
+            <svg
+              className="w-5 h-5 text-[#00ff41]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+              />
+            </svg>
+          </motion.div>
+        )}
       </div>
     </section>
   );
@@ -181,7 +209,7 @@ function ProjectCard({
       >
         <article className="newspaper-card h-full flex flex-col gap-3">
           {/* Project name as article headline */}
-          <h3 className="text-xl font-bold font-serif text-[#1a1208] newspaper-letterpress">
+          <h3 className="text-lg font-bold font-serif text-[#1a1208] newspaper-letterpress break-words leading-tight">
             {project.name}
           </h3>
 
@@ -213,7 +241,7 @@ function ProjectCard({
           <hr className="newspaper-rule" />
 
           {/* Body copy */}
-          <p className="text-sm text-[#3d2b1f] font-serif leading-relaxed flex-1">
+          <p className="text-sm text-[#3d2b1f] font-serif leading-relaxed flex-1 break-words overflow-hidden">
             {project.description}
           </p>
 

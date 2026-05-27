@@ -5,6 +5,7 @@ import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
+import { SectionScrollArrow } from "@/components/section-reveal";
 
 export function Hero() {
   const { theme } = useTheme();
@@ -174,6 +175,31 @@ function HeroTerminal() {
             ./get_in_touch
           </Link>
         </motion.div>
+
+        {/* Terminal scroll arrow */}
+        <motion.div
+          className="mt-16 animate-bounce flex justify-center cursor-pointer"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 1.2 }}
+          onClick={() => {
+            document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
+          }}
+        >
+          <svg
+            className="w-5 h-5 text-[#00ff41]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
+        </motion.div>
       </div>
     </section>
   );
@@ -197,7 +223,7 @@ function HeroNewspaper() {
             The Lance Portfolio
           </p>
           <div className="newspaper-masthead-sub">
-            Vol. I &nbsp;•&nbsp; Est. 2024 &nbsp;•&nbsp; San Francisco, CA
+            Vol. I &nbsp;•&nbsp; Est. 2026 &nbsp;•&nbsp; Carrollton, TX
           </div>
         </motion.div>
 

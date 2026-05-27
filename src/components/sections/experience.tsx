@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Building2, Terminal } from "lucide-react";
-import { useSectionReveal } from "@/components/section-reveal";
+import { useSectionReveal, SectionScrollArrow } from "@/components/section-reveal";
 import { useTheme } from "next-themes";
 import { experiences } from "@/data/experience";
 import { cn } from "@/lib/utils";
@@ -74,6 +74,34 @@ export function Experience() {
             />
           ))}
         </div>
+
+        {isNewspaper && <SectionScrollArrow targetId="projects" isInView={isInView} />}
+
+        {isTerminal && (
+          <motion.div
+            className="mt-12 animate-bounce flex justify-center cursor-pointer"
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.4, delay: 0.5 }}
+            onClick={() => {
+              document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
+            }}
+          >
+            <svg
+              className="w-5 h-5 text-[#00ff41]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+              />
+            </svg>
+          </motion.div>
+        )}
       </div>
     </section>
   );
@@ -156,7 +184,7 @@ function ExperienceCard({
           </div>
 
           {/* Role as headline */}
-          <h3 className="text-2xl font-bold font-serif text-[#1a1208] newspaper-letterpress">
+          <h3 className="text-xl font-bold font-serif text-[#1a1208] newspaper-letterpress break-words leading-tight">
             {exp.role}
           </h3>
 
@@ -168,7 +196,7 @@ function ExperienceCard({
           <hr className="newspaper-rule" />
 
           {/* Body text */}
-          <p className="text-[0.9rem] text-[#3d2b1f] font-serif leading-relaxed">
+          <p className="text-[0.9rem] text-[#3d2b1f] font-serif leading-relaxed break-words overflow-hidden">
             {exp.description}
           </p>
 

@@ -13,12 +13,12 @@ export const experiences: ExperienceItem[] = [
   },
   {
     company: "Paycom",
-    role: "Senior Software Developer in Training",
+    role: "Software Developer I → IV",
     period: "Dec 2022 — 2026",
     type: "Full-time",
-    location: "Okemos, MI",
+    location: "Irving, TX",
     description:
-      "Engineered and maintained large-scale enterprise applications, specializing in legacy system modernization, data pipeline redesign, and scalable architecture. Delivered improvements in performance, reliability, and user workflows. Started as a Software Development Intern, then returned full-time and progressed through the ranks to Senior Software Developer in Training.",
+      "Engineered and maintained large-scale enterprise applications, specializing in legacy system modernization, data pipeline redesign, and scalable architecture. Delivered improvements in performance, reliability, and user workflows. Progressed from Software Developer I through IV, ending in training to become a Senior Software Developer.",
     skills: ["PHP", "Laravel", "React", "TypeScript", "MySQL", "Redis", "Docker", "AWS"],
   },
   {
@@ -26,7 +26,7 @@ export const experiences: ExperienceItem[] = [
     role: "Software Development Intern",
     period: "May 2022 — Aug 2022",
     type: "Internship",
-    location: "Okemos, MI",
+    location: "OKC, OK",
     description:
       "Developed a full-stack data visualization application presented to the CIO. Automated a previously manual process, saving employees hundreds of hours annually. Designed an extensible database schema supporting user-level customization.",
     skills: ["Full-Stack", "Data Visualization", "Database Design", "Stakeholder Collaboration"],
@@ -43,7 +43,7 @@ export const experiences: ExperienceItem[] = [
   },
   {
     company: "Comstock Computing",
-    role: "Intern",
+    role: "Software Development Intern",
     period: "Sep 2021 — May 2022",
     type: "Part-time",
     location: "College Station, TX",
@@ -53,7 +53,7 @@ export const experiences: ExperienceItem[] = [
   },
   {
     company: "Dr. Sekula Gibbs, M.D.",
-    role: "Personal Assistant",
+    role: "Personal Secretary",
     period: "May 2019 — Aug 2019",
     type: "Part-time",
     location: "The Woodlands, TX",

@@ -24,6 +24,8 @@ type Fractal = {
   alpha: number;
   vx: number;
   vy: number;
+  driftPhase: number;
+  driftSpeed: number;
 };
 
 const CONNECTION_DIST = 160;
@@ -137,16 +139,20 @@ export function AnimatedBackground() {
 
       const isDark = document.documentElement.classList.contains("dark");
       const isTerminal = document.documentElement.classList.contains("terminal");
+      const isNewspaper = document.documentElement.classList.contains("newspaper");
 
       // Brighter base alpha for connections so they're actually visible
-      const baseAlpha = isTerminal ? 0.2 : isDark ? 0.18 : 0.1;
+      const baseAlpha = isTerminal ? 0.2 : isNewspaper ? 0.03 : isDark ? 0.18 : 0.1;
 
-      // Layer 1: Fractals (very subtle)
+      // Layer 1: Fractals (very subtle, with natural drift)
       ctx.save();
       ctx.globalAlpha = 1;
       fractalsRef.current.forEach((f) => {
-        f.x += f.vx;
-        f.y += f.vy;
+        f.driftPhase += f.driftSpeed;
+        const driftX = Math.sin(f.driftPhase) * 0.15;
+        const driftY = Math.cos(f.driftPhase * 0.7) * 0.1;
+        f.x += f.vx + driftX;
+        f.y += f.vy + driftY;
         f.rotation += 0.001;
         if (f.x < -100) f.x = w + 100;
         if (f.x > w + 100) f.x = -100;
@@ -160,6 +166,9 @@ export function AnimatedBackground() {
         if (isTerminal) {
           ctx.strokeStyle = `rgba(80,255,80,${f.alpha})`;
           ctx.fillStyle = `rgba(80,255,80,${f.alpha * 0.3})`;
+        } else if (isNewspaper) {
+          ctx.strokeStyle = `rgba(122,107,90,${f.alpha * 1.5})`;
+          ctx.fillStyle = `rgba(196,181,158,${f.alpha * 0.5})`;
         } else if (isDark) {
           ctx.strokeStyle = `rgba(200,200,220,${f.alpha})`;
           ctx.fillStyle = `rgba(180,180,200,${f.alpha * 0.3})`;
@@ -246,6 +255,8 @@ export function AnimatedBackground() {
 
                   if (isTerminal) {
                     ctx.strokeStyle = `rgba(80,255,80,${baseAlpha * (1 - dist / CONNECTION_DIST)})`;
+                  } else if (isNewspaper) {
+                    ctx.strokeStyle = `rgba(122,107,90,${baseAlpha * 0.5 * (1 - dist / CONNECTION_DIST)})`;
                   } else {
                     ctx.strokeStyle = `rgba(${p.hue},${p.hue},${p.hue + 10},${baseAlpha * (1 - dist / CONNECTION_DIST)})`;
                   }
@@ -268,6 +279,9 @@ export function AnimatedBackground() {
           grad.addColorStop(0, `rgba(80,255,80,${pulseAlpha})`);
           grad.addColorStop(0.4, `rgba(40,200,40,${pulseAlpha * 0.4})`);
           grad.addColorStop(1, `rgba(80,255,80,0)`);
+        } else if (isNewspaper) {
+          grad.addColorStop(0, `rgba(122,107,90,${pulseAlpha * 0.5})`);
+          grad.addColorStop(1, `rgba(122,107,90,0)`);
         } else {
           grad.addColorStop(0, `rgba(${p.hue},${p.hue},${p.hue + 10},${pulseAlpha})`);
           grad.addColorStop(1, `rgba(${p.hue},${p.hue},${p.hue + 10},0)`);
@@ -282,6 +296,8 @@ export function AnimatedBackground() {
         ctx.arc(p.x, p.y, p.r * 0.6, 0, Math.PI * 2);
         if (isTerminal) {
           ctx.fillStyle = `rgba(160,255,160,${pulseAlpha * 0.8})`;
+        } else if (isNewspaper) {
+          ctx.fillStyle = `rgba(92,46,14,${pulseAlpha * 0.3})`;
         } else {
           ctx.fillStyle = `rgba(${p.hue},${p.hue},${p.hue + 10},${pulseAlpha * 0.7})`;
         }
@@ -345,6 +361,8 @@ export function AnimatedBackground() {
         alpha: 0.04 + Math.random() * 0.03,
         vx: (Math.random() - 0.5) * 0.15,
         vy: (Math.random() - 0.5) * 0.15,
+        driftPhase: Math.random() * Math.PI * 2,
+        driftSpeed: 0.005 + Math.random() * 0.01,
       });
     }
 

@@ -172,24 +172,27 @@ export function ThemeSelector() {
           </div>
           <div className="my-1 h-px bg-border" />
 
-          {THEME_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              role="menuitem"
-              onClick={() => handleSelect(opt.value)}
-              className={cn(
-                "relative flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none",
-                "focus:bg-accent focus:text-accent-foreground",
-                theme === opt.value ? "bg-accent" : "",
-              )}
-            >
-              {opt.icon}
-              <span className="flex-1">{opt.label}</span>
-              {theme === opt.value && (
-                <Check className="h-3.5 w-3.5 ml-auto shrink-0" />
-              )}
-            </button>
-          ))}
+          {THEME_OPTIONS.map((opt) => {
+            const isActive = theme === opt.value;
+            return (
+              <button
+                key={opt.value}
+                role="menuitem"
+                onClick={() => handleSelect(opt.value)}
+                className={cn(
+                  "relative flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 pr-7 text-sm outline-none",
+                  "focus:bg-accent focus:text-accent-foreground",
+                  isActive && "bg-accent",
+                )}
+              >
+                {opt.icon}
+                <span className="flex-1 text-left">{opt.label}</span>
+                {isActive && (
+                  <Check className="h-3.5 w-3.5 absolute right-2 top-1/2 -translate-y-1/2" />
+                )}
+              </button>
+            );
+          })}
         </div>
       )}
 
