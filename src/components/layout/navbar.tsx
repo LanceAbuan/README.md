@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeSelector } from "@/components/theme-selector";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import { Menu, Download } from "lucide-react";
@@ -87,7 +87,7 @@ export function Navbar() {
             >
               <Download className="h-3.5 w-3.5" />
             </a>
-            <ThemeToggle />
+            <ThemeSelector />
           </div>
 
           {/* Mobile */}
@@ -118,7 +118,7 @@ export function Navbar() {
                   );
                 })}
                 <div className="flex items-center justify-between pt-2">
-                  <ThemeToggle />
+                  <ThemeSelector />
                   <a
                     href="/resume.pdf"
                     download
