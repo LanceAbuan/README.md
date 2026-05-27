@@ -48,17 +48,36 @@ const personJsonLd = {
   url: siteConfig.url,
   sameAs: siteConfig.author.sameAs,
   knowsAbout: [
-    "Software Engineering",
-    "Web Development",
-    "Systems Programming",
+    "AI",
+    "Agentic Workflows",
+    "Full-Stack Development",
+    "LLM Integration",
+    "React",
+    "TypeScript",
+    "Python",
   ],
 };
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: siteConfig.name,
+  name: siteConfig.title,
   url: siteConfig.url,
+  author: {
+    "@type": "Person",
+    name: siteConfig.author.name,
+  },
+  navigation: {
+    "@type": "SiteNavigationElement",
+    navigationElement: [
+      { "@id": `${siteConfig.url}/#about` },
+      { "@id": `${siteConfig.url}/#experience` },
+      { "@id": `${siteConfig.url}/#projects` },
+      { "@id": `${siteConfig.url}/#skills` },
+      { "@id": `${siteConfig.url}/blogs` },
+      { "@id": `${siteConfig.url}/#contact` },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -68,6 +87,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Lance Abuan" />
+        <meta name="theme-color" content="#ffffff" />
+      </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <Providers>{children}</Providers>
         <Script
