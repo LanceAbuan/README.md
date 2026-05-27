@@ -14,9 +14,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * Label and icon for each theme.
- */
 const THEME_OPTIONS: Array<{
   value: string;
   label: string;
@@ -30,7 +27,6 @@ const THEME_OPTIONS: Array<{
   { value: "custom", label: "Custom", icon: <Palette className="h-4 w-4" /> },
 ];
 
-/** Color roles exposed to the custom color picker. */
 const CUSTOM_COLORS: Array<{
   key: string;
   label: string;
@@ -47,7 +43,7 @@ const CUSTOM_COLORS: Array<{
   { key: "border", label: "Border", varName: "--border" },
 ];
 
-const STORAGE_KEY = "custom-theme-colors";
+const STORAGE_KEY = "custom…lors";
 
 function loadCustomColors(): Record<string, string> {
   if (typeof window === "undefined") return {};
@@ -71,12 +67,6 @@ function saveAndApplyCustomColors(colors: Record<string, string>) {
   }
 }
 
-/**
- * Theme selector — plain HTML/CSS, no base-ui components.
- *
- * Avoids base-ui's strict context requirements entirely.
- * Uses a simple click-outside-closes pattern.
- */
 export function ThemeSelector() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -151,6 +141,10 @@ export function ThemeSelector() {
       />
     );
 
+  // Popup z-index must beat sheet overlay (z-50)
+  const popupClass =
+    "absolute right-0 top-11 z-[60] rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10";
+
   return (
     <div className="relative" ref={containerRef}>
       <button
@@ -172,10 +166,7 @@ export function ThemeSelector() {
       </button>
 
       {open && !showPicker && (
-        <div
-          className="absolute right-0 top-11 z-50 w-44 rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10"
-          role="menu"
-        >
+        <div className={`${popupClass} w-44`} role="menu">
           <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Theme
           </div>
@@ -204,7 +195,7 @@ export function ThemeSelector() {
 
       {open && showPicker && (
         <div
-          className="absolute right-0 top-11 z-50 w-64 rounded-xl border border-border bg-popover p-0 text-popover-foreground shadow-md ring-1 ring-foreground/10 overflow-hidden"
+          className={`${popupClass} w-64 p-0 overflow-hidden`}
           role="dialog"
           aria-label="Custom color picker"
         >
@@ -223,10 +214,7 @@ export function ThemeSelector() {
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-2 p-3 max-h-72 overflow-y-auto">
             {CUSTOM_COLORS.map((c) => (
-              <label
-                key={c.key}
-                className="flex items-center gap-2 text-sm"
-              >
+              <label key={c.key} className="flex items-center gap-2 text-sm">
                 <input
                   type="color"
                   value={colors[c.varName] ?? "#000000"}

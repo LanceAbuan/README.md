@@ -14,6 +14,9 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
+  --font-terminal: var(--font-terminal);
+  --font-newspaper-heading: var(--font-newspaper-heading);
+  --font-newspaper-body: var(--font-newspaper-body);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -52,6 +55,9 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ============================================================
+   LIGHT THEME (default)
+   ============================================================ */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -87,6 +93,9 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* ============================================================
+   DARK THEME
+   ============================================================ */
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -123,89 +132,352 @@
 
 /* ============================================================
    TERMINAL THEME
-   True green-on-black CRT. Pure black background, phosphor
-   green text. No grey bleed.
-
-   To add a new theme: copy this block, rename the selector
-   (e.g. `.ocean { ... }`), set the CSS variables, and add
-   the theme name + Tailwind variant in the two spots marked
-   below. That's it — no framework config changes needed.
+   Pure CRT green-on-black. Monospace font. Scanline overlay.
+   Layout: compact, code-editor aesthetic with left-accent bars
+   and prompt-style section headers.
    ============================================================ */
 .terminal {
-  --background: #0a0e0a;
+  --background: #000000;
   --foreground: #00ff41;
-  --card: #0d120d;
+  --card: #0a0f0a;
   --card-foreground: #00ff41;
-  --popover: #0d120d;
+  --popover: #0a0f0a;
   --popover-foreground: #00ff41;
   --primary: #00ff41;
-  --primary-foreground: #0a0e0a;
-  --secondary: #141e14;
+  --primary-foreground: #000000;
+  --secondary: #0d1a0d;
   --secondary-foreground: #00cc33;
-  --muted: #1a2e1a;
-  --muted-foreground: #00aa2d;
-  --accent: #00cc33;
-  --accent-foreground: #0a0e0a;
+  --muted: #111a11;
+  --muted-foreground: #00aa30;
+  --accent: #00dd3a;
+  --accent-foreground: #000000;
   --destructive: #ff3333;
-  --border: #00ff4120;
+  --border: #00ff4130;
   --input: #00ff4120;
-  --ring: #00ff4180;
+  --ring: #00ff4160;
   --chart-1: #00ff41;
   --chart-2: #00cc33;
   --chart-3: #00aa2d;
   --chart-4: #008822;
   --chart-5: #00661c;
-  --sidebar: #0d120d;
+  --sidebar: #0a0f0a;
   --sidebar-foreground: #00ff41;
   --sidebar-primary: #00ff41;
-  --sidebar-primary-foreground: #0a0e0a;
-  --sidebar-accent: #141e14;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #0d1a0d;
   --sidebar-accent-foreground: #00cc33;
-  --sidebar-border: #00ff4120;
-  --sidebar-ring: #00ff4180;
+  --sidebar-border: #00ff4130;
+  --sidebar-ring: #00ff4160;
+  --radius: 0rem;
+}
+
+/* Terminal layout overrides */
+.terminal body,
+.terminal {
+  font-family: var(--font-terminal), monospace !important;
+  letter-spacing: 0.02em;
+}
+
+.terminal h1,
+.terminal h2,
+.terminal h3,
+.terminal h4,
+.terminal h5,
+.terminal h6 {
+  font-family: var(--font-terminal), monospace !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Scanline overlay */
+.terminal::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 65, 0.015) 2px,
+    rgba(0, 255, 65, 0.015) 4px
+  );
+}
+
+/* CRT text glow */
+.terminal .terminal-glow {
+  text-shadow:
+    0 0 5px rgba(0, 255, 65, 0.4),
+    0 0 10px rgba(0, 255, 65, 0.2),
+    0 0 20px rgba(0, 255, 65, 0.1);
+}
+
+/* Terminal section headers — prompt style */
+.terminal [data-terminal-prompt]::before {
+  content: "> ";
+  color: #00ff41;
+}
+
+/* Terminal cards — left accent bar instead of border */
+.terminal .terminal-card {
+  border: 1px solid #00ff4130 !important;
+  border-left: 3px solid #00ff41 !important;
+  border-radius: 0 !important;
+  background: #0a0f0a !important;
+}
+
+/* Terminal buttons — sharp, monospace, uppercase */
+.terminal .terminal-btn {
+  border-radius: 0 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: var(--font-terminal), monospace !important;
+  border: 1px solid #00ff41 !important;
+  background: transparent !important;
+  color: #00ff41 !important;
+  transition: all 0.1s !important;
+}
+
+.terminal .terminal-btn:hover {
+  background: #00ff41 !important;
+  color: #000000 !important;
+}
+
+/* Terminal skill badges — look like terminal tags */
+.terminal .terminal-badge {
+  border-radius: 0 !important;
+  border: 1px solid #00ff4140 !important;
+  background: #00ff4110 !important;
+  color: #00ff41 !important;
+  font-family: var(--font-terminal), monospace !important;
+  font-size: 0.7rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Terminal nav — compact, no blur */
+.terminal .terminal-nav {
+  backdrop-filter: none !important;
+  background: #000000cc !important;
+  border: 1px solid #00ff4130 !important;
+  border-radius: 0 !important;
+}
+
+/* Terminal experience timeline — vertical line */
+.terminal .terminal-timeline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #00ff4140;
 }
 
 /* ============================================================
    NEWSPAPER THEME
-   Editorial / coffee-shop aesthetic. Warm cream background,
-   deep brown text, amber accents. Like reading a printed
-   broadsheet at a café.
+   Editorial aesthetic. Serif fonts. Column layouts.
+   Warm cream background, deep brown text, ruled separators.
+   Layout: multi-column sections, drop caps, ruled borders.
    ============================================================ */
 .newspaper {
-  --background: #f5f0e8;
-  --foreground: #2c1810;
-  --card: #ebe5d8;
-  --card-foreground: #2c1810;
-  --popover: #ebe5d8;
-  --popover-foreground: #2c1810;
-  --primary: #8b4513;
-  --primary-foreground: #f5f0e8;
-  --secondary: #d4c5a9;
-  --secondary-foreground: #2c1810;
-  --muted: #ddd5c4;
-  --muted-foreground: #6b5b4a;
-  --accent: #a0522d;
-  --accent-foreground: #f5f0e8;
-  --destructive: #b22222;
-  --border: #c4b5a0;
-  --input: #c4b5a0;
-  --ring: #8b4513;
-  --chart-1: #8b4513;
-  --chart-2: #a0522d;
-  --chart-3: #6b5b4a;
+  --background: #f7f2ea;
+  --foreground: #1a1208;
+  --card: #efe8da;
+  --card-foreground: #1a1208;
+  --popover: #efe8da;
+  --popover-foreground: #1a1208;
+  --primary: #5c2e0e;
+  --primary-foreground: #f7f2ea;
+  --secondary: #ddd2be;
+  --secondary-foreground: #3d2b1f;
+  --muted: #e8dfcf;
+  --muted-foreground: #7a6b5a;
+  --accent: #8b5e3c;
+  --accent-foreground: #f7f2ea;
+  --destructive: #8b1a1a;
+  --border: #c4b59e;
+  --input: #c4b59e;
+  --ring: #5c2e0e;
+  --chart-1: #5c2e0e;
+  --chart-2: #8b5e3c;
+  --chart-3: #7a6b5a;
   --chart-4: #5c4a3d;
   --chart-5: #4a3c32;
-  --sidebar: #ebe5d8;
-  --sidebar-foreground: #2c1810;
-  --sidebar-primary: #8b4513;
-  --sidebar-primary-foreground: #f5f0e8;
-  --sidebar-accent: #d4c5a9;
-  --sidebar-accent-foreground: #2c1810;
-  --sidebar-border: #c4b5a0;
-  --sidebar-ring: #8b4513;
+  --sidebar: #efe8da;
+  --sidebar-foreground: #1a1208;
+  --sidebar-primary: #5c2e0e;
+  --sidebar-primary-foreground: #f7f2ea;
+  --sidebar-accent: #ddd2be;
+  --sidebar-accent-foreground: #3d2b1f;
+  --sidebar-border: #c4b59e;
+  --sidebar-ring: #5c2e0e;
+  --radius: 0rem;
 }
 
-/* Custom theme — defaults to dark, overridden by inline styles */
+/* Newspaper layout overrides */
+.newspaper body,
+.newspaper {
+  font-family: var(--font-newspaper-body), Georgia, serif !important;
+  line-height: 1.7 !important;
+}
+
+.newspaper h1,
+.newspaper h2,
+.newspaper h3,
+.newspaper h4 {
+  font-family: var(--font-newspaper-heading), "Playfair Display", Georgia, serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.newspaper h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem) !important;
+  text-transform: none !important;
+}
+
+.newspaper h2 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem) !important;
+}
+
+/* Ruled separators */
+.newspaper .newspaper-rule {
+  border: none;
+  border-top: 2px solid #1a1208;
+  margin: 1rem 0;
+}
+
+.newspaper .newspaper-rule-thin {
+  border: none;
+  border-top: 1px solid #c4b59e;
+  margin: 0.75rem 0;
+}
+
+/* Newspaper cards — editorial boxes with double rule */
+.newspaper .newspaper-card {
+  border: 1px solid #c4b59e !important;
+  border-radius: 0 !important;
+  background: #efe8da !important;
+  padding: 1.25rem !important;
+  position: relative;
+}
+
+.newspaper .newspaper-card::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  height: 1px;
+  background: #c4b59e;
+}
+
+.newspaper .newspaper-card::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+  height: 1px;
+  background: #c4b59e;
+}
+
+/* Newspaper multi-column layout */
+.newspaper .newspaper-columns-2 {
+  columns: 2;
+  column-gap: 2rem;
+  column-rule: 1px solid #c4b59e;
+}
+
+.newspaper .newspaper-columns-3 {
+  columns: 3;
+  column-gap: 1.5rem;
+  column-rule: 1px solid #c4b59e;
+}
+
+/* Drop cap for first paragraph */
+.newspaper .newspaper-dropcap:first-letter {
+  float: left;
+  font-family: var(--font-newspaper-heading), serif;
+  font-size: 3.5rem;
+  line-height: 0.8;
+  padding-right: 0.5rem;
+  padding-top: 0.1rem;
+  font-weight: 700;
+  color: #5c2e0e;
+}
+
+/* Newspaper section headers — uppercase small-caps style */
+.newspaper [data-newspaper-section] {
+  text-transform: uppercase;
+  font-size: 0.7rem !important;
+  font-family: var(--font-newspaper-body), serif !important;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+  color: #7a6b5a;
+  border-bottom: 2px solid #1a1208;
+  padding-bottom: 0.25rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+/* Newspaper nav — compact, serif, ruled */
+.newspaper .newspaper-nav {
+  backdrop-filter: none !important;
+  background: #f7f2eacc !important;
+  border: none !important;
+  border-bottom: 2px solid #1a1208 !important;
+  border-radius: 0 !important;
+  font-family: var(--font-newspaper-heading), serif !important;
+}
+
+/* Newspaper buttons — editorial style */
+.newspaper .newspaper-btn {
+  border-radius: 0 !important;
+  font-family: var(--font-newspaper-heading), serif !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem !important;
+  border: 2px solid #1a1208 !important;
+  background: transparent !important;
+  color: #1a1208 !important;
+  transition: all 0.15s !important;
+}
+
+.newspaper .newspaper-btn:hover {
+  background: #1a1208 !important;
+  color: #f7f2ea !important;
+}
+
+/* Newspaper badges — editorial tags */
+.newspaper .newspaper-badge {
+  border-radius: 0 !important;
+  border: 1px solid #c4b59e !important;
+  background: transparent !important;
+  color: #5c2e0e !important;
+  font-family: var(--font-newspaper-body), serif !important;
+  font-size: 0.7rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Newspaper skill pills — compact tags */
+.newspaper .newspaper-skill {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid #c4b59e;
+  color: #3d2b1f;
+  font-size: 0.75rem;
+  font-family: var(--font-newspaper-body), serif;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================
+   CUSTOM THEME — defaults to dark, overridden by inline styles
+   ============================================================ */
 .custom {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
