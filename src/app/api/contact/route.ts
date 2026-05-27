@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
 /** Module-scoped Resend singleton — avoids re-instantiating per request. */
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY ?? "re_fake");
 
 /** Simple token-bucket rate limiter keyed by IP (memory-based, not cross-instance). */
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
