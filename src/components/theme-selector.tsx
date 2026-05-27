@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useTheme } from "next-themes";
 import {
   Moon,
@@ -25,7 +25,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 /**
@@ -93,12 +92,14 @@ function saveAndApplyCustomColors(colors: Record<string, string>) {
  *
  * All UI stays within the page. Uses shadcn DropdownMenu for
  * theme selection and Dialog for the custom color picker.
+ * The Dialog trigger is a hidden button that fires programmatically.
  */
 export function ThemeSelector() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [colors, setColors] = useState<Record<string, string>>({});
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => setMounted(true), []);
 
@@ -128,12 +129,15 @@ export function ThemeSelector() {
     CUSTOM_COLORS.forEach((c) => root.style.removeProperty(c.varName));
   }, []);
 
-  const handleCustomSelect = useCallback(() => {
+  const openCustomPicker = useCallback(() => {
     setTheme("custom");
-    setPickerOpen(true);
+    // Click the hidden trigger to open the Dialog
+    triggerRef.current?.click();
   }, [setTheme]);
 
   if (!mounted) return <Button variant="ghost" size="icon" disabled />;
+
+  const presets = THEME_OPTIONS.filter((t) => t.value !== "custom");
 
   return (
     <>
@@ -153,7 +157,7 @@ export function ThemeSelector() {
           <DropdownMenuLabel>Theme</DropdownMenuLabel>
           <DropdownMenuSeparator />
 
-          {THEME_OPTIONS.filter((t) => t.value !== "custom").map((opt) => (
+          {presets.map((opt) => (
             <DropdownMenuItem
               key={opt.value}
               onClick={() => setTheme(opt.value)}
@@ -166,49 +170,60 @@ export function ThemeSelector() {
 
           <DropdownMenuSeparator />
 
-          <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
-            <DropdownMenuItem onClick={handleCustomSelect}>
-              <Palette className="h-4 w-4" />
-              <span className="flex-1">Custom</span>
-              {theme === "custom" && <Check className="h-3.5 w-3.5 ml-auto" />}
-            </DropdownMenuItem>
-
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  <Palette className="h-4 w-4" />
-                  Custom Colors
-                </DialogTitle>
-              </DialogHeader>
-
-              <div className="grid grid-cols-2 gap-x-6 gap-y-3 py-2">
-                {CUSTOM_COLORS.map((c) => (
-                  <label
-                    key={c.key}
-                    className="flex items-center gap-3 text-sm"
-                  >
-                    <input
-                      type="color"
-                      value={colors[c.varName] ?? "#000000"}
-                      onChange={(e) =>
-                        handleColorChange(c.varName, e.target.value)
-                      }
-                      className="w-8 h-8 rounded cursor-pointer border border-neutral-300 dark:border-neutral-600 bg-transparent"
-                    />
-                    <span>{c.label}</span>
-                  </label>
-                ))}
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2 border-t">
-                <Button variant="outline" size="sm" onClick={handleReset}>
-                  Reset
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <DropdownMenuItem onClick={openCustomPicker}>
+            <Palette className="h-4 w-4" />
+            <span className="flex-1">Custom</span>
+            {theme === "custom" && <Check className="h-3.5 w-3.5 ml-auto" />}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {/* Hidden button + Dialog for custom color picker.
+          The dropdown menu item clicks this button to open the modal. */}
+      <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
+        <button
+          ref={triggerRef}
+          onClick={() => setPickerOpen(true)}
+          className="sr-only"
+          aria-label="Open custom color picker"
+        >
+          Open color picker
+        </button>
+
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Palette className="h-4 w-4" />
+              Custom Colors
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="grid grid-cols-2 gap-x-6 gap-y-3 py-2">
+            {CUSTOM_COLORS.map((c) => (
+              <label
+                key={c.key}
+                className="flex items-center gap-3 text-sm"
+              >
+                <input
+                  type="color"
+                  value={colors[c.varName] ?? "#000000"}
+                  onChange={(e) =>
+                    handleColorChange(c.varName, e.target.value)
+                  }
+                  className="w-8 h-8 rounded cursor-pointer border border-neutral-300 dark:border-neutral-600 bg-transparent"
+                />
+                <span>{c.label}</span>
+              </label>
+            ))}
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2 border-t">
+            <Button variant="outline" size="sm" onClick={handleReset}>
+              Reset
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
