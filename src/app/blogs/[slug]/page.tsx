@@ -12,6 +12,7 @@ import matter from "gray-matter";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { useMDXComponents } from "@/mdx-components";
+import type { MDXComponents } from "mdx/types";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/background";
@@ -121,7 +122,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                 }),
               }}
             />
-            <BlogMDX source={source} />
+            <BlogMDX source={source} components={mdxComponents} />
           </div>
         </div>
       </main>
@@ -130,10 +131,14 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   );
 }
 
-function BlogMDX({ source }: { source: string }) {
+/**
+ * Client-side blog content renderer.
+ * Separated from the async server page to avoid hook-in-async-server-component errors.
+ */
+function BlogMDX({ source, components }: { source: string; components: MDXComponents }) {
   return (
     <article className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-foreground prose-code:bg-neutral-100 dark:prose-code:bg-neutral-800 prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm">
-      <MDXRemote source={source} options={{ mdxOptions: { remarkPlugins: [[remarkGfm]] } }} components={useMDXComponents({})} />
+      <MDXRemote source={source} options={{ mdxOptions: { remarkPlugins: [[remarkGfm]] } }} components={components} />
     </article>
   );
 }
