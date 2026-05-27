@@ -19,6 +19,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuItem,
+  DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 import {
   Dialog,
@@ -157,24 +158,26 @@ export function ThemeSelector() {
           <DropdownMenuLabel>Theme</DropdownMenuLabel>
           <DropdownMenuSeparator />
 
-          {presets.map((opt) => (
-            <DropdownMenuItem
-              key={opt.value}
-              onClick={() => setTheme(opt.value)}
-            >
-              {opt.icon}
-              <span className="flex-1">{opt.label}</span>
-              {theme === opt.value && <Check className="h-3.5 w-3.5 ml-auto" />}
+          <DropdownMenuGroup>
+            {presets.map((opt) => (
+              <DropdownMenuItem
+                key={opt.value}
+                onClick={() => setTheme(opt.value)}
+              >
+                {opt.icon}
+                <span className="flex-1">{opt.label}</span>
+                {theme === opt.value && <Check className="h-3.5 w-3.5 ml-auto" />}
+              </DropdownMenuItem>
+            ))}
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem onClick={openCustomPicker}>
+              <Palette className="h-4 w-4" />
+              <span className="flex-1">Custom</span>
+              {theme === "custom" && <Check className="h-3.5 w-3.5 ml-auto" />}
             </DropdownMenuItem>
-          ))}
-
-          <DropdownMenuSeparator />
-
-          <DropdownMenuItem onClick={openCustomPicker}>
-            <Palette className="h-4 w-4" />
-            <span className="flex-1">Custom</span>
-            {theme === "custom" && <Check className="h-3.5 w-3.5 ml-auto" />}
-          </DropdownMenuItem>
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
 
