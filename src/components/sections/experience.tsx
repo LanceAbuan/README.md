@@ -22,7 +22,7 @@ export function Experience() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="mb-12"
+          className={cn(isNewspaper ? "text-center mb-12" : "mb-12")}
         >
           {isTerminal ? (
             <div>
@@ -35,13 +35,16 @@ export function Experience() {
             </div>
           ) : isNewspaper ? (
             <div>
-              <p className="text-xs font-serif tracking-[0.2em] text-[#7a6b5a] mb-1 uppercase" data-newspaper-section>
-                Experience
+              <p className="text-xs font-serif tracking-[0.2em] text-[#7a6b5a] uppercase" data-newspaper-section>
+                Career
               </p>
-              <hr className="newspaper-rule" />
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a1208] mt-4">
-                Where I&apos;ve Worked
+              <hr className="newspaper-triple-rule mx-auto max-w-sm mt-2" />
+              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a1208] mt-4 newspaper-letterpress">
+                Professional History
               </h2>
+              <p className="newspaper-deck max-w-lg mx-auto mt-3">
+                A chronological record of positions held and contributions made.
+              </p>
             </div>
           ) : (
             <>
@@ -55,7 +58,11 @@ export function Experience() {
           )}
         </motion.div>
 
-        <div className={cn("space-y-4", isTerminal && "terminal-timeline pl-4 relative")}>
+        <div className={cn(
+          "space-y-4",
+          isTerminal && "terminal-timeline pl-4 relative",
+          isNewspaper && "space-y-8",
+        )}>
           {experiences.map((exp, i) => (
             <ExperienceCard
               key={i}
@@ -137,34 +144,43 @@ function ExperienceCard({
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
       >
-        <div className="newspaper-card space-y-3">
-          <div className="flex items-baseline justify-between gap-2">
-            <h3 className="text-xl font-bold font-serif text-[#1a1208]">
-              {exp.role}
-            </h3>
+        <article className="newspaper-card space-y-4">
+          {/* Date in dateline style */}
+          <div className="flex items-baseline justify-between">
+            <span className="newspaper-kicker">
+              {exp.company}
+            </span>
             <span className="text-xs text-[#7a6b5a] font-serif italic">
               {exp.period}
             </span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-[#5c2e0e] font-serif">
-            <span className="font-semibold">{exp.company}</span>
-            <span>&middot;</span>
-            <span>{exp.location}</span>
-            <span>&middot;</span>
-            <span className="text-[#7a6b5a]">{exp.type}</span>
+
+          {/* Role as headline */}
+          <h3 className="text-2xl font-bold font-serif text-[#1a1208] newspaper-letterpress">
+            {exp.role}
+          </h3>
+
+          {/* Location / type as byline */}
+          <div className="newspaper-byline text-left">
+            {exp.location} &middot; {exp.type}
           </div>
-          <hr className="newspaper-rule-thin" />
-          <p className="text-sm text-[#3d2b1f] font-serif leading-relaxed">
+
+          <hr className="newspaper-rule" />
+
+          {/* Body text */}
+          <p className="text-[0.9rem] text-[#3d2b1f] font-serif leading-relaxed">
             {exp.description}
           </p>
-          <div className="flex flex-wrap gap-2">
+
+          {/* Skills as editorial tags */}
+          <div className="flex flex-wrap gap-2 pt-1">
             {exp.skills.map((skill, j) => (
-              <span key={j} className="newspaper-skill">
+              <span key={j} className="newspaper-badge px-2 py-0.5">
                 {skill}
               </span>
             ))}
           </div>
-        </div>
+        </article>
       </motion.div>
     );
   }

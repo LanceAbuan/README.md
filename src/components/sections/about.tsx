@@ -16,7 +16,7 @@ export function About() {
 
   return (
     <section id="about" className="py-24 px-6" ref={ref}>
-      <div className={cn("mx-auto", isNewspaper ? "max-w-4xl" : "max-w-4xl")}>
+      <div className="max-w-4xl mx-auto">
         {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -33,14 +33,17 @@ export function About() {
               </h2>
             </div>
           ) : isNewspaper ? (
-            <div>
-              <p className="text-xs font-serif tracking-[0.2em] text-[#7a6b5a] mb-1 uppercase" data-newspaper-section>
-                About
+            <div className="text-center mb-12">
+              <p className="text-xs font-serif tracking-[0.2em] text-[#7a6b5a] uppercase" data-newspaper-section>
+                Profile
               </p>
-              <hr className="newspaper-rule" />
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a1208] mt-4">
+              <hr className="newspaper-triple-rule mx-auto max-w-sm mt-2" />
+              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a1208] mt-4 newspaper-letterpress">
                 A Little About Me
               </h2>
+              <p className="newspaper-deck max-w-lg mx-auto mt-3">
+                The story behind the code — experience, background, and what drives the work.
+              </p>
             </div>
           ) : (
             <>
@@ -54,55 +57,107 @@ export function About() {
           )}
         </motion.div>
 
-        <div className={cn(
-          "gap-8 mt-8",
-          isNewspaper ? "newspaper-columns-2" : "grid md:grid-cols-2",
-        )}>
-          {/* Bio paragraphs */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className={cn(
-              "space-y-4 leading-relaxed",
-              isTerminal
-                ? "text-[#00aa30] font-mono text-sm"
-                : isNewspaper
-                  ? "text-[#3d2b1f] font-serif"
-                  : "text-neutral-600 dark:text-neutral-400",
-            )}
-          >
-            {aboutData.paragraphs.map((paragraph, i) => (
-              <HighlightedParagraph
-                key={i}
-                {...paragraph}
-                isTerminal={isTerminal}
-                isNewspaper={isNewspaper}
-              />
-            ))}
-          </motion.div>
-
-          {/* Stat cards */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="grid grid-cols-2 gap-3"
-          >
-            {aboutData.stats.map((stat, i) => {
-              const Icon = getIcon(stat.icon);
-              return (
-                <AboutStatCard
+        {isNewspaper ? (
+          /* Newspaper editorial layout */
+          <div className="space-y-8">
+            {/* Two-column body text */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className="newspaper-body-columns"
+            >
+              {aboutData.paragraphs.map((paragraph, i) => (
+                <HighlightedParagraph
                   key={i}
-                  stat={stat}
-                  Icon={Icon}
+                  {...paragraph}
                   isTerminal={isTerminal}
                   isNewspaper={isNewspaper}
                 />
-              );
-            })}
-          </motion.div>
-        </div>
+              ))}
+            </motion.div>
+
+            {/* Pull quote */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="newspaper-pull-quote"
+            >
+              Building things that matter — that&apos;s the thread running through everything I do.
+            </motion.div>
+
+            {/* Stat cards */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="grid grid-cols-2 sm:grid-cols-4 gap-4"
+            >
+              {aboutData.stats.map((stat, i) => {
+                const Icon = getIcon(stat.icon);
+                return (
+                  <AboutStatCard
+                    key={i}
+                    stat={stat}
+                    Icon={Icon}
+                    isTerminal={isTerminal}
+                    isNewspaper={isNewspaper}
+                  />
+                );
+              })}
+            </motion.div>
+          </div>
+        ) : (
+          /* Default / Terminal layout */
+          <div className={cn(
+            "gap-8 mt-8",
+            isTerminal ? "space-y-6" : "grid md:grid-cols-2",
+          )}>
+            {/* Bio paragraphs */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className={cn(
+                "space-y-4 leading-relaxed",
+                isTerminal
+                  ? "text-[#00aa30] font-mono text-sm"
+                  : "text-neutral-600 dark:text-neutral-400",
+              )}
+            >
+              {aboutData.paragraphs.map((paragraph, i) => (
+                <HighlightedParagraph
+                  key={i}
+                  {...paragraph}
+                  isTerminal={isTerminal}
+                  isNewspaper={isNewspaper}
+                />
+              ))}
+            </motion.div>
+
+            {/* Stat cards */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="grid grid-cols-2 gap-3"
+            >
+              {aboutData.stats.map((stat, i) => {
+                const Icon = getIcon(stat.icon);
+                return (
+                  <AboutStatCard
+                    key={i}
+                    stat={stat}
+                    Icon={Icon}
+                    isTerminal={isTerminal}
+                    isNewspaper={isNewspaper}
+                  />
+                );
+              })}
+            </motion.div>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -179,7 +234,7 @@ function AboutStatCard({
         <span className="text-[10px] text-[#7a6b5a] uppercase tracking-wider font-serif block">
           {stat.label}
         </span>
-        <span className="text-sm font-bold text-[#1a1208] font-serif">
+        <span className="text-2xl font-bold font-serif text-[#1a1208] newspaper-letterpress">
           {stat.value}
         </span>
       </div>

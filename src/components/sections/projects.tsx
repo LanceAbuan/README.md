@@ -25,7 +25,9 @@ export function Projects() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="flex items-end justify-between mb-12"
+          className={cn(
+            isNewspaper ? "text-center mb-12" : "flex items-end justify-between mb-12",
+          )}
         >
           <div>
             {isTerminal ? (
@@ -39,13 +41,16 @@ export function Projects() {
               </>
             ) : isNewspaper ? (
               <>
-                <p className="text-xs font-serif tracking-[0.2em] text-[#7a6b5a] mb-1 uppercase" data-newspaper-section>
-                  Projects
+                <p className="text-xs font-serif tracking-[0.2em] text-[#7a6b5a] uppercase" data-newspaper-section>
+                  Portfolio
                 </p>
-                <hr className="newspaper-rule" />
-                <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a1208] mt-4">
-                  Things I&apos;ve Built
+                <hr className="newspaper-triple-rule mx-auto max-w-sm mt-2" />
+                <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a1208] mt-4 newspaper-letterpress">
+                  Selected Works
                 </h2>
+                <p className="newspaper-deck max-w-lg mx-auto mt-3">
+                  A curated collection of projects, each representing a distinct challenge and solution.
+                </p>
               </>
             ) : (
               <>
@@ -58,17 +63,19 @@ export function Projects() {
               </>
             )}
           </div>
-          <Link
-            href={githubProfileUrl}
-            target="_blank"
-            className={cn(
-              buttonVariants({ variant: "ghost", className: "hidden sm:flex items-center gap-1 text-sm" }),
-              isTerminal && "rounded-none font-mono text-[#00ff41] hover:bg-[#0d1a0d]",
-              isNewspaper && "rounded-none font-serif text-[#5c2e0e] hover:bg-[#ddd2be]",
-            )}
-          >
-            View all <ArrowUpRight className="h-3.5 w-3.5" />
-          </Link>
+          {!isNewspaper && (
+            <Link
+              href={githubProfileUrl}
+              target="_blank"
+              className={cn(
+                buttonVariants({ variant: "ghost", className: "hidden sm:flex items-center gap-1 text-sm" }),
+                isTerminal && "rounded-none font-mono text-[#00ff41] hover:bg-[#0d1a0d]",
+                isNewspaper && "rounded-none font-serif text-[#5c2e0e] hover:bg-[#ddd2be]",
+              )}
+            >
+              View all <ArrowUpRight className="h-3.5 w-3.5" />
+            </Link>
+          )}
         </motion.div>
 
         <div className={cn(
@@ -85,6 +92,23 @@ export function Projects() {
             />
           ))}
         </div>
+
+        {isNewspaper && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="text-center mt-8"
+          >
+            <Link
+              href={githubProfileUrl}
+              target="_blank"
+              className="newspaper-btn inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] px-6 py-2 border-2 border-[#1a1208] text-[#1a1208] hover:bg-[#1a1208] hover:text-[#f7f2ea] transition-colors font-serif"
+            >
+              View Complete Archive <ArrowUpRight className="h-3.5 w-3.5" />
+            </Link>
+          </motion.div>
+        )}
       </div>
     </section>
   );
@@ -155,35 +179,53 @@ function ProjectCard({
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
         transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
       >
-        <div className="newspaper-card h-full flex flex-col gap-3">
-          <div className="flex items-start justify-between">
-            <h3 className="text-lg font-bold font-serif text-[#1a1208]">
-              {project.name}
-            </h3>
-            <div className="flex items-center gap-1 shrink-0">
+        <article className="newspaper-card h-full flex flex-col gap-3">
+          {/* Project name as article headline */}
+          <h3 className="text-xl font-bold font-serif text-[#1a1208] newspaper-letterpress">
+            {project.name}
+          </h3>
+
+          {/* Featured star + links */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {project.featured && (
+                <span className="text-[10px] font-serif text-[#7a6b5a] italic">* Featured *</span>
+              )}
+            </div>
+            <div className="flex items-center gap-1">
               {project.demo && (
-                <Link href={project.demo} className="h-7 w-7 flex items-center justify-center text-[#5c2e0e] hover:bg-[#ddd2be]">
+                <Link
+                  href={project.demo}
+                  className="h-7 w-7 flex items-center justify-center text-[#5c2e0e] hover:bg-[#ddd2be] font-serif"
+                >
                   <ExternalLink className="h-3.5 w-3.5" />
                 </Link>
               )}
-              <Link href={project.github} className="h-7 w-7 flex items-center justify-center text-[#5c2e0e] hover:bg-[#ddd2be]">
+              <Link
+                href={project.github}
+                className="h-7 w-7 flex items-center justify-center text-[#5c2e0e] hover:bg-[#ddd2be] font-serif"
+              >
                 <GitFork className="h-3.5 w-3.5" />
               </Link>
             </div>
           </div>
-          {project.featured && (
-            <span className="text-[10px] font-serif italic text-[#7a6b5a]">* Featured *</span>
-          )}
-          <hr className="newspaper-rule-thin" />
+
+          <hr className="newspaper-rule" />
+
+          {/* Body copy */}
           <p className="text-sm text-[#3d2b1f] font-serif leading-relaxed flex-1">
             {project.description}
           </p>
-          <div className="flex flex-wrap gap-2">
+
+          {/* Tags as caption */}
+          <div className="newspaper-caption flex flex-wrap gap-2">
             {project.tags.map((tag, i) => (
-              <span key={i} className="newspaper-skill">{tag}</span>
+              <span key={i} className="newspaper-badge px-2 py-0.5">
+                {tag}
+              </span>
             ))}
           </div>
-        </div>
+        </article>
       </motion.div>
     );
   }

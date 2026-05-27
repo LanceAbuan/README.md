@@ -19,7 +19,7 @@ export function Skills() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="mb-12"
+          className={cn(isNewspaper ? "text-center mb-12" : "mb-12")}
         >
           {isTerminal ? (
             <div>
@@ -32,13 +32,16 @@ export function Skills() {
             </div>
           ) : isNewspaper ? (
             <div>
-              <p className="text-xs font-serif tracking-[0.2em] text-[#7a6b5a] mb-1 uppercase" data-newspaper-section>
-                Skills
+              <p className="text-xs font-serif tracking-[0.2em] text-[#7a6b5a] uppercase" data-newspaper-section>
+                Expertise
               </p>
-              <hr className="newspaper-rule" />
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a1208] mt-4">
-                What I Work With
+              <hr className="newspaper-triple-rule mx-auto max-w-sm mt-2" />
+              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a1208] mt-4 newspaper-letterpress">
+                Technical Proficiency
               </h2>
+              <p className="newspaper-deck max-w-lg mx-auto mt-3">
+                The tools, languages, and frameworks that form the foundation of my craft.
+              </p>
             </div>
           ) : (
             <>
@@ -116,14 +119,17 @@ function SkillCategoryCard({
         transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
       >
         <div className="newspaper-card space-y-3">
-          <h3 className="text-sm font-bold font-serif text-[#1a1208] uppercase tracking-wider">
+          {/* Category as section kicker */}
+          <h3 className="text-xs font-bold font-serif text-[#5c2e0e] uppercase tracking-[0.15em]">
             {category.name}
           </h3>
-          <hr className="newspaper-rule-thin" />
-          <div className="flex flex-wrap gap-2">
+          <hr className="newspaper-rule" />
+          {/* Skills as comma-separated editorial list */}
+          <div className="font-serif text-sm text-[#3d2b1f] leading-relaxed">
             {category.items.map((skill, i) => (
-              <span key={i} className="newspaper-skill">
+              <span key={i}>
                 {skill}
+                {i < category.items.length - 1 ? " &middot; " : ""}
               </span>
             ))}
           </div>

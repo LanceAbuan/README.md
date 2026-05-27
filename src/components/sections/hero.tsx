@@ -178,37 +178,57 @@ function HeroTerminal() {
 
 /* ============================================================
    NEWSPAPER HERO
-   Editorial masthead. Serif headline. Drop cap bio.
+   Full masthead with volume line, headline, deck, and byline.
    ============================================================ */
 function HeroNewspaper() {
   return (
     <section className="min-h-screen flex items-center justify-center px-6 pt-16">
-      <div className="max-w-3xl mx-auto text-center">
+      <div className="max-w-3xl mx-auto">
+        {/* Masthead */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#7a6b5a] mb-2 font-serif">
-            Portfolio &amp; Works
+          <p className="newspaper-masthead newspaper-letterpress">
+            The Lance Portfolio
           </p>
-          <hr className="newspaper-rule mx-auto w-32" />
+          <div className="newspaper-masthead-sub">
+            Vol. I &nbsp;•&nbsp; Est. 2024 &nbsp;•&nbsp; San Francisco, CA
+          </div>
         </motion.div>
 
+        {/* Main headline */}
         <motion.h1
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] font-serif"
+          className="text-4xl sm:text-5xl md:text-6xl font-bold font-serif text-[#1a1208] text-center leading-[1.1] mb-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          Lance Abuan
+        </motion.h1>
+
+        {/* Subheadline / kicker */}
+        <motion.p
+          className="text-center text-base sm:text-lg font-serif italic text-[#5c2e0e] mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <span className="block text-[#1a1208]">Lance Abuan</span>
-          <span className="block text-[#7a6b5a] text-lg sm:text-xl mt-2 italic font-serif">
-            Software Developer — AI &amp; Agentic Workflows
-          </span>
-        </motion.h1>
+          Software Developer — AI &amp; Agentic Workflows
+        </motion.p>
 
+        {/* Triple rule separator */}
+        <motion.hr
+          className="newspaper-triple-rule mx-auto max-w-xs"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+        />
+
+        {/* Deck / lead paragraph */}
         <motion.p
-          className="mt-8 text-base sm:text-lg text-[#3d2b1f] max-w-xl mx-auto leading-relaxed font-serif newspaper-dropcap text-left"
+          className="newspaper-deck text-center max-w-xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
@@ -219,18 +239,39 @@ function HeroNewspaper() {
           can do.
         </motion.p>
 
+        {/* Byline */}
+        <motion.p
+          className="newspaper-byline mt-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.7 }}
+        >
+          By Lance Abuan
+        </motion.p>
+
+        {/* Ornamental divider */}
         <motion.div
-          className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3"
+          className="newspaper-ornament my-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+        >
+          <span>❧</span>
+        </motion.div>
+
+        {/* CTA buttons */}
+        <motion.div
+          className="flex flex-col sm:flex-row items-center justify-center gap-3"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
+          transition={{ duration: 0.6, delay: 0.9 }}
         >
           <Link
             href="#projects"
             className={cn(
               buttonVariants({
                 className:
-                  "rounded-none px-6 font-serif uppercase tracking-wider border-2 border-[#1a1208] bg-transparent text-[#1a1208] hover:bg-[#1a1208] hover:text-[#f7f2ea]",
+                  "rounded-none px-8 font-serif text-xs uppercase tracking-[0.15em] border-2 border-[#1a1208] bg-transparent text-[#1a1208] hover:bg-[#1a1208] hover:text-[#f7f2ea] transition-colors",
               }),
             )}
           >
@@ -242,12 +283,34 @@ function HeroNewspaper() {
               buttonVariants({
                 variant: "outline",
                 className:
-                  "rounded-none px-6 font-serif uppercase tracking-wider border border-[#c4b59e] text-[#5c2e0e] hover:border-[#1a1208] hover:text-[#1a1208] bg-transparent",
+                  "rounded-none px-8 font-serif text-xs uppercase tracking-[0.15em] border border-[#c4b59e] text-[#5c2e0e] hover:border-[#1a1208] hover:text-[#1a1208] bg-transparent transition-colors",
               }),
             )}
           >
             Get In Touch
           </Link>
+        </motion.div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          className="mt-16 animate-bounce flex justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 1.3 }}
+        >
+          <svg
+            className="w-5 h-5 text-[#7a6b5a]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
         </motion.div>
       </div>
     </section>
