@@ -5,6 +5,7 @@
 
 @custom-variant dark (&:is(.dark *));
 @custom-variant terminal (&:is(.terminal *));
+@custom-variant newspaper (&:is(.newspaper *));
 @custom-variant custom (&:is(.custom *));
 
 @theme inline {
@@ -122,7 +123,8 @@
 
 /* ============================================================
    TERMINAL THEME
-   Green-on-black monospace CRT aesthetic.
+   True green-on-black CRT. Pure black background, phosphor
+   green text. No grey bleed.
 
    To add a new theme: copy this block, rename the selector
    (e.g. `.ocean { ... }`), set the CSS variables, and add
@@ -130,37 +132,77 @@
    below. That's it — no framework config changes needed.
    ============================================================ */
 .terminal {
-  --background: oklch(0.12 0.02 145);
-  --foreground: oklch(0.88 0.12 145);
-  --card: oklch(0.16 0.02 145);
-  --card-foreground: oklch(0.88 0.12 145);
-  --popover: oklch(0.16 0.02 145);
-  --popover-foreground: oklch(0.88 0.12 145);
-  --primary: oklch(0.85 0.15 145);
-  --primary-foreground: oklch(0.12 0.02 145);
-  --secondary: oklch(0.22 0.03 145);
-  --secondary-foreground: oklch(0.85 0.12 145);
-  --muted: oklch(0.22 0.03 145);
-  --muted-foreground: oklch(0.58 0.06 145);
-  --accent: oklch(0.28 0.06 145);
-  --accent-foreground: oklch(0.88 0.12 145);
-  --destructive: oklch(0.64 0.20 25);
-  --border: oklch(0.85 0.12 145 / 15%);
-  --input: oklch(0.85 0.12 145 / 15%);
-  --ring: oklch(0.72 0.12 145);
-  --chart-1: oklch(0.85 0.12 145);
-  --chart-2: oklch(0.72 0.10 145);
-  --chart-3: oklch(0.58 0.08 145);
-  --chart-4: oklch(0.45 0.06 145);
-  --chart-5: oklch(0.32 0.04 145);
-  --sidebar: oklch(0.16 0.02 145);
-  --sidebar-foreground: oklch(0.88 0.12 145);
-  --sidebar-primary: oklch(0.85 0.15 145);
-  --sidebar-primary-foreground: oklch(0.12 0.02 145);
-  --sidebar-accent: oklch(0.22 0.03 145);
-  --sidebar-accent-foreground: oklch(0.85 0.12 145);
-  --sidebar-border: oklch(0.85 0.12 145 / 15%);
-  --sidebar-ring: oklch(0.72 0.12 145);
+  --background: #0a0e0a;
+  --foreground: #00ff41;
+  --card: #0d120d;
+  --card-foreground: #00ff41;
+  --popover: #0d120d;
+  --popover-foreground: #00ff41;
+  --primary: #00ff41;
+  --primary-foreground: #0a0e0a;
+  --secondary: #141e14;
+  --secondary-foreground: #00cc33;
+  --muted: #1a2e1a;
+  --muted-foreground: #00aa2d;
+  --accent: #00cc33;
+  --accent-foreground: #0a0e0a;
+  --destructive: #ff3333;
+  --border: #00ff4120;
+  --input: #00ff4120;
+  --ring: #00ff4180;
+  --chart-1: #00ff41;
+  --chart-2: #00cc33;
+  --chart-3: #00aa2d;
+  --chart-4: #008822;
+  --chart-5: #00661c;
+  --sidebar: #0d120d;
+  --sidebar-foreground: #00ff41;
+  --sidebar-primary: #00ff41;
+  --sidebar-primary-foreground: #0a0e0a;
+  --sidebar-accent: #141e14;
+  --sidebar-accent-foreground: #00cc33;
+  --sidebar-border: #00ff4120;
+  --sidebar-ring: #00ff4180;
+}
+
+/* ============================================================
+   NEWSPAPER THEME
+   Editorial / coffee-shop aesthetic. Warm cream background,
+   deep brown text, amber accents. Like reading a printed
+   broadsheet at a café.
+   ============================================================ */
+.newspaper {
+  --background: #f5f0e8;
+  --foreground: #2c1810;
+  --card: #ebe5d8;
+  --card-foreground: #2c1810;
+  --popover: #ebe5d8;
+  --popover-foreground: #2c1810;
+  --primary: #8b4513;
+  --primary-foreground: #f5f0e8;
+  --secondary: #d4c5a9;
+  --secondary-foreground: #2c1810;
+  --muted: #ddd5c4;
+  --muted-foreground: #6b5b4a;
+  --accent: #a0522d;
+  --accent-foreground: #f5f0e8;
+  --destructive: #b22222;
+  --border: #c4b5a0;
+  --input: #c4b5a0;
+  --ring: #8b4513;
+  --chart-1: #8b4513;
+  --chart-2: #a0522d;
+  --chart-3: #6b5b4a;
+  --chart-4: #5c4a3d;
+  --chart-5: #4a3c32;
+  --sidebar: #ebe5d8;
+  --sidebar-foreground: #2c1810;
+  --sidebar-primary: #8b4513;
+  --sidebar-primary-foreground: #f5f0e8;
+  --sidebar-accent: #d4c5a9;
+  --sidebar-accent-foreground: #2c1810;
+  --sidebar-border: #c4b5a0;
+  --sidebar-ring: #8b4513;
 }
 
 /* Custom theme — defaults to dark, overridden by inline styles */

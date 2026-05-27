@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTheme } from "next-themes";
 import {
   Moon,
@@ -9,9 +9,24 @@ import {
   Terminal,
   Palette,
   Check,
-  X,
+  Newspaper,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 /**
  * Label and icon for each theme.
@@ -28,6 +43,7 @@ const THEME_OPTIONS: Array<{
   { value: "dark", label: "Dark", icon: <Moon className="h-4 w-4" /> },
   { value: "system", label: "System", icon: <Monitor className="h-4 w-4" /> },
   { value: "terminal", label: "Terminal", icon: <Terminal className="h-4 w-4" /> },
+  { value: "newspaper", label: "Newspaper", icon: <Newspaper className="h-4 w-4" /> },
   { value: "custom", label: "Custom", icon: <Palette className="h-4 w-4" /> },
 ];
 
@@ -50,9 +66,6 @@ const CUSTOM_COLORS: Array<{
 
 const STORAGE_KEY = "custom-theme-colors";
 
-/**
- * Load custom colors from localStorage.
- */
 function loadCustomColors(): Record<string, string> {
   if (typeof window === "undefined") return {};
   try {
@@ -63,14 +76,11 @@ function loadCustomColors(): Record<string, string> {
   }
 }
 
-/**
- * Save custom colors to localStorage and apply to document root.
- */
 function saveAndApplyCustomColors(colors: Record<string, string>) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(colors));
   } catch {
-    // quota exceeded — silently skip
+    // quota exceeded
   }
   const root = document.documentElement;
   for (const [key, value] of Object.entries(colors)) {
@@ -79,23 +89,19 @@ function saveAndApplyCustomColors(colors: Record<string, string>) {
 }
 
 /**
- * Theme selector with dropdown and custom color picker.
+ * Theme selector — inline dropdown + modal color picker.
  *
- * Replaces the binary sun/moon toggle with a full theme picker.
- * Supports preset themes (light, dark, system, terminal) and
- * a custom mode with live color inputs persisted to localStorage.
+ * All UI stays within the page. Uses shadcn DropdownMenu for
+ * theme selection and Dialog for the custom color picker.
  */
 export function ThemeSelector() {
-  const { theme, setTheme, themes } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [showPicker, setShowPicker] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [colors, setColors] = useState<Record<string, string>>({});
-  const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => setMounted(true), []);
 
-  // Load saved custom colors once on mount
   useEffect(() => {
     const saved = loadCustomColors();
     if (Object.keys(saved).length > 0) {
@@ -104,149 +110,105 @@ export function ThemeSelector() {
     }
   }, []);
 
-  // Close dropdown on outside click
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e: MouseEvent) => {
-      if (popupRef.current && !popupRef.current.contains(e.target as Node)) {
-        setOpen(false);
-        setShowPicker(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [open]);
+  const handleColorChange = useCallback(
+    (varName: string, value: string) => {
+      setColors((prev) => {
+        const updated = { ...prev, [varName]: value };
+        saveAndApplyCustomColors(updated);
+        return updated;
+      });
+    },
+    [],
+  );
 
-  // Switch to custom theme when picker opens
-  const handleCustomClick = () => {
+  const handleReset = useCallback(() => {
+    setColors({});
+    localStorage.removeItem(STORAGE_KEY);
+    const root = document.documentElement;
+    CUSTOM_COLORS.forEach((c) => root.style.removeProperty(c.varName));
+  }, []);
+
+  const handleCustomSelect = useCallback(() => {
     setTheme("custom");
-    setShowPicker(true);
-  };
-
-  const handleColorChange = (varName: string, value: string) => {
-    const updated = { ...colors, [varName]: value };
-    setColors(updated);
-    saveAndApplyCustomColors(updated);
-  };
+    setPickerOpen(true);
+  }, [setTheme]);
 
   if (!mounted) return <Button variant="ghost" size="icon" disabled />;
 
-  const currentLabel =
-    THEME_OPTIONS.find((t) => t.value === theme)?.label ?? "Theme";
-
   return (
-    <div className="relative" ref={popupRef}>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => {
-          setOpen(!open);
-          setShowPicker(false);
-        }}
-        className="size-9 transition-opacity hover:opacity-70"
-        aria-label="Select theme"
-      >
-        <Palette className="h-4 w-4" />
-      </Button>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-9 transition-opacity hover:opacity-70"
+            aria-label="Select theme"
+          >
+            <Palette className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
 
-      {open && !showPicker && (
-        <div className="absolute right-0 top-12 w-44 rounded-xl border border-neutral-200/80 dark:border-neutral-700/80 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl shadow-lg overflow-hidden z-50">
-          <div className="px-3 py-2 text-xs font-medium text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">
-            Theme
-          </div>
-          {THEME_OPTIONS.map((opt) => (
-            <button
+        <DropdownMenuContent align="end" className="w-44">
+          <DropdownMenuLabel>Theme</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+
+          {THEME_OPTIONS.filter((t) => t.value !== "custom").map((opt) => (
+            <DropdownMenuItem
               key={opt.value}
-              onClick={() => {
-                if (opt.value === "custom") {
-                  handleCustomClick();
-                } else {
-                  setTheme(opt.value);
-                  setOpen(false);
-                }
-              }}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800 ${
-                theme === opt.value
-                  ? "text-foreground"
-                  : "text-neutral-600 dark:text-neutral-400"
-              }`}
+              onClick={() => setTheme(opt.value)}
             >
-              <span className="flex-shrink-0">{opt.icon}</span>
-              <span className="flex-1 text-left">{opt.label}</span>
-              {theme === opt.value && (
-                <Check className="h-3.5 w-3.5 flex-shrink-0" />
-              )}
-            </button>
+              {opt.icon}
+              <span className="flex-1">{opt.label}</span>
+              {theme === opt.value && <Check className="h-3.5 w-3.5 ml-auto" />}
+            </DropdownMenuItem>
           ))}
-        </div>
-      )}
 
-      {open && showPicker && (
-        <div className="absolute right-0 top-12 w-64 rounded-xl border border-neutral-200/80 dark:border-neutral-700/80 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl shadow-lg overflow-hidden z-50">
-          <div className="flex items-center justify-between px-3 py-2 border-b border-neutral-200/50 dark:border-neutral-700/50">
-            <span className="text-xs font-medium text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">
-              Custom Colors
-            </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                setShowPicker(false);
-              }}
-              className="h-6 w-6"
-            >
-              <X className="h-3.5 w-3.5" />
-            </Button>
-          </div>
-          <div className="p-3 grid grid-cols-2 gap-x-4 gap-y-2 max-h-72 overflow-y-auto">
-            {CUSTOM_COLORS.map((c) => (
-              <label
-                key={c.key}
-                className="flex items-center gap-2 text-xs"
-              >
-                <input
-                  type="color"
-                  value={colors[c.varName] ?? "#000000"}
-                  onChange={(e) => handleColorChange(c.varName, e.target.value)}
-                  className="w-6 h-6 rounded cursor-pointer border border-neutral-300 dark:border-neutral-600 bg-transparent"
-                />
-                <span className="text-neutral-600 dark:text-neutral-400">
-                  {c.label}
-                </span>
-              </label>
-            ))}
-          </div>
-          <div className="px-3 py-2 border-t border-neutral-200/50 dark:border-neutral-700/50 flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 text-xs flex-1"
-              onClick={() => {
-                setColors({});
-                localStorage.removeItem(STORAGE_KEY);
-                // Reset by removing inline overrides — the CSS .custom block takes over
-                const root = document.documentElement;
-                CUSTOM_COLORS.forEach((c) =>
-                  root.style.removeProperty(c.varName)
-                );
-              }}
-            >
-              Reset
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              className="h-7 text-xs flex-1"
-              onClick={() => {
-                setShowPicker(false);
-                setOpen(false);
-              }}
-            >
-              Done
-            </Button>
-          </div>
-        </div>
-      )}
-    </div>
+          <DropdownMenuSeparator />
+
+          <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
+            <DropdownMenuItem onClick={handleCustomSelect}>
+              <Palette className="h-4 w-4" />
+              <span className="flex-1">Custom</span>
+              {theme === "custom" && <Check className="h-3.5 w-3.5 ml-auto" />}
+            </DropdownMenuItem>
+
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Palette className="h-4 w-4" />
+                  Custom Colors
+                </DialogTitle>
+              </DialogHeader>
+
+              <div className="grid grid-cols-2 gap-x-6 gap-y-3 py-2">
+                {CUSTOM_COLORS.map((c) => (
+                  <label
+                    key={c.key}
+                    className="flex items-center gap-3 text-sm"
+                  >
+                    <input
+                      type="color"
+                      value={colors[c.varName] ?? "#000000"}
+                      onChange={(e) =>
+                        handleColorChange(c.varName, e.target.value)
+                      }
+                      className="w-8 h-8 rounded cursor-pointer border border-neutral-300 dark:border-neutral-600 bg-transparent"
+                    />
+                    <span>{c.label}</span>
+                  </label>
+                ))}
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t">
+                <Button variant="outline" size="sm" onClick={handleReset}>
+                  Reset
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   );
 }

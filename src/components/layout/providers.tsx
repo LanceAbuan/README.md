@@ -13,7 +13,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
  * 4. Add an entry to the theme selector UI
  * That's it — no framework config changes needed.
  */
-export const THEMES = ["light", "dark", "system", "terminal", "custom"] as string[];
+export const THEMES = ["light", "dark", "system", "terminal", "newspaper", "custom"] as string[];
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
