@@ -10,29 +10,12 @@ import {
   Palette,
   Check,
   Newspaper,
+  X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuItem,
-  DropdownMenuGroup,
-} from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 /**
  * Label and icon for each theme.
- *
- * To add a new preset theme, add an entry here.
- * The key must match the theme name in providers.tsx THEMES array.
  */
 const THEME_OPTIONS: Array<{
   value: string;
@@ -89,18 +72,18 @@ function saveAndApplyCustomColors(colors: Record<string, string>) {
 }
 
 /**
- * Theme selector — inline dropdown + modal color picker.
+ * Theme selector — plain HTML/CSS, no base-ui components.
  *
- * All UI stays within the page. Uses shadcn DropdownMenu for
- * theme selection and Dialog for the custom color picker.
- * The Dialog trigger is a hidden button that fires programmatically.
+ * Avoids base-ui's strict context requirements entirely.
+ * Uses a simple click-outside-closes pattern.
  */
 export function ThemeSelector() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [pickerOpen, setPickerOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
   const [colors, setColors] = useState<Record<string, string>>({});
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => setMounted(true), []);
 
@@ -111,6 +94,22 @@ export function ThemeSelector() {
       saveAndApplyCustomColors(saved);
     }
   }, []);
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false);
+        setShowPicker(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
 
   const handleColorChange = useCallback(
     (varName: string, value: string) => {
@@ -130,82 +129,103 @@ export function ThemeSelector() {
     CUSTOM_COLORS.forEach((c) => root.style.removeProperty(c.varName));
   }, []);
 
-  const openCustomPicker = useCallback(() => {
-    setTheme("custom");
-    // Click the hidden trigger to open the Dialog
-    triggerRef.current?.click();
-  }, [setTheme]);
+  const handleSelect = useCallback(
+    (value: string) => {
+      if (value === "custom") {
+        setTheme("custom");
+        setShowPicker(true);
+      } else {
+        setTheme(value);
+        setOpen(false);
+        setShowPicker(false);
+      }
+    },
+    [setTheme],
+  );
 
-  if (!mounted) return <Button variant="ghost" size="icon" disabled />;
-
-  const presets = THEME_OPTIONS.filter((t) => t.value !== "custom");
+  if (!mounted)
+    return (
+      <button
+        disabled
+        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm"
+      />
+    );
 
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-9 transition-opacity hover:opacity-70"
-            aria-label="Select theme"
-          >
-            <Palette className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
+    <div className="relative" ref={containerRef}>
+      <button
+        onClick={() => {
+          setOpen(!open);
+          setShowPicker(false);
+        }}
+        className={cn(
+          "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-medium",
+          "transition-colors outline-none select-none",
+          "hover:bg-muted dark:hover:bg-muted/50",
+          "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
+        )}
+        aria-label="Select theme"
+        aria-haspopup="true"
+        aria-expanded={open}
+      >
+        <Palette className="h-4 w-4" />
+      </button>
 
-        <DropdownMenuContent align="end" className="w-44">
-          <DropdownMenuLabel>Theme</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-
-          <DropdownMenuGroup>
-            {presets.map((opt) => (
-              <DropdownMenuItem
-                key={opt.value}
-                onClick={() => setTheme(opt.value)}
-              >
-                {opt.icon}
-                <span className="flex-1">{opt.label}</span>
-                {theme === opt.value && <Check className="h-3.5 w-3.5 ml-auto" />}
-              </DropdownMenuItem>
-            ))}
-
-            <DropdownMenuSeparator />
-
-            <DropdownMenuItem onClick={openCustomPicker}>
-              <Palette className="h-4 w-4" />
-              <span className="flex-1">Custom</span>
-              {theme === "custom" && <Check className="h-3.5 w-3.5 ml-auto" />}
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      {/* Hidden button + Dialog for custom color picker.
-          The dropdown menu item clicks this button to open the modal. */}
-      <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
-        <button
-          ref={triggerRef}
-          onClick={() => setPickerOpen(true)}
-          className="sr-only"
-          aria-label="Open custom color picker"
+      {open && !showPicker && (
+        <div
+          className="absolute right-0 top-11 z-50 w-44 rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10"
+          role="menu"
         >
-          Open color picker
-        </button>
+          <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Theme
+          </div>
+          <div className="my-1 h-px bg-border" />
 
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Palette className="h-4 w-4" />
+          {THEME_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              role="menuitem"
+              onClick={() => handleSelect(opt.value)}
+              className={cn(
+                "relative flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none",
+                "focus:bg-accent focus:text-accent-foreground",
+                theme === opt.value ? "bg-accent" : "",
+              )}
+            >
+              {opt.icon}
+              <span className="flex-1">{opt.label}</span>
+              {theme === opt.value && (
+                <Check className="h-3.5 w-3.5 ml-auto shrink-0" />
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {open && showPicker && (
+        <div
+          className="absolute right-0 top-11 z-50 w-64 rounded-xl border border-border bg-popover p-0 text-popover-foreground shadow-md ring-1 ring-foreground/10 overflow-hidden"
+          role="dialog"
+          aria-label="Custom color picker"
+        >
+          <div className="flex items-center justify-between border-b border-border px-3 py-2">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Custom Colors
-            </DialogTitle>
-          </DialogHeader>
+            </span>
+            <button
+              onClick={() => setShowPicker(false)}
+              className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-muted"
+              aria-label="Close picker"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
 
-          <div className="grid grid-cols-2 gap-x-6 gap-y-3 py-2">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 p-3 max-h-72 overflow-y-auto">
             {CUSTOM_COLORS.map((c) => (
               <label
                 key={c.key}
-                className="flex items-center gap-3 text-sm"
+                className="flex items-center gap-2 text-sm"
               >
                 <input
                   type="color"
@@ -213,20 +233,32 @@ export function ThemeSelector() {
                   onChange={(e) =>
                     handleColorChange(c.varName, e.target.value)
                   }
-                  className="w-8 h-8 rounded cursor-pointer border border-neutral-300 dark:border-neutral-600 bg-transparent"
+                  className="w-7 h-7 rounded cursor-pointer border border-border bg-transparent"
                 />
-                <span>{c.label}</span>
+                <span className="text-muted-foreground">{c.label}</span>
               </label>
             ))}
           </div>
 
-          <div className="flex justify-end gap-2 pt-2 border-t">
-            <Button variant="outline" size="sm" onClick={handleReset}>
+          <div className="flex gap-2 border-t border-border px-3 py-2">
+            <button
+              onClick={handleReset}
+              className="flex-1 inline-flex h-7 items-center justify-center rounded-md border border-border bg-background px-2 text-sm hover:bg-muted"
+            >
               Reset
-            </Button>
+            </button>
+            <button
+              onClick={() => {
+                setOpen(false);
+                setShowPicker(false);
+              }}
+              className="flex-1 inline-flex h-7 items-center justify-center rounded-md bg-secondary text-secondary-foreground px-2 text-sm hover:bg-secondary/80"
+            >
+              Done
+            </button>
           </div>
-        </DialogContent>
-      </Dialog>
-    </>
+        </div>
+      )}
+    </div>
   );
 }
