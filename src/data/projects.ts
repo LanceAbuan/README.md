@@ -2,21 +2,12 @@ import type { ProjectItem } from "@/types";
 
 export const projects: ProjectItem[] = [
   {
-    name: "AI Agent Orchestrator",
-    description:
-      "Multi-agent workflow engine that coordinates LLM-powered agents for complex task decomposition, tool use, and autonomous decision-making. Built with LangChain and custom tool registries.",
-    tags: ["Python", "LangChain", "LLM", "Agentic AI", "RAG"],
-    github: "https://github.com/LanceAbuan/agent-orchestrator",
-    demo: null,
-    featured: true,
-  },
-  {
     name: "OpenClaw Qwen Portfolio",
     description:
-      "This portfolio — built entirely using OpenClaw with a local Qwen 27B model. Demonstrates human-in-the-loop AI development with PR-based code review workflows.",
+      "This portfolio — built entirely using OpenClaw with a local Qwen model. Demonstrates human-in-the-loop AI development with PR-based code review workflows. Features multiple theme modes including terminal and newspaper layouts.",
     tags: ["Next.js", "OpenClaw", "Qwen", "AI Dev", "shadcn/ui"],
     github: "https://github.com/LanceAbuan/README.md",
-    demo: null,
+    demo: "https://lanceabuan.com",
     featured: true,
   },
   {
@@ -26,16 +17,7 @@ export const projects: ProjectItem[] = [
     tags: ["Godot", "GDScript", "Procedural Generation", "Education"],
     github: "https://github.com/LanceAbuan/godot-microbe-sim",
     demo: null,
-    featured: false,
-  },
-  {
-    name: "Arrow Rust Benchmark",
-    description:
-      "Performance benchmarking suite for Apache Arrow in Rust, comparing different serialization and query execution strategies.",
-    tags: ["Rust", "Apache Arrow", "Benchmarking", "Systems"],
-    github: "https://github.com/LanceAbuan/arrow-rs-benchmark",
-    demo: null,
-    featured: false,
+    featured: true,
   },
   {
     name: "Web Poker",

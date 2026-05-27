@@ -3,23 +3,33 @@ import type { ExperienceItem } from "@/types";
 export const experiences: ExperienceItem[] = [
   {
     company: "Saltech Systems",
-    role: "Software Developer — AI & Agentic Workflows",
-    period: "2026 — Present",
+    role: "Web Developer",
+    period: "Mar 2026 — Present",
     type: "Full-time",
-    location: "Irving, TX",
+    location: "Plano, TX",
     description:
       "Developing AI tools and agentic workflows for enterprise automation. Building intelligent systems that orchestrate complex business processes, integrate LLM-powered agents, and deliver measurable productivity gains.",
     skills: ["Python", "LLM Integration", "Agentic Workflows", "RAG", "API Design", "React", "TypeScript"],
   },
   {
     company: "Paycom",
-    role: "Software Developer IV",
+    role: "Senior Software Developer in Training",
     period: "Dec 2022 — 2026",
     type: "Full-time",
-    location: "Irving, TX",
+    location: "Okemos, MI",
     description:
-      "Engineered and maintained large-scale enterprise applications, specializing in legacy system modernization, data pipeline redesign, and scalable architecture. Delivered improvements in performance, reliability, and user workflows.",
+      "Engineered and maintained large-scale enterprise applications, specializing in legacy system modernization, data pipeline redesign, and scalable architecture. Delivered improvements in performance, reliability, and user workflows. Started as a Software Development Intern, then returned full-time and progressed through the ranks to Senior Software Developer in Training.",
     skills: ["PHP", "Laravel", "React", "TypeScript", "MySQL", "Redis", "Docker", "AWS"],
+  },
+  {
+    company: "Paycom",
+    role: "Software Development Intern",
+    period: "May 2022 — Aug 2022",
+    type: "Internship",
+    location: "Okemos, MI",
+    description:
+      "Developed a full-stack data visualization application presented to the CIO. Automated a previously manual process, saving employees hundreds of hours annually. Designed an extensible database schema supporting user-level customization.",
+    skills: ["Full-Stack", "Data Visualization", "Database Design", "Stakeholder Collaboration"],
   },
   {
     company: "Texas A&M — Dept. of Entomology",
@@ -30,16 +40,6 @@ export const experiences: ExperienceItem[] = [
     description:
       "Built an interactive microbiology simulator in Godot with a hex-grid environment, procedurally generated infinite world, NPC systems, and dynamic resource creation. Incorporated into classroom curriculum for hands-on learning.",
     skills: ["Godot", "GDScript", "C#", "Procedural Generation", "Game Design"],
-  },
-  {
-    company: "Paycom",
-    role: "Intern",
-    period: "May 2022 — Aug 2022",
-    type: "Internship",
-    location: "Oklahoma",
-    description:
-      "Developed a full-stack data visualization application presented to the CIO. Automated a previously manual process, saving employees hundreds of hours annually. Designed an extensible database schema supporting user-level customization.",
-    skills: ["Full-Stack", "Data Visualization", "Database Design", "Stakeholder Collaboration"],
   },
   {
     company: "Comstock Computing",

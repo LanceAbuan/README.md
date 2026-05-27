@@ -191,6 +191,18 @@
 }
 
 /* Scanline overlay */
+.terminal::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+}
+
+/* Scanline lines overlay */
 .terminal::after {
   content: "";
   position: fixed;
@@ -317,11 +329,24 @@
   --radius: 0rem;
 }
 
-/* Newspaper layout overrides */
+/* Newspaper layout overrides — scoped to main content, not overlays */
 .newspaper body,
-.newspaper {
+.newspaper main,
+.newspaper section,
+.newspaper .newspaper-card {
   font-family: var(--font-newspaper-body), Georgia, serif !important;
   line-height: 1.7 !important;
+}
+
+/* Preserve normal line-height on buttons, inputs, interactive elements */
+.newspaper button,
+.newspaper input,
+.newspaper textarea,
+.newspaper select,
+.newspaper [role="button"],
+.newspaper a {
+  font-family: var(--font-newspaper-body), Georgia, serif !important;
+  line-height: normal !important;
 }
 
 .newspaper h1,
@@ -331,7 +356,7 @@
   font-family: var(--font-newspaper-heading), "Playfair Display", Georgia, serif !important;
   font-weight: 700 !important;
   letter-spacing: -0.01em;
-  line-height: 1.2;
+  line-height: 1.15 !important;
 }
 
 .newspaper h1 {
@@ -363,6 +388,7 @@
   background: #efe8da !important;
   padding: 1.25rem !important;
   position: relative;
+  overflow: visible !important;
 }
 
 .newspaper .newspaper-card::before {
@@ -398,6 +424,13 @@
   column-rule: 1px solid #c4b59e;
 }
 
+/* Prevent cards from splitting across columns */
+.newspaper .newspaper-card,
+.newspaper .terminal-card {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
 /* Drop cap for first paragraph */
 .newspaper .newspaper-dropcap:first-letter {
   float: left;
@@ -418,9 +451,6 @@
   letter-spacing: 0.2em;
   font-weight: 600;
   color: #7a6b5a;
-  border-bottom: 2px solid #1a1208;
-  padding-bottom: 0.25rem;
-  margin-bottom: 1rem;
   display: inline-block;
 }
 
@@ -485,7 +515,7 @@
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 9998;
+  z-index: 9997;
   opacity: 0.03;
   background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231a1208' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
@@ -587,11 +617,9 @@
 
 /* Byline — "by Lance Abuan" style */
 .newspaper .newspaper-byline {
-  font-family: var(--font-newspaper-body), serif;
+  font-family: var(--font-newspaper-body), serif !important;
   font-size: 0.8rem;
   color: #7a6b5a;
-  text-align: center;
-  margin-bottom: 1.5rem;
   font-style: italic;
 }
 
@@ -646,6 +674,8 @@
   line-height: 1.7;
   color: #3d2b1f;
   font-family: var(--font-newspaper-body), serif;
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .newspaper .newspaper-body-columns p:first-child {

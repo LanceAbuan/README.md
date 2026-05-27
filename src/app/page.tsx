@@ -31,7 +31,7 @@ const faqSchema = {
       name: "What is Lance's educational background?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Lance graduated Magna Cum Laude from Texas A&M University with a Bachelor of Science in Computer Science.",
+        text: "Lance graduated Magna Cum Laude from Texas A&M University with a Bachelor of Science in Computer Science and a minor in Mathematics.",
       },
     },
     {
@@ -39,7 +39,7 @@ const faqSchema = {
       name: "Where is Lance based?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Lance is based in Irving, Texas.",
+        text: "Lance is based in Carrollton, Texas.",
       },
     },
   ],

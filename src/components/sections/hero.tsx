@@ -78,10 +78,13 @@ function HeroDefault() {
         </motion.div>
 
         <motion.div
-          className="mt-16 animate-bounce"
+          className="mt-16 animate-bounce cursor-pointer"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 1.2 }}
+          onClick={() => {
+            document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
+          }}
         >
           <svg
             className="w-5 h-5 mx-auto text-neutral-400"
@@ -293,10 +296,13 @@ function HeroNewspaper() {
 
         {/* Scroll indicator */}
         <motion.div
-          className="mt-16 animate-bounce flex justify-center"
+          className="mt-16 animate-bounce flex justify-center cursor-pointer"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 1.3 }}
+          onClick={() => {
+            document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
+          }}
         >
           <svg
             className="w-5 h-5 text-[#7a6b5a]"
