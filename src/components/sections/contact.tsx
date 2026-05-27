@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,15 +8,25 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Send, CheckCircle, AlertCircle } from "lucide-react";
 import { getIcon } from "@/lib/icons";
+import { useSectionReveal } from "@/components/section-reveal";
 import { contactLinks, contactEmail } from "@/data/contact";
 
-export function Contact() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+/** Form status states for the submit lifecycle. */
+type FormStatus = "idle" | "sending" | "sent" | "error";
 
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+/**
+ * Contact section — contact form on the right, social links on the left.
+ * Submits to /api/contact via POST. Shows success/error feedback.
+ */
+export function Contact() {
+  const { ref, isInView } = useSectionReveal();
+  const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
+  /**
+   * Handles form submission. Sends name/email/message to the contact API,
+   * updates form status, and resets after 4 seconds on success/error.
+   */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("sending");
@@ -53,6 +63,7 @@ export function Contact() {
   return (
     <section id="contact" className="py-24 px-6" ref={ref}>
       <div className="max-w-4xl mx-auto">
+        {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -72,6 +83,7 @@ export function Contact() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8">
+          {/* Social links sidebar */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -134,6 +146,7 @@ export function Contact() {
             </div>
           </motion.div>
 
+          {/* Contact form */}
           <motion.form
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}

@@ -1,12 +1,15 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
+import { useSectionReveal } from "@/components/section-reveal";
 import { skillCategories } from "@/data/skills";
 
+/**
+ * Skills section — categorized grid of technology tags.
+ * Categories animate in with staggered delay.
+ */
 export function Skills() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { ref, isInView } = useSectionReveal();
 
   return (
     <section id="skills" className="py-24 px-6" ref={ref}>
@@ -40,6 +43,10 @@ export function Skills() {
   );
 }
 
+/**
+ * Single skill category card. Receives the section-level isInView
+ * flag so all cards animate together with staggered delays.
+ */
 function SkillCategoryCard({
   category,
   index,

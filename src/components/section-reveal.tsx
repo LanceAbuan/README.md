@@ -1,0 +1,103 @@
+"use client";
+
+import { motion, useInView, Variants } from "framer-motion";
+import { useRef, type ReactNode } from "react";
+
+/** Default animation transition config shared across all reveal animations. */
+const DEFAULT_TRANSITION = { duration: 0.6 };
+/** Default initial state (invisible, pushed down). */
+const DEFAULT_INITIAL: Record<string, number> = { opacity: 0, y: 30 };
+/** Default animate state (visible, at rest). */
+const DEFAULT_ANIMATE: Record<string, number> = { opacity: 1, y: 0 };
+
+/**
+ * Props for the SectionReveal wrapper component.
+ */
+export interface SectionRevealProps {
+  /** Content to wrap in the reveal animation. */
+  children: ReactNode;
+  /** Delay before animation starts (seconds). @default 0 */
+  delay?: number;
+  /** Custom framer-motion variants override. Falls back to defaults. */
+  variants?: Variants;
+  /** Additional CSS classes. */
+  className?: string;
+  /** Only animate once (don't replay on re-scroll). @default true */
+  once?: boolean;
+  /** Intersection observer margin offset. @default "-100px" */
+  margin?: string;
+}
+
+/**
+ * Reusable reveal-on-scroll wrapper component.
+ *
+ * Handles the `useRef` + `useInView` boilerplate so each section
+ * component doesn't need to repeat it. Wraps children in a
+ * `motion.div` with fade-up animation.
+ *
+ * @example
+ * ```tsx
+ * <SectionReveal delay={0.2}>
+ *   <h2>Title</h2>
+ * </SectionReveal>
+ * ```
+ */
+export function SectionReveal({
+  children,
+  delay = 0,
+  variants,
+  className,
+  once = true,
+  margin = "-100px",
+}: SectionRevealProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isInView = useInView(ref as any, { once, margin: margin as any });
+
+  const animVariants: Variants = variants ?? {
+    initial: DEFAULT_INITIAL,
+    animate: {
+      ...DEFAULT_ANIMATE,
+      transition: { ...DEFAULT_TRANSITION, delay },
+    },
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      initial="initial"
+      animate={isInView ? "animate" : "initial"}
+      variants={animVariants}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/**
+ * Hook-only version of section reveal for cases where the caller needs
+ * the ref attached to their own element (e.g., a `<section>` tag) rather
+ * than a `motion.div` wrapper.
+ *
+ * Returns `{ ref, isInView }` so the caller controls the DOM structure
+ * and applies their own animation logic.
+ *
+ * @example
+ * ```tsx
+ * const { ref, isInView } = useSectionReveal();
+ * return <section ref={ref}>...</section>;
+ * ```
+ */
+export function useSectionReveal(options?: {
+  /** Only animate once. @default true */
+  once?: boolean;
+  /** Intersection observer margin offset. @default "-100px" */
+  margin?: string;
+}) {
+  const ref = useRef<HTMLElement>(null);
+  const { once = true, margin = "-100px" } = options ?? {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isInView = useInView(ref as any, { once, margin: margin as any });
+  return { ref, isInView };
+}

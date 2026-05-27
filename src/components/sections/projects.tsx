@@ -7,11 +7,16 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { ExternalLink, GitFork, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { useSectionReveal } from "@/components/section-reveal";
 import { projects, githubProfileUrl } from "@/data/projects";
 
+/**
+ * Projects section — grid of project cards.
+ * Section-level reveal for the header; individual cards use their own
+ * intersection observers so they animate as you scroll past them.
+ */
 export function Projects() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { ref, isInView } = useSectionReveal();
 
   return (
     <section id="projects" className="py-24 px-6" ref={ref}>
@@ -49,6 +54,11 @@ export function Projects() {
   );
 }
 
+/**
+ * Individual project card with its own intersection observer.
+ * This lets cards animate independently as the user scrolls,
+ * rather than all at once when the section enters view.
+ */
 function ProjectCard({
   project,
   index,
@@ -56,7 +66,7 @@ function ProjectCard({
   project: (typeof projects)[number];
   index: number;
 }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
 
   return (

@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
 
     await resend.emails.send({
       from: process.env.RESEND_FROM ?? "lance@lanceabuan.tech",
-      to: [process.env.RESEND_TO ?? "lance@lanceabuan.tech"],
+      to: [process.env.RESEND_TO ?? "assistant@lanceabuan.tech"],
       subject: `Portfolio contact from ${name}`,
       text: `${message}\n\n— ${name} (${email})`,
       replyTo: email,

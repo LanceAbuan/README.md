@@ -1,14 +1,17 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { getIcon } from "@/lib/icons";
+import { useSectionReveal } from "@/components/section-reveal";
 import { aboutData } from "@/data/about";
 
+/**
+ * About section — bio paragraphs with highlighted keywords
+ * and stat cards. Uses useSectionReveal for scroll-triggered animation.
+ */
 export function About() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { ref, isInView } = useSectionReveal();
 
   return (
     <section id="about" className="py-24 px-6" ref={ref}>
@@ -27,6 +30,7 @@ export function About() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8">
+          {/* Bio paragraphs with keyword highlights */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -38,6 +42,7 @@ export function About() {
             ))}
           </motion.div>
 
+          {/* Stat cards (years experience, languages, etc.) */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -68,6 +73,10 @@ export function About() {
   );
 }
 
+/**
+ * Renders a paragraph with certain keywords highlighted in bold.
+ * Splits text by highlight strings and wraps matches in <strong>.
+ */
 function HighlightedParagraph({
   text,
   highlights,
@@ -96,6 +105,11 @@ function HighlightedParagraph({
   );
 }
 
+/**
+ * Splits a string into segments, marking segments that match any
+ * highlight keyword. Longer highlights are matched first to avoid
+ * partial overlaps.
+ */
 function splitTextByHighlights(
   text: string,
   highlights: string[],

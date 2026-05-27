@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
-import { AnimatedBackground } from "@/components/background";
+import { Navbar } from "@/components/layout/navbar";
+import { Footer } from "@/components/layout/footer";
+import { AnimatedBackground } from "@/components/layout/background";
 import { buttonVariants } from "@/components/ui/button";
 
 export const metadata: Metadata = {

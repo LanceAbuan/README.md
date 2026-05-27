@@ -1,15 +1,18 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Building2 } from "lucide-react";
+import { useSectionReveal } from "@/components/section-reveal";
 import { experiences } from "@/data/experience";
 
+/**
+ * Experience section — timeline of work history.
+ * Each card animates in with staggered delay based on index.
+ */
 export function Experience() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { ref, isInView } = useSectionReveal();
 
   return (
     <section id="experience" className="py-24 px-6" ref={ref}>
@@ -38,6 +41,10 @@ export function Experience() {
   );
 }
 
+/**
+ * Single experience entry card. Receives the section-level isInView
+ * flag so all cards animate together with staggered delays.
+ */
 function ExperienceCard({
   exp,
   index,
