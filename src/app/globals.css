@@ -6,6 +6,8 @@
 @custom-variant dark (&:is(.dark *));
 @custom-variant terminal (&:is(.terminal *));
 @custom-variant newspaper (&:is(.newspaper *));
+@custom-variant synthwave (&:is(.synthwave *));
+@custom-variant casino (&:is(.casino *));
 @custom-variant custom (&:is(.custom *));
 
 @theme inline {
@@ -190,19 +192,30 @@
   letter-spacing: 0.05em;
 }
 
-/* Scanline overlay */
+/* CRT noise/grain overlay — heavier, animated */
+@keyframes crt-grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-2%, -3%); }
+  25% { transform: translate(1%, 2%); }
+  40% { transform: translate(-1%, 1%); }
+  55% { transform: translate(3%, -1%); }
+  70% { transform: translate(-2%, 2%); }
+  85% { transform: translate(1%, -2%); }
+}
+
 .terminal::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 9998;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   background-size: 128px 128px;
+  animation: crt-grain 0.5s steps(4) infinite;
 }
 
-/* Scanline lines overlay */
+/* Scanline lines overlay — thicker, more visible */
 .terminal::after {
   content: "";
   position: fixed;
@@ -211,10 +224,10 @@
   z-index: 9999;
   background: repeating-linear-gradient(
     0deg,
-    rgba(0, 0, 0, 0.12) 0px,
-    rgba(0, 0, 0, 0.12) 1px,
-    transparent 1px,
-    transparent 3px
+    rgba(0, 0, 0, 0.18) 0px,
+    rgba(0, 0, 0, 0.18) 2px,
+    transparent 2px,
+    transparent 4px
   );
 }
 
@@ -232,27 +245,83 @@
   animation: crt-flicker 4s infinite linear;
 }
 
-/* Subtle vignette for CRT bezel effect */
+/* Phosphor glow overlay — subtle green tint on everything */
 .terminal .background-container::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 9996;
-  box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.5);
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 255, 65, 0.03) 100%);
 }
 
-/* CRT text glow */
+/* CRT screen curvature vignette */
+.terminal .background-container::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9995;
+  box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.7);
+}
+
+/* CRT text glow — stronger phosphor bloom */
 .terminal .terminal-glow {
   text-shadow:
-    0 0 5px rgba(0, 255, 65, 0.4),
-    0 0 10px rgba(0, 255, 65, 0.2),
-    0 0 20px rgba(0, 255, 65, 0.1);
+    0 0 5px rgba(0, 255, 65, 0.6),
+    0 0 12px rgba(0, 255, 65, 0.3),
+    0 0 25px rgba(0, 255, 65, 0.15),
+    0 0 40px rgba(0, 255, 65, 0.08);
+}
+
+/* Live typing animation — reveals text like it's being typed */
+@keyframes terminal-typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes terminal-cursor {
+  0%, 49% { border-color: #00ff41; }
+  50%, 100% { border-color: transparent; }
+}
+
+.terminal [data-typing="true"] {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 3px solid #00ff41;
+  animation:
+    terminal-typing 1.5s steps(40, end) forwards,
+    terminal-cursor 0.8s step-end infinite;
+}
+
+/* Staggered typing for multi-line content */
+.terminal [data-typing-line] {
+  opacity: 0;
+  animation: terminal-line-reveal 0.01s forwards;
+}
+
+.terminal [data-typing-line="1"] { animation-delay: 0.3s; }
+.terminal [data-typing-line="2"] { animation-delay: 0.8s; }
+.terminal [data-typing-line="3"] { animation-delay: 1.3s; }
+.terminal [data-typing-line="4"] { animation-delay: 1.8s; }
+.terminal [data-typing-line="5"] { animation-delay: 2.3s; }
+
+@keyframes terminal-line-reveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* Terminal section headers — prompt style */
 .terminal [data-terminal-prompt]::before {
   content: "> ";
+  color: #00ff41;
+}
+
+/* Blinking cursor on terminal prompts */
+.terminal [data-terminal-prompt]::after {
+  content: "_";
+  animation: terminal-cursor 0.8s step-end infinite;
   color: #00ff41;
 }
 
@@ -782,6 +851,313 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* ============================================================
+   SYNTHWAVE '90S THEME
+   Retro-futuristic neon aesthetic. Deep purples, hot pinks,
+   electric cyans. Chrome-style headings. Perspective grid.
+   ============================================================ */
+.synthwave {
+  --background: #0a0520;
+  --foreground: #e0d0ff;
+  --card: rgba(15, 5, 30, 0.85);
+  --card-foreground: #e0d0ff;
+  --popover: rgba(15, 5, 30, 0.95);
+  --popover-foreground: #e0d0ff;
+  --primary: #ff00ff;
+  --primary-foreground: #0a0520;
+  --secondary: #00ffff;
+  --secondary-foreground: #0a0520;
+  --muted: #8b5cf6;
+  --muted-foreground: #c4b5fd;
+  --accent: #ff6ec7;
+  --accent-foreground: #0a0520;
+  --destructive: #ff0055;
+  --border: #ff00ff30;
+  --input: #ff00ff20;
+  --ring: #ff00ff80;
+  --chart-1: #ff00ff;
+  --chart-2: #00ffff;
+  --chart-3: #ff6ec7;
+  --chart-4: #8b5cf6;
+  --chart-5: #6d28d9;
+  --sidebar: rgba(15, 5, 30, 0.9);
+  --sidebar-foreground: #e0d0ff;
+  --sidebar-primary: #ff00ff;
+  --sidebar-primary-foreground: #0a0520;
+  --sidebar-accent: #1a0a40;
+  --sidebar-accent-foreground: #00ffff;
+  --sidebar-border: #ff00ff30;
+  --sidebar-ring: #ff00ff80;
+  --radius: 0.5rem;
+}
+
+/* Synthwave background gradient */
+.synthwave body,
+.synthwave {
+  background: linear-gradient(180deg, #0a0520 0%, #1a0a3e 40%, #2d1b69 70%, #1a0a3e 100%) !important;
+}
+
+/* Perspective grid overlay */
+.synthwave::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9996;
+  opacity: 0.06;
+  background-image:
+    linear-gradient(#ff00ff 1px, transparent 1px),
+    linear-gradient(90deg, #ff00ff 1px, transparent 1px);
+  background-size: 60px 60px;
+  background-position: center bottom;
+  transform: perspective(500px) rotateX(60deg);
+  transform-origin: center bottom;
+  mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%);
+}
+
+/* Neon text glow */
+.synthwave .synthwave-neon-text {
+  text-shadow:
+    0 0 7px rgba(255, 0, 255, 0.7),
+    0 0 20px rgba(255, 0, 255, 0.4),
+    0 0 40px rgba(255, 0, 255, 0.2),
+    0 0 80px rgba(255, 0, 255, 0.1);
+}
+
+/* Chrome/metallic gradient text */
+.synthwave .synthwave-chrome {
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #e0d0ff 25%,
+    #ff00ff 50%,
+    #e0d0ff 75%,
+    #ffffff 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Holographic card effect */
+.synthwave .synthwave-holo-card {
+  border: 1px solid #ff00ff30 !important;
+  border-radius: 0.75rem !important;
+  background: rgba(15, 5, 30, 0.85) !important;
+  backdrop-filter: blur(12px);
+  box-shadow:
+    0 0 15px rgba(255, 0, 255, 0.1),
+    0 0 30px rgba(255, 0, 255, 0.05),
+    inset 0 1px 0 rgba(255, 0, 255, 0.1);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.synthwave .synthwave-holo-card:hover {
+  border-color: #ff00ff60 !important;
+  box-shadow:
+    0 0 20px rgba(255, 0, 255, 0.2),
+    0 0 40px rgba(255, 0, 255, 0.1),
+    inset 0 1px 0 rgba(255, 0, 255, 0.2);
+}
+
+/* Synthwave neon button */
+.synthwave .synthwave-btn {
+  border-radius: 0.5rem !important;
+  border: 1px solid #ff00ff !important;
+  background: transparent !important;
+  color: #ff00ff !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.2s !important;
+  text-shadow: 0 0 5px rgba(255, 0, 255, 0.5);
+}
+
+.synthwave .synthwave-btn:hover {
+  background: #ff00ff !important;
+  color: #0a0520 !important;
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.5) !important;
+  text-shadow: none;
+}
+
+/* Synthwave skill badges */
+.synthwave .synthwave-badge {
+  border-radius: 0.25rem !important;
+  border: 1px solid #00ffff40 !important;
+  background: #00ffff10 !important;
+  color: #00ffff !important;
+  font-size: 0.75rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Synthwave nav */
+.synthwave .synthwave-nav {
+  backdrop-filter: blur(12px) !important;
+  background: rgba(10, 5, 32, 0.8) !important;
+  border: 1px solid #ff00ff30 !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.1) !important;
+}
+
+/* Synthwave experience timeline */
+.synthwave .synthwave-timeline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, #ff00ff, #00ffff);
+  box-shadow: 0 0 8px rgba(255, 0, 255, 0.4);
+}
+
+/* ============================================================
+   CASINO THEME
+   Las Vegas / James Bond aesthetic. Deep reds, blacks,
+   gold accents. Felt-green cards. Velvet-drape background.
+   ============================================================ */
+.casino {
+  --background: #1a0a0a;
+  --foreground: #f0e6d3;
+  --card: rgba(20, 60, 20, 0.6);
+  --card-foreground: #f0e6d3;
+  --popover: rgba(26, 10, 10, 0.95);
+  --popover-foreground: #f0e6d3;
+  --primary: #c41e1e;
+  --primary-foreground: #d4a843;
+  --secondary: #d4a843;
+  --secondary-foreground: #1a0a0a;
+  --muted: #8b7355;
+  --muted-foreground: #c4b59e;
+  --accent: #ffd700;
+  --accent-foreground: #1a0a0a;
+  --destructive: #8b0000;
+  --border: #d4a84340;
+  --input: #d4a84320;
+  --ring: #d4a84380;
+  --chart-1: #c41e1e;
+  --chart-2: #d4a843;
+  --chart-3: #ffd700;
+  --chart-4: #8b7355;
+  --chart-5: #5c4a3d;
+  --sidebar: rgba(26, 10, 10, 0.9);
+  --sidebar-foreground: #f0e6d3;
+  --sidebar-primary: #c41e1e;
+  --sidebar-primary-foreground: #d4a843;
+  --sidebar-accent: #2a1515;
+  --sidebar-accent-foreground: #d4a843;
+  --sidebar-border: #d4a84340;
+  --sidebar-ring: #d4a84380;
+  --radius: 0.375rem;
+}
+
+/* Casino velvet-drape background */
+.casino body,
+.casino {
+  background: linear-gradient(180deg, #1a0a0a 0%, #2a1515 30%, #1a0a0a 70%, #0d0505 100%) !important;
+}
+
+/* Subtle gold sparkle overlay */
+.casino::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9996;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* Gold shimmer text */
+.casino .casino-gold {
+  background: linear-gradient(
+    90deg,
+    #d4a843 0%,
+    #ffd700 25%,
+    #d4a843 50%,
+    #ffd700 75%,
+    #d4a843 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: casino-shimmer 3s linear infinite;
+}
+
+@keyframes casino-shimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Felt green card */
+.casino .casino-felt {
+  border: 1px solid #d4a84340 !important;
+  border-radius: 0.5rem !important;
+  background: rgba(20, 60, 20, 0.6) !important;
+  backdrop-filter: blur(8px);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(212, 168, 67, 0.1);
+}
+
+/* Roulette chip badge */
+.casino .casino-chip {
+  border-radius: 50% !important;
+  border: 2px dashed #d4a843 !important;
+  background: linear-gradient(135deg, #c41e1e 0%, #8b0000 100%) !important;
+  color: #d4a843 !important;
+  font-size: 0.7rem !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow:
+    0 0 8px rgba(212, 168, 67, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.1);
+}
+
+/* Casino gold button */
+.casino .casino-btn {
+  border-radius: 0.375rem !important;
+  border: 1px solid #d4a843 !important;
+  background: linear-gradient(135deg, #c41e1e 0%, #8b0000 100%) !important;
+  color: #d4a843 !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.2s !important;
+}
+
+.casino .casino-btn:hover {
+  background: linear-gradient(135deg, #d4a843 0%, #c41e1e 100%) !important;
+  color: #1a0a0a !important;
+  box-shadow: 0 0 15px rgba(212, 168, 67, 0.3) !important;
+}
+
+/* Casino nav */
+.casino .casino-nav {
+  backdrop-filter: blur(12px) !important;
+  background: rgba(26, 10, 10, 0.9) !important;
+  border: 1px solid #d4a84340 !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 0 15px rgba(196, 30, 30, 0.15) !important;
+}
+
+/* Casino experience timeline */
+.casino .casino-timeline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, #d4a843, #c41e1e);
+  box-shadow: 0 0 6px rgba(212, 168, 67, 0.3);
 }
 
 @layer base {

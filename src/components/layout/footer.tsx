@@ -2,46 +2,79 @@
 
 import { Separator } from "@/components/ui/separator";
 import { useTheme } from "next-themes";
+import { useThemeConfig } from "@/hooks/use-theme-config";
 import { cn } from "@/lib/utils";
 
 export function Footer() {
   const year = new Date().getFullYear();
   const { theme } = useTheme();
-  const isTerminal = theme === "terminal";
-  const isNewspaper = theme === "newspaper";
+  const config = useThemeConfig();
 
+  // For newspaper, render triple rule + editorial footer
+  if (config.id === "newspaper") {
+    return (
+      <footer className={config.footer.borderClass}>
+        <div className="max-w-4xl mx-auto flex flex-col items-center gap-4">
+          <hr className="newspaper-rule w-full" />
+          <p className={config.footer.textClass}>
+            &copy; {year} Lance Abuan &middot; Built with Next.js &amp; shadcn/ui
+          </p>
+        </div>
+      </footer>
+    );
+  }
+
+  // For terminal, render prompt-style footer
+  if (config.id === "terminal") {
+    return (
+      <footer className={config.footer.borderClass}>
+        <div className="max-w-4xl mx-auto flex flex-col items-center gap-4">
+          <div className="w-full border-t border-[#00ff4130]" />
+          <p className={config.footer.textClass}>
+            {/* eslint-disable-next-line @next/next/no-svg */}
+            &lt;/&gt; {year} Lance Abuan &bull; Next.js &bull; shadcn/ui
+          </p>
+        </div>
+      </footer>
+    );
+  }
+
+  // For synthwave, render neon footer
+  if (config.id === "synthwave") {
+    return (
+      <footer className={config.footer.borderClass}>
+        <div className="max-w-4xl mx-auto flex flex-col items-center gap-4">
+          <div className="w-full border-t border-[#ff00ff30]" />
+          <p className={cn(config.footer.textClass, "synthwave-neon-text")}>
+            // {year} Lance Abuan // Next.js // shadcn/ui
+          </p>
+        </div>
+      </footer>
+    );
+  }
+
+  // For casino, render gold footer
+  if (config.id === "casino") {
+    return (
+      <footer className={config.footer.borderClass}>
+        <div className="max-w-4xl mx-auto flex flex-col items-center gap-4">
+          <div className="w-full border-t border-[#d4a84340]" />
+          <p className={cn(config.footer.textClass, "casino-gold")}>
+            © {year} Lance Abuan &middot; Built with Next.js &amp; shadcn/ui
+          </p>
+        </div>
+      </footer>
+    );
+  }
+
+  // Default theme
   return (
-    <footer
-      className={cn(
-        "py-12 px-6 border-t border-neutral-200/50 dark:border-neutral-800/50",
-        isTerminal && "border-[#00ff4130]",
-        isNewspaper && "border-[#c4b59e]",
-      )}
-    >
+    <footer className={config.footer.borderClass}>
       <div className="max-w-4xl mx-auto flex flex-col items-center gap-4">
-        {isNewspaper ? (
-          <>
-            <hr className="newspaper-rule w-full" />
-            <p className="text-xs font-serif text-[#7a6b5a] tracking-wider text-center">
-              &copy; {year} Lance Abuan &middot; Built with Next.js &amp; shadcn/ui
-            </p>
-          </>
-        ) : isTerminal ? (
-          <>
-            <div className="w-full border-t border-[#00ff4130]" />
-            <p className="text-xs font-mono text-[#00aa30] text-center">
-              {/* eslint-disable-next-line @next/next/no-svg */}
-              &lt;/&gt; {year} Lance Abuan &bull; Next.js &bull; shadcn/ui
-            </p>
-          </>
-        ) : (
-          <>
-            <Separator className="w-full" />
-            <p className="text-xs text-neutral-400 dark:text-neutral-500">
-              © {year} Lance Abuan. Built with Next.js & shadcn/ui.
-            </p>
-          </>
-        )}
+        <Separator className="w-full" />
+        <p className={config.footer.textClass}>
+          © {year} Lance Abuan. Built with Next.js & shadcn/ui.
+        </p>
       </div>
     </footer>
   );

@@ -28,13 +28,15 @@ type Fractal = {
   driftSpeed: number;
 };
 
+/** Shape drawn for theme-specific particles. */
+type ParticleShape = "circle" | "diamond" | "hex" | "square" | "star" | "chip";
+
 const CONNECTION_DIST = 160;
 const MOUSE_RADIUS = 120;
 const MOUSE_FORCE = 0.8;
 
 /**
  * Adaptive particle count based on screen width and DPR.
- * Higher than the old 70 so the star field feels dense.
  */
 function getParticleCount(): number {
   if (typeof window === "undefined") return 120;
@@ -50,6 +52,97 @@ function prefersReducedMotion(): boolean {
   if (typeof window === "undefined") return false;
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
+
+/**
+ * Determine which theme class is active on <html>.
+ * Returns "terminal" | "newspaper" | "synthwave" | "casino" | "dark" | "light".
+ */
+function detectTheme(): string {
+  if (typeof window === "undefined") return "dark";
+  const html = document.documentElement;
+  if (html.classList.contains("terminal")) return "terminal";
+  if (html.classList.contains("newspaper")) return "newspaper";
+  if (html.classList.contains("synthwave")) return "synthwave";
+  if (html.classList.contains("casino")) return "casino";
+  if (html.classList.contains("dark")) return "dark";
+  return "light";
+}
+
+/** Theme-specific color palettes for canvas rendering. */
+const THEME_COLORS: Record<
+  string,
+  {
+    fractalStroke: string;
+    fractalFill: string;
+    connection: string;
+    connectionAlpha: number;
+    particleColor: string;
+    particleCore: string;
+    glowRadius: number;
+    particleShape: ParticleShape;
+  }
+> = {
+  terminal: {
+    fractalStroke: "80,255,80",
+    fractalFill: "80,255,80",
+    connection: "80,255,80",
+    connectionAlpha: 0.2,
+    particleColor: "80,255,80",
+    particleCore: "160,255,160",
+    glowRadius: 5,
+    particleShape: "square",
+  },
+  newspaper: {
+    fractalStroke: "122,107,90",
+    fractalFill: "196,181,158",
+    connection: "122,107,90",
+    connectionAlpha: 0.03,
+    particleColor: "122,107,90",
+    particleCore: "92,46,14",
+    glowRadius: 4,
+    particleShape: "hex",
+  },
+  synthwave: {
+    fractalStroke: "255,0,255",
+    fractalFill: "0,255,255",
+    connection: "0,255,255",
+    connectionAlpha: 0.1,
+    particleColor: "255,0,255",
+    particleCore: "0,255,255",
+    glowRadius: 6,
+    particleShape: "diamond",
+  },
+  casino: {
+    fractalStroke: "212,168,67",
+    fractalFill: "196,30,30",
+    connection: "196,30,30",
+    connectionAlpha: 0.06,
+    particleColor: "212,168,67",
+    particleCore: "255,215,0",
+    glowRadius: 5,
+    particleShape: "star",
+  },
+  dark: {
+    fractalStroke: "200,200,220",
+    fractalFill: "180,180,200",
+    connection: "120,120,130",
+    connectionAlpha: 0.18,
+    particleColor: "120,120,130",
+    particleCore: "180,180,200",
+    glowRadius: 5,
+    particleShape: "circle",
+  },
+  light: {
+    fractalStroke: "40,40,60",
+    fractalFill: "30,30,50",
+    connection: "60,60,70",
+    connectionAlpha: 0.1,
+    particleColor: "60,60,70",
+    particleCore: "40,40,60",
+    glowRadius: 4,
+    particleShape: "circle",
+  },
+};
 
 /** Draw a Sierpinski triangle fractal. */
 function drawSierpinski(
@@ -108,8 +201,115 @@ function drawDiamond(ctx: CanvasRenderingContext2D, x: number, y: number, size: 
   ctx.restore();
 }
 
+/** Draw a star shape (for casino particles). */
+function drawStarShape(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  r: number,
+) {
+  const spikes = 5;
+  const outerR = r;
+  const innerR = r * 0.45;
+  ctx.beginPath();
+  for (let i = 0; i < spikes * 2; i++) {
+    const radius = i % 2 === 0 ? outerR : innerR;
+    const angle = (Math.PI / spikes) * i - Math.PI / 2;
+    const px = x + radius * Math.cos(angle);
+    const py = y + radius * Math.sin(angle);
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+/** Draw a diamond shape (for synthwave particles). */
+function drawDiamondParticle(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  r: number,
+) {
+  ctx.beginPath();
+  ctx.moveTo(x, y - r);
+  ctx.lineTo(x + r * 0.6, y);
+  ctx.lineTo(x, y + r);
+  ctx.lineTo(x - r * 0.6, y);
+  ctx.closePath();
+  ctx.fill();
+}
+
+/** Draw a hex shape (for newspaper particles). */
+function drawHexParticle(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  r: number,
+) {
+  ctx.beginPath();
+  for (let i = 0; i < 6; i++) {
+    const angle = (Math.PI / 3) * i - Math.PI / 6;
+    const px = x + r * Math.cos(angle);
+    const py = y + r * Math.sin(angle);
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+/** Draw a square shape (for terminal particles). */
+function drawSquareParticle(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  r: number,
+) {
+  ctx.fillRect(x - r, y - r, r * 2, r * 2);
+}
+
+/** Draw the theme-appropriate particle shape. */
+function drawParticleShape(
+  ctx: CanvasRenderingContext2D,
+  shape: ParticleShape,
+  x: number,
+  y: number,
+  r: number,
+) {
+  switch (shape) {
+    case "circle":
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case "diamond":
+      drawDiamondParticle(ctx, x, y, r);
+      break;
+    case "hex":
+      drawHexParticle(ctx, x, y, r);
+      break;
+    case "star":
+      drawStarShape(ctx, x, y, r);
+      break;
+    case "square":
+      drawSquareParticle(ctx, x, y, r);
+      break;
+    default:
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+  }
+}
+
 /**
  * Animated background with particles, connections, and fractal shapes.
+ *
+ * Theme-aware: detects current theme via <html> class and adjusts:
+ * - Particle colors and shapes
+ * - Connection line colors and opacity
+ * - Fractal colors
+ * - Glow intensity
  *
  * Optimizations:
  * - Respects prefers-reduced-motion (static gradient fallback)
@@ -117,7 +317,6 @@ function drawDiamond(ctx: CanvasRenderingContext2D, x: number, y: number, size: 
  * - Pauses animation when tab is hidden
  * - Spatial hash grid for O(n) connection lookups instead of O(n²)
  * - CSS containment for better compositing
- * - Brighter, denser star field with larger glow halos
  */
 export function AnimatedBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -137,20 +336,16 @@ export function AnimatedBackground() {
 
       ctx.clearRect(0, 0, w, h);
 
-      const isDark = document.documentElement.classList.contains("dark");
-      const isTerminal = document.documentElement.classList.contains("terminal");
-      const isNewspaper = document.documentElement.classList.contains("newspaper");
+      const theme = detectTheme();
+      const tc = THEME_COLORS[theme] ?? THEME_COLORS.dark;
 
-      // Brighter base alpha for connections so they're actually visible
-      const baseAlpha = isTerminal ? 0.2 : isNewspaper ? 0.03 : isDark ? 0.18 : 0.1;
-
-      // Layer 1: Fractals (very subtle, with natural drift)
+      // Layer 1: Fractals (with natural sinusoidal drift)
       ctx.save();
       ctx.globalAlpha = 1;
       fractalsRef.current.forEach((f) => {
         f.driftPhase += f.driftSpeed;
-        const driftX = Math.sin(f.driftPhase) * 0.15;
-        const driftY = Math.cos(f.driftPhase * 0.7) * 0.1;
+        const driftX = Math.sin(f.driftPhase) * 0.3;
+        const driftY = Math.cos(f.driftPhase * 0.7) * 0.2;
         f.x += f.vx + driftX;
         f.y += f.vy + driftY;
         f.rotation += 0.001;
@@ -162,20 +357,8 @@ export function AnimatedBackground() {
         ctx.save();
         ctx.translate(f.x, f.y);
         ctx.rotate(f.rotation);
-
-        if (isTerminal) {
-          ctx.strokeStyle = `rgba(80,255,80,${f.alpha})`;
-          ctx.fillStyle = `rgba(80,255,80,${f.alpha * 0.3})`;
-        } else if (isNewspaper) {
-          ctx.strokeStyle = `rgba(122,107,90,${f.alpha * 1.5})`;
-          ctx.fillStyle = `rgba(196,181,158,${f.alpha * 0.5})`;
-        } else if (isDark) {
-          ctx.strokeStyle = `rgba(200,200,220,${f.alpha})`;
-          ctx.fillStyle = `rgba(180,180,200,${f.alpha * 0.3})`;
-        } else {
-          ctx.strokeStyle = `rgba(40,40,60,${f.alpha})`;
-          ctx.fillStyle = `rgba(30,30,50,${f.alpha * 0.3})`;
-        }
+        ctx.strokeStyle = `rgba(${tc.fractalStroke},${f.alpha})`;
+        ctx.fillStyle = `rgba(${tc.fractalFill},${f.alpha * 0.3})`;
         ctx.lineWidth = 0.5;
 
         if (f.type === 0) drawSierpinski(ctx, 0, 0, f.size, 3);
@@ -252,14 +435,7 @@ export function AnimatedBackground() {
                   ctx.beginPath();
                   ctx.moveTo(p.x, p.y);
                   ctx.lineTo(p2.x, p2.y);
-
-                  if (isTerminal) {
-                    ctx.strokeStyle = `rgba(80,255,80,${baseAlpha * (1 - dist / CONNECTION_DIST)})`;
-                  } else if (isNewspaper) {
-                    ctx.strokeStyle = `rgba(122,107,90,${baseAlpha * 0.5 * (1 - dist / CONNECTION_DIST)})`;
-                  } else {
-                    ctx.strokeStyle = `rgba(${p.hue},${p.hue},${p.hue + 10},${baseAlpha * (1 - dist / CONNECTION_DIST)})`;
-                  }
+                  ctx.strokeStyle = `rgba(${tc.connection},${tc.connectionAlpha * (1 - dist / CONNECTION_DIST)})`;
                   ctx.lineWidth = 0.5;
                   ctx.stroke();
                 }
@@ -269,39 +445,24 @@ export function AnimatedBackground() {
         }
       }
 
-      // Draw particles (stars) with larger glow
+      // Draw particles with theme-specific shapes and glow
       for (const p of particles) {
         const pulseAlpha = p.alpha + Math.sin(p.pulse) * 0.12;
-        const glowRadius = p.r * 5; // Larger halo for visibility
+        const glowRadius = p.r * tc.glowRadius;
 
+        // Glow halo
         const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowRadius);
-        if (isTerminal) {
-          grad.addColorStop(0, `rgba(80,255,80,${pulseAlpha})`);
-          grad.addColorStop(0.4, `rgba(40,200,40,${pulseAlpha * 0.4})`);
-          grad.addColorStop(1, `rgba(80,255,80,0)`);
-        } else if (isNewspaper) {
-          grad.addColorStop(0, `rgba(122,107,90,${pulseAlpha * 0.5})`);
-          grad.addColorStop(1, `rgba(122,107,90,0)`);
-        } else {
-          grad.addColorStop(0, `rgba(${p.hue},${p.hue},${p.hue + 10},${pulseAlpha})`);
-          grad.addColorStop(1, `rgba(${p.hue},${p.hue},${p.hue + 10},0)`);
-        }
+        grad.addColorStop(0, `rgba(${tc.particleColor},${pulseAlpha})`);
+        grad.addColorStop(0.4, `rgba(${tc.particleColor},${pulseAlpha * 0.4})`);
+        grad.addColorStop(1, `rgba(${tc.particleColor},0)`);
         ctx.beginPath();
         ctx.arc(p.x, p.y, glowRadius, 0, Math.PI * 2);
         ctx.fillStyle = grad;
         ctx.fill();
 
-        // Solid bright core so each star is a distinct dot
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 0.6, 0, Math.PI * 2);
-        if (isTerminal) {
-          ctx.fillStyle = `rgba(160,255,160,${pulseAlpha * 0.8})`;
-        } else if (isNewspaper) {
-          ctx.fillStyle = `rgba(92,46,14,${pulseAlpha * 0.3})`;
-        } else {
-          ctx.fillStyle = `rgba(${p.hue},${p.hue},${p.hue + 10},${pulseAlpha * 0.7})`;
-        }
-        ctx.fill();
+        // Solid core with theme shape
+        ctx.fillStyle = `rgba(${tc.particleCore},${pulseAlpha * 0.8})`;
+        drawParticleShape(ctx, tc.particleShape, p.x, p.y, p.r * 0.6);
       }
 
       if (isRunningRef.current) {
@@ -362,7 +523,7 @@ export function AnimatedBackground() {
         vx: (Math.random() - 0.5) * 0.15,
         vy: (Math.random() - 0.5) * 0.15,
         driftPhase: Math.random() * Math.PI * 2,
-        driftSpeed: 0.005 + Math.random() * 0.01,
+        driftSpeed: 0.008 + Math.random() * 0.012,
       });
     }
 

@@ -10,6 +10,8 @@ import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/s
 import { motion } from "framer-motion";
 import { useActiveSection } from "@/hooks/use-active-section";
 import { useTheme } from "next-themes";
+import { useThemeConfig } from "@/hooks/use-theme-config";
+import { CoinFlipNav } from "@/components/casino/coin-flip";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -26,9 +28,9 @@ export function Navbar() {
   const pathname = usePathname();
   const activeSection = useActiveSection();
   const { theme } = useTheme();
+  const config = useThemeConfig();
 
-  const isTerminal = theme === "terminal";
-  const isNewspaper = theme === "newspaper";
+  const isCoinFlip = config.features.coinFlip;
 
   const resolveHref = (href: string) => {
     if (href.startsWith("#")) {
@@ -42,42 +44,29 @@ export function Navbar() {
     return id && activeSection === id;
   };
 
-  // Nav container classes based on theme
-  const navContainerClass = cn(
-    "backdrop-blur-xl bg-white/70 dark:bg-neutral-900/70 border border-neutral-200/50 dark:border-neutral-700/50 rounded-2xl shadow-sm",
-    isTerminal && "border-[#00ff4130] bg-black/90 rounded-none shadow-none",
-    isNewspaper && "backdrop-blur-none bg-[#f7f2ea]/90 border-none border-b-2 border-b-[#1a1208] rounded-none shadow-none",
-  );
-
-  // Nav link button class
+  // Nav link button class from theme config
   const linkButtonClass = useCallback(
     (href: string) => {
       const active = isActive(href);
-      if (isTerminal) {
-        return cn(
-          "text-xs font-medium h-8 px-3 rounded-none font-mono uppercase tracking-wider transition-colors",
-          active
-            ? "bg-[#00ff41] text-black"
-            : "text-[#00ff41] hover:bg-[#0d1a0d]",
-        );
-      }
-      if (isNewspaper) {
-        return cn(
-          "text-xs h-8 px-3 rounded-none font-serif tracking-wide transition-colors",
-          active
-            ? "bg-[#1a1208] text-[#f7f2ea]"
-            : "text-[#5c2e0e] hover:bg-[#ddd2be]",
-        );
-      }
       return cn(
-        "text-xs font-medium h-8 px-3",
-        active
-          ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-          : "",
+        active ? config.nav.linkActiveClass : config.nav.linkClass,
       );
     },
-    [isActive, isTerminal, isNewspaper],
+    [isActive, config],
   );
+
+  // Divider color from theme
+  const dividerStyle = config.nav.dividerColor
+    ? { backgroundColor: config.nav.dividerColor }
+    : undefined;
+
+  const NavLinkWrapper = isCoinFlip ? CoinFlipNav : "div";
+
+  const navLinkProps = isCoinFlip
+    ? {
+        sectionId: (href: string) => ({ sectionId: href.replace("#", "") }),
+      }
+    : {};
 
   return (
     <motion.nav
@@ -86,16 +75,9 @@ export function Navbar() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-2xl"
     >
-      <div className={navContainerClass}>
+      <div className={config.nav.containerClass}>
         <div className="flex items-center justify-between px-4 py-2">
-          <Link
-            href="/"
-            className={cn(
-              "text-sm font-semibold tracking-tight hover:opacity-70 transition-opacity",
-              isTerminal && "font-mono text-[#00ff41] uppercase",
-              isNewspaper && "font-serif text-[#1a1208]",
-            )}
-          >
+          <Link href="/" className={config.nav.logoClass}>
             lance
           </Link>
 
@@ -103,29 +85,27 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-1">
             {NAV_LINKS.map((link) => {
               const href = resolveHref(link.href);
+              const sectionId = link.href.replace("#", "");
+
               return (
-                <Link key={link.href} href={href}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={linkButtonClass(link.href)}
-                  >
-                    {link.label}
-                  </Button>
-                </Link>
+                <NavLinkWrapper
+                  key={link.href}
+                  {...(isCoinFlip ? { sectionId } : {})}
+                >
+                  <Link href={href} className="block">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={linkButtonClass(link.href)}
+                    >
+                      {link.label}
+                    </Button>
+                  </Link>
+                </NavLinkWrapper>
               );
             })}
-            <div
-              className="w-px h-4 mx-1"
-              style={{
-                backgroundColor: isTerminal
-                  ? "#00ff4130"
-                  : isNewspaper
-                    ? "#c4b59e"
-                    : "undefined",
-              }}
-            >
-              {!isTerminal && !isNewspaper && (
+            <div className="w-px h-4 mx-1" style={dividerStyle}>
+              {!config.nav.dividerColor && (
                 <div className="w-full h-full bg-neutral-200 dark:bg-neutral-700" />
               )}
             </div>
@@ -134,8 +114,10 @@ export function Navbar() {
               download
               className={cn(
                 "inline-flex items-center justify-center h-8 w-8 rounded-lg text-sm font-medium transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800",
-                isTerminal && "rounded-none text-[#00ff41] hover:bg-[#0d1a0d]",
-                isNewspaper && "rounded-none text-[#5c2e0e] hover:bg-[#ddd2be]",
+                theme === "terminal" && "rounded-none text-[#00ff41] hover:bg-[#0d1a0d]",
+                theme === "newspaper" && "rounded-none text-[#5c2e0e] hover:bg-[#ddd2be]",
+                theme === "synthwave" && "rounded-lg text-[#00ffff] hover:bg-[#ff00ff20]",
+                theme === "casino" && "rounded-lg text-[#d4a843] hover:bg-[#c41e1e40]",
               )}
               aria-label="Download resume"
             >
@@ -153,8 +135,10 @@ export function Navbar() {
                   size="icon"
                   className={cn(
                     "h-8 w-8 md:hidden",
-                    isTerminal && "text-[#00ff41]",
-                    isNewspaper && "text-[#5c2e0e]",
+                    theme === "terminal" && "text-[#00ff41]",
+                    theme === "newspaper" && "text-[#5c2e0e]",
+                    theme === "synthwave" && "text-[#00ffff]",
+                    theme === "casino" && "text-[#d4a843]",
                   )}
                 >
                   <Menu className="h-4 w-4" />
@@ -163,11 +147,7 @@ export function Navbar() {
             />
             <SheetContent
               side="top"
-              className={cn(
-                "pt-6 pb-4",
-                isTerminal && "bg-black border-[#00ff4130] rounded-none text-[#00ff41]",
-                isNewspaper && "bg-[#f7f2ea] border-none border-b-2 border-b-[#1a1208] rounded-none text-[#1a1208]",
-              )}
+              className={config.nav.sheetContentClass}
             >
               <div className="flex flex-col gap-2">
                 {NAV_LINKS.map((link) => {
@@ -178,11 +158,7 @@ export function Navbar() {
                       render={
                         <Link
                           href={href}
-                          className={cn(
-                            "px-4 py-3 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-sm font-medium inline-block w-full text-left",
-                            isTerminal && "rounded-none font-mono hover:bg-[#0d1a0d] text-[#00ff41]",
-                            isNewspaper && "rounded-none font-serif hover:bg-[#ddd2be] text-[#1a1208]",
-                          )}
+                          className={config.nav.mobileLinkClass}
                         >
                           {link.label}
                         </Link>
@@ -197,8 +173,7 @@ export function Navbar() {
                     download
                     className={cn(
                       "inline-flex items-center justify-center h-8 w-8 rounded-lg text-sm font-medium transition-colors",
-                      isTerminal && "rounded-none text-[#00ff41] hover:bg-[#0d1a0d]",
-                      isNewspaper && "rounded-none text-[#5c2e0e] hover:bg-[#ddd2be]",
+                      config.nav.mobileLinkClass,
                     )}
                     aria-label="Download resume"
                   >
