@@ -3,16 +3,17 @@
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Building2 } from "lucide-react";
-import { useSectionReveal } from "@/components/section-reveal";
+import { Building2, Terminal } from "lucide-react";
+import { useSectionReveal, SectionScrollArrow } from "@/components/section-reveal";
+import { useTheme } from "next-themes";
 import { experiences } from "@/data/experience";
+import { cn } from "@/lib/utils";
 
-/**
- * Experience section — timeline of work history.
- * Each card animates in with staggered delay based on index.
- */
 export function Experience() {
   const { ref, isInView } = useSectionReveal();
+  const { theme } = useTheme();
+  const isTerminal = theme === "terminal";
+  const isNewspaper = theme === "newspaper";
 
   return (
     <section id="experience" className="py-24 px-6" ref={ref}>
@@ -21,39 +22,197 @@ export function Experience() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="mb-12"
+          className={cn(isNewspaper ? "text-center mb-12" : "mb-12")}
         >
-          <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
-            Experience
-          </p>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-            Where I&apos;ve worked
-          </h2>
+          {isTerminal ? (
+            <div>
+              <p className="text-xs font-mono text-[#00aa30] mb-2 tracking-wider" data-terminal-prompt>
+                experience
+              </p>
+              <h2 className="text-2xl sm:text-3xl font-bold font-mono text-[#00ff41] terminal-glow uppercase tracking-wider">
+                Work.History
+              </h2>
+            </div>
+          ) : isNewspaper ? (
+            <div>
+              <p className="text-xs font-serif tracking-[0.2em] text-[#7a6b5a] uppercase" data-newspaper-section>
+                Career
+              </p>
+              <hr className="newspaper-triple-rule mx-auto max-w-sm mt-2" />
+              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a1208] mt-4 newspaper-letterpress">
+                Professional History
+              </h2>
+              <p className="newspaper-deck max-w-lg mx-auto mt-3">
+                A chronological record of positions held and contributions made.
+              </p>
+            </div>
+          ) : (
+            <>
+              <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
+                Experience
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                Where I&apos;ve worked
+              </h2>
+            </>
+          )}
         </motion.div>
 
-        <div className="space-y-4">
+        <div className={cn(
+          "space-y-4",
+          isTerminal && "terminal-timeline pl-4 relative",
+          isNewspaper && "space-y-8",
+        )}>
           {experiences.map((exp, i) => (
-            <ExperienceCard key={i} exp={exp} index={i} isInView={isInView} />
+            <ExperienceCard
+              key={i}
+              exp={exp}
+              index={i}
+              isInView={isInView}
+              isTerminal={isTerminal}
+              isNewspaper={isNewspaper}
+            />
           ))}
         </div>
+
+        {isNewspaper && <SectionScrollArrow targetId="projects" isInView={isInView} />}
+
+        {isTerminal && (
+          <motion.div
+            className="mt-12 animate-bounce flex justify-center cursor-pointer"
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.4, delay: 0.5 }}
+            onClick={() => {
+              document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
+            }}
+          >
+            <svg
+              className="w-5 h-5 text-[#00ff41]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+              />
+            </svg>
+          </motion.div>
+        )}
       </div>
     </section>
   );
 }
 
-/**
- * Single experience entry card. Receives the section-level isInView
- * flag so all cards animate together with staggered delays.
- */
 function ExperienceCard({
   exp,
   index,
   isInView,
+  isTerminal,
+  isNewspaper,
 }: {
   exp: (typeof experiences)[number];
   index: number;
   isInView: boolean;
+  isTerminal: boolean;
+  isNewspaper: boolean;
 }) {
+  if (isTerminal) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
+      >
+        <div className="terminal-card p-4 space-y-3">
+          <div className="flex items-center gap-2 mb-2">
+            <Terminal className="h-4 w-4 text-[#00ff41]" />
+            <span className="text-xs text-[#00aa30] font-mono">
+              [{exp.period}]
+            </span>
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-[#00ff41] font-mono terminal-glow">
+              {exp.role}
+            </h3>
+            <div className="flex items-center gap-2 text-sm text-[#00aa30] font-mono mt-1">
+              <Building2 className="h-3.5 w-3.5" />
+              <span>{exp.company}</span>
+              <span>&bull;</span>
+              <span>{exp.location}</span>
+              <span>&bull;</span>
+              <span className="text-[#008822]">{exp.type}</span>
+            </div>
+          </div>
+          <p className="text-sm text-[#00aa30] font-mono leading-relaxed">
+            {exp.description}
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {exp.skills.map((skill, j) => (
+              <span
+                key={j}
+                className="terminal-badge text-xs px-2 py-0.5 font-mono"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  if (isNewspaper) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
+      >
+        <article className="newspaper-card space-y-4">
+          {/* Date in dateline style */}
+          <div className="flex items-baseline justify-between">
+            <span className="newspaper-kicker">
+              {exp.company}
+            </span>
+            <span className="text-xs text-[#7a6b5a] font-serif italic">
+              {exp.period}
+            </span>
+          </div>
+
+          {/* Role as headline */}
+          <h3 className="text-xl font-bold font-serif text-[#1a1208] newspaper-letterpress break-words leading-tight">
+            {exp.role}
+          </h3>
+
+          {/* Location / type as byline */}
+          <div className="newspaper-byline text-left">
+            {exp.location} &middot; {exp.type}
+          </div>
+
+          <hr className="newspaper-rule" />
+
+          {/* Body text */}
+          <p className="text-[0.9rem] text-[#3d2b1f] font-serif leading-relaxed break-words overflow-hidden">
+            {exp.description}
+          </p>
+
+          {/* Skills as editorial tags */}
+          <div className="flex flex-wrap gap-2 pt-1">
+            {exp.skills.map((skill, j) => (
+              <span key={j} className="newspaper-badge px-2 py-0.5">
+                {skill}
+              </span>
+            ))}
+          </div>
+        </article>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}

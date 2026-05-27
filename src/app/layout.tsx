@@ -1,11 +1,36 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import {
+  Inter,
+  JetBrains_Mono,
+  Playfair_Display,
+  Source_Serif_4,
+} from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { Providers } from "@/components/layout/providers";
 import { siteConfig } from "@/data/site";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+
+// Terminal theme: monospace everywhere
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-terminal",
+});
+
+// Newspaper theme: serif headlines + serif body
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-newspaper-heading",
+});
+
+const sourceSerif4 = Source_Serif_4({
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700"],
+  variable: "--font-newspaper-body",
+});
 
 export const viewport: Viewport = {
   themeColor: [
@@ -95,7 +120,9 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Lance Abuan" />
         <meta name="theme-color" content="#ffffff" />
       </head>
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body
+        className={`${inter.variable} ${jetBrainsMono.variable} ${playfairDisplay.variable} ${sourceSerif4.variable} font-sans antialiased`}
+      >
         <Providers>{children}</Providers>
         <Script
           id="json-ld-person"

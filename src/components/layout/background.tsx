@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useCallback } from "react";
 
-/** Particle for the constellation animation. */
+/** Particle (star) for the constellation animation. */
 type Particle = {
   x: number;
   y: number;
@@ -24,6 +24,8 @@ type Fractal = {
   alpha: number;
   vx: number;
   vy: number;
+  driftPhase: number;
+  driftSpeed: number;
 };
 
 const CONNECTION_DIST = 160;
@@ -31,30 +33,25 @@ const MOUSE_RADIUS = 120;
 const MOUSE_FORCE = 0.8;
 
 /**
- * Determine optimal particle count based on screen size and DPR.
- * Lower-end devices get fewer particles to preserve battery and frame rate.
+ * Adaptive particle count based on screen width and DPR.
+ * Higher than the old 70 so the star field feels dense.
  */
 function getParticleCount(): number {
-  if (typeof window === "undefined") return 70;
+  if (typeof window === "undefined") return 120;
   const width = window.innerWidth;
   const dpr = window.devicePixelRatio || 1;
-  if (width < 640 || dpr < 2) return 25;
-  if (width < 1024) return 45;
-  return 70;
+  if (width < 640 || dpr < 2) return 50;
+  if (width < 1024) return 85;
+  return 120;
 }
 
-/**
- * Check if the user prefers reduced motion.
- * When true, we skip the animation entirely and render a static gradient fallback.
- */
+/** Check if the user prefers reduced motion. */
 function prefersReducedMotion(): boolean {
   if (typeof window === "undefined") return false;
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-/**
- * Draw a Sierpinski triangle fractal (recursive, depth-limited).
- */
+/** Draw a Sierpinski triangle fractal. */
 function drawSierpinski(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -114,12 +111,13 @@ function drawDiamond(ctx: CanvasRenderingContext2D, x: number, y: number, size: 
 /**
  * Animated background with particles, connections, and fractal shapes.
  *
- * Optimizations vs original:
- * - Respects `prefers-reduced-motion` (static gradient fallback)
- * - Adapts particle count for mobile / low-DPR devices
- * - Pauses animation when tab is hidden (saves battery)
- * - Uses spatial hash grid for O(n) connection lookups instead of O(n²)
- * - CSS containment for better browser compositing
+ * Optimizations:
+ * - Respects prefers-reduced-motion (static gradient fallback)
+ * - Adaptive particle count for mobile / low-DPR
+ * - Pauses animation when tab is hidden
+ * - Spatial hash grid for O(n) connection lookups instead of O(n²)
+ * - CSS containment for better compositing
+ * - Brighter, denser star field with larger glow halos
  */
 export function AnimatedBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -130,25 +128,31 @@ export function AnimatedBackground() {
   const isRunningRef = useRef(true);
 
   const draw = useCallback(
-    (timestamp: number) => {
+    (_timestamp: number) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
       const ctx = canvas.getContext("2d")!;
       const w = window.innerWidth;
       const h = window.innerHeight;
-      const dpr = window.devicePixelRatio || 1;
 
       ctx.clearRect(0, 0, w, h);
 
       const isDark = document.documentElement.classList.contains("dark");
-      const baseAlpha = isDark ? 0.12 : 0.06;
+      const isTerminal = document.documentElement.classList.contains("terminal");
+      const isNewspaper = document.documentElement.classList.contains("newspaper");
 
-      // Layer 1: Fractals
+      // Brighter base alpha for connections so they're actually visible
+      const baseAlpha = isTerminal ? 0.2 : isNewspaper ? 0.03 : isDark ? 0.18 : 0.1;
+
+      // Layer 1: Fractals (very subtle, with natural drift)
       ctx.save();
       ctx.globalAlpha = 1;
       fractalsRef.current.forEach((f) => {
-        f.x += f.vx;
-        f.y += f.vy;
+        f.driftPhase += f.driftSpeed;
+        const driftX = Math.sin(f.driftPhase) * 0.15;
+        const driftY = Math.cos(f.driftPhase * 0.7) * 0.1;
+        f.x += f.vx + driftX;
+        f.y += f.vy + driftY;
         f.rotation += 0.001;
         if (f.x < -100) f.x = w + 100;
         if (f.x > w + 100) f.x = -100;
@@ -158,12 +162,20 @@ export function AnimatedBackground() {
         ctx.save();
         ctx.translate(f.x, f.y);
         ctx.rotate(f.rotation);
-        ctx.strokeStyle = isDark
-          ? `rgba(200,200,220,${f.alpha})`
-          : `rgba(40,40,60,${f.alpha})`;
-        ctx.fillStyle = isDark
-          ? `rgba(180,180,200,${f.alpha * 0.3})`
-          : `rgba(30,30,50,${f.alpha * 0.3})`;
+
+        if (isTerminal) {
+          ctx.strokeStyle = `rgba(80,255,80,${f.alpha})`;
+          ctx.fillStyle = `rgba(80,255,80,${f.alpha * 0.3})`;
+        } else if (isNewspaper) {
+          ctx.strokeStyle = `rgba(122,107,90,${f.alpha * 1.5})`;
+          ctx.fillStyle = `rgba(196,181,158,${f.alpha * 0.5})`;
+        } else if (isDark) {
+          ctx.strokeStyle = `rgba(200,200,220,${f.alpha})`;
+          ctx.fillStyle = `rgba(180,180,200,${f.alpha * 0.3})`;
+        } else {
+          ctx.strokeStyle = `rgba(40,40,60,${f.alpha})`;
+          ctx.fillStyle = `rgba(30,30,50,${f.alpha * 0.3})`;
+        }
         ctx.lineWidth = 0.5;
 
         if (f.type === 0) drawSierpinski(ctx, 0, 0, f.size, 3);
@@ -177,7 +189,7 @@ export function AnimatedBackground() {
       // Layer 2: Particles + connections
       const particles = particlesRef.current;
 
-      // Update particle positions
+      // Update positions
       for (const p of particles) {
         p.pulse += 0.02;
 
@@ -196,14 +208,14 @@ export function AnimatedBackground() {
         p.vx *= 0.98;
         p.vy *= 0.98;
 
-        // Wrap around edges
+        // Wrap
         if (p.x < -20) p.x = w + 20;
         if (p.x > w + 20) p.x = -20;
         if (p.y < -20) p.y = h + 20;
         if (p.y > h + 20) p.y = -20;
       }
 
-      // Spatial hash for O(n) connection lookups
+      // Spatial hash grid for O(n) connection lookups
       const cellSize = CONNECTION_DIST;
       const grid = new Map<string, number[]>();
       for (let i = 0; i < particles.length; i++) {
@@ -219,16 +231,14 @@ export function AnimatedBackground() {
       const checked = new Set<string>();
       for (const [key, indices] of grid) {
         const [cx, cy] = key.split(",").map(Number);
-        // Check this cell and 8 neighbors
         for (let dx = -1; dx <= 1; dx++) {
           for (let dy = -1; dy <= 1; dy++) {
             const nKey = `${cx + dx},${cy + dy}`;
             const neighborCell = grid.get(nKey);
             if (!neighborCell) continue;
-
             for (const i of indices) {
               for (const j of neighborCell) {
-                if (i >= j) continue; // avoid duplicates
+                if (i >= j) continue;
                 const pairKey = `${i}-${j}`;
                 if (checked.has(pairKey)) continue;
                 checked.add(pairKey);
@@ -242,7 +252,14 @@ export function AnimatedBackground() {
                   ctx.beginPath();
                   ctx.moveTo(p.x, p.y);
                   ctx.lineTo(p2.x, p2.y);
-                  ctx.strokeStyle = `rgba(${p.hue},${p.hue},${p.hue + 10},${baseAlpha * (1 - dist / CONNECTION_DIST)})`;
+
+                  if (isTerminal) {
+                    ctx.strokeStyle = `rgba(80,255,80,${baseAlpha * (1 - dist / CONNECTION_DIST)})`;
+                  } else if (isNewspaper) {
+                    ctx.strokeStyle = `rgba(122,107,90,${baseAlpha * 0.5 * (1 - dist / CONNECTION_DIST)})`;
+                  } else {
+                    ctx.strokeStyle = `rgba(${p.hue},${p.hue},${p.hue + 10},${baseAlpha * (1 - dist / CONNECTION_DIST)})`;
+                  }
                   ctx.lineWidth = 0.5;
                   ctx.stroke();
                 }
@@ -252,15 +269,38 @@ export function AnimatedBackground() {
         }
       }
 
-      // Draw particles
+      // Draw particles (stars) with larger glow
       for (const p of particles) {
-        const pulseAlpha = p.alpha + Math.sin(p.pulse) * 0.08;
-        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3);
-        grad.addColorStop(0, `rgba(${p.hue},${p.hue},${p.hue + 10},${pulseAlpha})`);
-        grad.addColorStop(1, `rgba(${p.hue},${p.hue},${p.hue + 10},0)`);
+        const pulseAlpha = p.alpha + Math.sin(p.pulse) * 0.12;
+        const glowRadius = p.r * 5; // Larger halo for visibility
+
+        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowRadius);
+        if (isTerminal) {
+          grad.addColorStop(0, `rgba(80,255,80,${pulseAlpha})`);
+          grad.addColorStop(0.4, `rgba(40,200,40,${pulseAlpha * 0.4})`);
+          grad.addColorStop(1, `rgba(80,255,80,0)`);
+        } else if (isNewspaper) {
+          grad.addColorStop(0, `rgba(122,107,90,${pulseAlpha * 0.5})`);
+          grad.addColorStop(1, `rgba(122,107,90,0)`);
+        } else {
+          grad.addColorStop(0, `rgba(${p.hue},${p.hue},${p.hue + 10},${pulseAlpha})`);
+          grad.addColorStop(1, `rgba(${p.hue},${p.hue},${p.hue + 10},0)`);
+        }
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, glowRadius, 0, Math.PI * 2);
         ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Solid bright core so each star is a distinct dot
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 0.6, 0, Math.PI * 2);
+        if (isTerminal) {
+          ctx.fillStyle = `rgba(160,255,160,${pulseAlpha * 0.8})`;
+        } else if (isNewspaper) {
+          ctx.fillStyle = `rgba(92,46,14,${pulseAlpha * 0.3})`;
+        } else {
+          ctx.fillStyle = `rgba(${p.hue},${p.hue},${p.hue + 10},${pulseAlpha * 0.7})`;
+        }
         ctx.fill();
       }
 
@@ -272,15 +312,12 @@ export function AnimatedBackground() {
   );
 
   useEffect(() => {
-    // Skip animation if user prefers reduced motion
     if (prefersReducedMotion()) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d")!;
     const dpr = window.devicePixelRatio || 1;
-    const w = window.innerWidth;
-    const h = window.innerHeight;
 
     function resize() {
       canvas!.width = window.innerWidth * dpr;
@@ -296,7 +333,7 @@ export function AnimatedBackground() {
     }
     window.addEventListener("mousemove", onMove);
 
-    // Init particles with adaptive count
+    // Init particles
     const count = getParticleCount();
     const pw = window.innerWidth;
     const ph = window.innerHeight;
@@ -306,9 +343,9 @@ export function AnimatedBackground() {
         y: Math.random() * ph,
         vx: (Math.random() - 0.5) * 0.3,
         vy: (Math.random() - 0.5) * 0.3,
-        r: Math.random() * 1.8 + 0.5,
+        r: Math.random() * 2.2 + 0.8,
         hue: Math.random() > 0.5 ? 25 + Math.random() * 20 : 200 + Math.random() * 30,
-        alpha: Math.random() * 0.4 + 0.2,
+        alpha: Math.random() * 0.4 + 0.45,
         pulse: Math.random() * Math.PI * 2,
       });
     }
@@ -324,10 +361,12 @@ export function AnimatedBackground() {
         alpha: 0.04 + Math.random() * 0.03,
         vx: (Math.random() - 0.5) * 0.15,
         vy: (Math.random() - 0.5) * 0.15,
+        driftPhase: Math.random() * Math.PI * 2,
+        driftSpeed: 0.005 + Math.random() * 0.01,
       });
     }
 
-    // Pause/resume animation when tab visibility changes
+    // Pause/resume on tab visibility change
     const handleVisibility = () => {
       if (document.hidden) {
         isRunningRef.current = false;
@@ -339,7 +378,7 @@ export function AnimatedBackground() {
     };
     document.addEventListener("visibilitychange", handleVisibility);
 
-    // Start animation loop
+    // Start
     isRunningRef.current = true;
     animRef.current = requestAnimationFrame(draw);
 
@@ -352,7 +391,7 @@ export function AnimatedBackground() {
     };
   }, [draw]);
 
-  // Render static gradient fallback when reduced-motion is preferred
+  // Static gradient fallback for reduced-motion
   if (typeof window !== "undefined" && prefersReducedMotion()) {
     return (
       <div

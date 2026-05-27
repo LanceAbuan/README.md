@@ -4,6 +4,9 @@
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant terminal (&:is(.terminal *));
+@custom-variant newspaper (&:is(.newspaper *));
+@custom-variant custom (&:is(.custom *));
 
 @theme inline {
   --color-background: var(--background);
@@ -11,6 +14,9 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
+  --font-terminal: var(--font-terminal);
+  --font-newspaper-heading: var(--font-newspaper-heading);
+  --font-newspaper-body: var(--font-newspaper-body);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -49,6 +55,9 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ============================================================
+   LIGHT THEME (default)
+   ============================================================ */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -84,7 +93,664 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* ============================================================
+   DARK THEME
+   ============================================================ */
 .dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* ============================================================
+   TERMINAL THEME
+   Pure CRT green-on-black. Monospace font. Scanline overlay.
+   Layout: compact, code-editor aesthetic with left-accent bars
+   and prompt-style section headers.
+   ============================================================ */
+.terminal {
+  --background: #000000;
+  --foreground: #00ff41;
+  --card: #0a0f0a;
+  --card-foreground: #00ff41;
+  --popover: #0a0f0a;
+  --popover-foreground: #00ff41;
+  --primary: #00ff41;
+  --primary-foreground: #000000;
+  --secondary: #0d1a0d;
+  --secondary-foreground: #00cc33;
+  --muted: #111a11;
+  --muted-foreground: #00aa30;
+  --accent: #00dd3a;
+  --accent-foreground: #000000;
+  --destructive: #ff3333;
+  --border: #00ff4130;
+  --input: #00ff4120;
+  --ring: #00ff4160;
+  --chart-1: #00ff41;
+  --chart-2: #00cc33;
+  --chart-3: #00aa2d;
+  --chart-4: #008822;
+  --chart-5: #00661c;
+  --sidebar: #0a0f0a;
+  --sidebar-foreground: #00ff41;
+  --sidebar-primary: #00ff41;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #0d1a0d;
+  --sidebar-accent-foreground: #00cc33;
+  --sidebar-border: #00ff4130;
+  --sidebar-ring: #00ff4160;
+  --radius: 0rem;
+}
+
+/* Terminal layout overrides */
+.terminal body,
+.terminal {
+  font-family: var(--font-terminal), monospace !important;
+  letter-spacing: 0.02em;
+}
+
+.terminal h1,
+.terminal h2,
+.terminal h3,
+.terminal h4,
+.terminal h5,
+.terminal h6 {
+  font-family: var(--font-terminal), monospace !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Scanline overlay */
+.terminal::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+}
+
+/* Scanline lines overlay */
+.terminal::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.12) 0px,
+    rgba(0, 0, 0, 0.12) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+/* CRT screen flicker animation */
+@keyframes crt-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.8; }
+  94% { opacity: 1; }
+  96% { opacity: 0.9; }
+  97% { opacity: 1; }
+}
+
+.terminal::after {
+  animation: crt-flicker 4s infinite linear;
+}
+
+/* Subtle vignette for CRT bezel effect */
+.terminal .background-container::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9996;
+  box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.5);
+}
+
+/* CRT text glow */
+.terminal .terminal-glow {
+  text-shadow:
+    0 0 5px rgba(0, 255, 65, 0.4),
+    0 0 10px rgba(0, 255, 65, 0.2),
+    0 0 20px rgba(0, 255, 65, 0.1);
+}
+
+/* Terminal section headers — prompt style */
+.terminal [data-terminal-prompt]::before {
+  content: "> ";
+  color: #00ff41;
+}
+
+/* Terminal cards — left accent bar instead of border */
+.terminal .terminal-card {
+  border: 1px solid #00ff4130 !important;
+  border-left: 3px solid #00ff41 !important;
+  border-radius: 0 !important;
+  background: #0a0f0a !important;
+}
+
+/* Terminal buttons — sharp, monospace, uppercase */
+.terminal .terminal-btn {
+  border-radius: 0 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: var(--font-terminal), monospace !important;
+  border: 1px solid #00ff41 !important;
+  background: transparent !important;
+  color: #00ff41 !important;
+  transition: all 0.1s !important;
+}
+
+.terminal .terminal-btn:hover {
+  background: #00ff41 !important;
+  color: #000000 !important;
+}
+
+/* Terminal skill badges — look like terminal tags */
+.terminal .terminal-badge {
+  border-radius: 0 !important;
+  border: 1px solid #00ff4140 !important;
+  background: #00ff4110 !important;
+  color: #00ff41 !important;
+  font-family: var(--font-terminal), monospace !important;
+  font-size: 0.7rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Terminal nav — compact, no blur */
+.terminal .terminal-nav {
+  backdrop-filter: none !important;
+  background: #000000cc !important;
+  border: 1px solid #00ff4130 !important;
+  border-radius: 0 !important;
+}
+
+/* Terminal experience timeline — vertical line */
+.terminal .terminal-timeline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #00ff4140;
+}
+
+/* ============================================================
+   NEWSPAPER THEME
+   Editorial aesthetic. Serif fonts. Column layouts.
+   Warm cream background, deep brown text, ruled separators.
+   Layout: multi-column sections, drop caps, ruled borders.
+   ============================================================ */
+.newspaper {
+  --background: #f7f2ea;
+  --foreground: #1a1208;
+  --card: #efe8da;
+  --card-foreground: #1a1208;
+  --popover: #efe8da;
+  --popover-foreground: #1a1208;
+  --primary: #5c2e0e;
+  --primary-foreground: #f7f2ea;
+  --secondary: #ddd2be;
+  --secondary-foreground: #3d2b1f;
+  --muted: #e8dfcf;
+  --muted-foreground: #7a6b5a;
+  --accent: #8b5e3c;
+  --accent-foreground: #f7f2ea;
+  --destructive: #8b1a1a;
+  --border: #c4b59e;
+  --input: #c4b59e;
+  --ring: #5c2e0e;
+  --chart-1: #5c2e0e;
+  --chart-2: #8b5e3c;
+  --chart-3: #7a6b5a;
+  --chart-4: #5c4a3d;
+  --chart-5: #4a3c32;
+  --sidebar: #efe8da;
+  --sidebar-foreground: #1a1208;
+  --sidebar-primary: #5c2e0e;
+  --sidebar-primary-foreground: #f7f2ea;
+  --sidebar-accent: #ddd2be;
+  --sidebar-accent-foreground: #3d2b1f;
+  --sidebar-border: #c4b59e;
+  --sidebar-ring: #5c2e0e;
+  --radius: 0rem;
+}
+
+/* Newspaper layout overrides — scoped to main content, not overlays */
+.newspaper body,
+.newspaper main,
+.newspaper section,
+.newspaper .newspaper-card {
+  font-family: var(--font-newspaper-body), Georgia, serif !important;
+  line-height: 1.7 !important;
+}
+
+/* Preserve normal line-height on buttons, inputs, interactive elements */
+.newspaper button,
+.newspaper input,
+.newspaper textarea,
+.newspaper select,
+.newspaper [role="button"],
+.newspaper a {
+  font-family: var(--font-newspaper-body), Georgia, serif !important;
+  line-height: normal !important;
+}
+
+.newspaper h1,
+.newspaper h2,
+.newspaper h3,
+.newspaper h4 {
+  font-family: var(--font-newspaper-heading), "Playfair Display", Georgia, serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em;
+  line-height: 1.15 !important;
+}
+
+.newspaper h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem) !important;
+  text-transform: none !important;
+}
+
+.newspaper h2 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem) !important;
+}
+
+/* Ruled separators */
+.newspaper .newspaper-rule {
+  border: none;
+  border-top: 2px solid #1a1208;
+  margin: 1rem 0;
+}
+
+.newspaper .newspaper-rule-thin {
+  border: none;
+  border-top: 1px solid #c4b59e;
+  margin: 0.75rem 0;
+}
+
+/* Newspaper cards — editorial boxes with double rule */
+.newspaper .newspaper-card {
+  border: 1px solid #c4b59e !important;
+  border-radius: 0 !important;
+  background: #efe8da !important;
+  padding: 1rem !important;
+  position: relative;
+  overflow: hidden !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.newspaper .newspaper-card::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  height: 1px;
+  background: #c4b59e;
+}
+
+.newspaper .newspaper-card::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+  height: 1px;
+  background: #c4b59e;
+}
+
+/* Newspaper multi-column layout */
+.newspaper .newspaper-columns-2 {
+  columns: 2;
+  column-gap: 2rem;
+  column-rule: 1px solid #c4b59e;
+}
+
+.newspaper .newspaper-columns-3 {
+  columns: 3;
+  column-gap: 1.5rem;
+  column-rule: 1px solid #c4b59e;
+}
+
+/* Prevent cards from splitting across columns */
+.newspaper .newspaper-card,
+.newspaper .terminal-card {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* Drop cap for first paragraph */
+.newspaper .newspaper-dropcap:first-letter {
+  float: left;
+  font-family: var(--font-newspaper-heading), serif;
+  font-size: 3.5rem;
+  line-height: 0.8;
+  padding-right: 0.5rem;
+  padding-top: 0.1rem;
+  font-weight: 700;
+  color: #5c2e0e;
+}
+
+/* Newspaper section headers — uppercase small-caps style */
+.newspaper [data-newspaper-section] {
+  text-transform: uppercase;
+  font-size: 0.7rem !important;
+  font-family: var(--font-newspaper-body), serif !important;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+  color: #7a6b5a;
+  display: inline-block;
+}
+
+/* Newspaper nav — compact, serif, ruled */
+.newspaper .newspaper-nav {
+  backdrop-filter: none !important;
+  background: #f7f2eacc !important;
+  border: none !important;
+  border-bottom: 2px solid #1a1208 !important;
+  border-radius: 0 !important;
+  font-family: var(--font-newspaper-heading), serif !important;
+}
+
+/* Newspaper buttons — editorial style */
+.newspaper .newspaper-btn {
+  border-radius: 0 !important;
+  font-family: var(--font-newspaper-heading), serif !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem !important;
+  border: 2px solid #1a1208 !important;
+  background: transparent !important;
+  color: #1a1208 !important;
+  transition: all 0.15s !important;
+}
+
+.newspaper .newspaper-btn:hover {
+  background: #1a1208 !important;
+  color: #f7f2ea !important;
+}
+
+/* Newspaper badges — editorial tags */
+.newspaper .newspaper-badge {
+  border-radius: 0 !important;
+  border: 1px solid #c4b59e !important;
+  background: transparent !important;
+  color: #5c2e0e !important;
+  font-family: var(--font-newspaper-body), serif !important;
+  font-size: 0.7rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Newspaper skill pills — compact tags */
+.newspaper .newspaper-skill {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid #c4b59e;
+  color: #3d2b1f;
+  font-size: 0.75rem;
+  font-family: var(--font-newspaper-body), serif;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================
+   NEWSPAPER — ADVANCED EDITORIAL ELEMENTS
+   ============================================================ */
+
+/* Subtle paper texture overlay */
+.newspaper::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9997;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231a1208' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Ornamental divider — classic newspaper ornament */
+.newspaper .newspaper-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 2rem 0;
+}
+
+.newspaper .newspaper-ornament::before,
+.newspaper .newspaper-ornament::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #c4b59e;
+}
+
+.newspaper .newspaper-ornament span {
+  color: #5c2e0e;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+/* Masthead — newspaper title styling */
+.newspaper .newspaper-masthead {
+  font-family: var(--font-newspaper-heading), serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 6vw, 4rem);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  color: #1a1208;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+/* Masthead sub-line (vol/date/etc) */
+.newspaper .newspaper-masthead-sub {
+  font-family: var(--font-newspaper-body), serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  text-align: center;
+  color: #7a6b5a;
+  border-top: 1px solid #1a1208;
+  border-bottom: 1px solid #1a1208;
+  padding: 0.35rem 0;
+  margin-bottom: 1.5rem;
+}
+
+/* Triple rule — classic newspaper header */
+.newspaper .newspaper-triple-rule {
+  border: none;
+  margin: 0.5rem 0 1.5rem;
+}
+
+.newspaper .newspaper-triple-rule::before {
+  content: "";
+  display: block;
+  border-top: 3px double #1a1208;
+  margin-bottom: 2px;
+}
+
+.newspaper .newspaper-triple-rule::after {
+  content: "";
+  display: block;
+  border-top: 1px solid #1a1208;
+}
+
+/* Pull quote — editorial sidebar quote */
+.newspaper .newspaper-pull-quote {
+  font-family: var(--font-newspaper-heading), serif;
+  font-size: 1.5rem;
+  font-style: italic;
+  line-height: 1.3;
+  color: #5c2e0e;
+  text-align: center;
+  padding: 1.5rem 2rem;
+  border-top: 2px solid #1a1208;
+  border-bottom: 2px solid #1a1208;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.newspaper .newspaper-pull-quote::before {
+  content: "\201C";
+  position: absolute;
+  top: -0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 3rem;
+  color: #c4b59e;
+  line-height: 1;
+}
+
+/* Byline — "by Lance Abuan" style */
+.newspaper .newspaper-byline {
+  font-family: var(--font-newspaper-body), serif !important;
+  font-size: 0.8rem;
+  color: #7a6b5a;
+  font-style: italic;
+}
+
+/* Letter-press effect for headings */
+.newspaper .newspaper-letterpress {
+  text-shadow: 0 1px 0 rgba(247, 242, 234, 0.8), 0 -1px 0 rgba(26, 18, 8, 0.1);
+}
+
+/* Section subheading — small caps editorial style */
+.newspaper .newspaper-subheading {
+  font-family: var(--font-newspaper-heading), serif;
+  font-size: 0.85rem;
+  font-variant: small-caps;
+  letter-spacing: 0.1em;
+  color: #7a6b5a;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+/* Kicker — above-heading teaser */
+.newspaper .newspaper-kicker {
+  font-family: var(--font-newspaper-heading), serif;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: #8b5e3c;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+/* Deck / standfirst — lead paragraph styling */
+.newspaper .newspaper-deck {
+  font-family: var(--font-newspaper-body), serif;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #3d2b1f;
+  font-style: italic;
+  margin-bottom: 1.5rem;
+}
+
+/* Two-column editorial text block */
+.newspaper .newspaper-body-columns {
+  columns: 2;
+  column-gap: 2rem;
+  column-rule: 1px solid #ddd2be;
+}
+
+.newspaper .newspaper-body-columns p {
+  text-indent: 1.5em;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #3d2b1f;
+  font-family: var(--font-newspaper-body), serif;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.newspaper .newspaper-body-columns p:first-child {
+  text-indent: 0;
+}
+
+/* Mobile: single column to prevent layout thrashing */
+@media (max-width: 640px) {
+  .newspaper .newspaper-body-columns {
+    columns: 1;
+  }
+}
+
+/* Thumbnail / lede image placeholder styling */
+.newspaper .newspaper-lede {
+  text-align: center;
+  margin: 1.5rem 0;
+  font-family: var(--font-newspaper-body), serif;
+  font-size: 0.75rem;
+  color: #7a6b5a;
+  font-style: italic;
+}
+
+/* Section number — classic numbered section */
+.newspaper .newspaper-section-number {
+  font-family: var(--font-newspaper-heading), serif;
+  font-size: 3rem;
+  font-weight: 900;
+  color: #ddd2be;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+/* Caption / figcaption styling */
+.newspaper .newspaper-caption {
+  font-family: var(--font-newspaper-body), serif;
+  font-size: 0.75rem;
+  color: #7a6b5a;
+  line-height: 1.4;
+  border-bottom: 1px solid #c4b59e;
+  padding-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* ============================================================
+   CUSTOM THEME — defaults to dark, overridden by inline styles
+   ============================================================ */
+.custom {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
