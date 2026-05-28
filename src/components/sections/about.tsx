@@ -13,6 +13,7 @@ export function About() {
   const { theme } = useTheme();
   const isTerminal = theme === "terminal";
   const isNewspaper = theme === "newspaper";
+  const isCasino = theme === "casino";
 
   return (
     <section id="about" className="py-24 px-6" ref={ref}>
@@ -23,7 +24,19 @@ export function About() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          {isTerminal ? (
+          {isCasino ? (
+            <div className="text-center mb-12">
+              <p className="text-xs font-serif text-[#d4a843] mb-2 tracking-[0.3em] uppercase">
+                THE PLAYER
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#d4a843] casino-gold tracking-tight">
+                Know Your Opponent
+              </h2>
+              <p className="text-[#c4b59e] font-serif mt-3 max-w-lg mx-auto">
+                Every great hand starts with reading the table.
+              </p>
+            </div>
+          ) : isTerminal ? (
             <div>
               <p className="text-xs font-mono text-[#00aa30] mb-2 tracking-wider" data-terminal-prompt>
                 about
@@ -57,7 +70,50 @@ export function About() {
           )}
         </motion.div>
 
-        {isNewspaper ? (
+        {isCasino ? (
+          /* Casino layout — felt cards, gold accents */
+          <div className="space-y-8">
+            {/* Bio paragraphs in a felt card */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className="casino-felt p-6 sm:p-8 space-y-4"
+            >
+              {aboutData.paragraphs.map((paragraph, i) => (
+                <HighlightedParagraph
+                  key={i}
+                  {...paragraph}
+                  isTerminal={false}
+                  isNewspaper={false}
+                  isCasino={true}
+                />
+              ))}
+            </motion.div>
+
+            {/* Stat cards — chip-style */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="grid grid-cols-2 sm:grid-cols-4 gap-3"
+            >
+              {aboutData.stats.map((stat, i) => {
+                const Icon = getIcon(stat.icon);
+                return (
+                  <AboutStatCard
+                    key={i}
+                    stat={stat}
+                    Icon={Icon}
+                    isTerminal={false}
+                    isNewspaper={false}
+                    isCasino={true}
+                  />
+                );
+              })}
+            </motion.div>
+          </div>
+        ) : isNewspaper ? (
           /* Newspaper editorial layout */
           <div className="space-y-8">
             {/* Two-column body text */}
@@ -228,20 +284,22 @@ function HighlightedParagraph({
   highlights,
   isTerminal,
   isNewspaper,
+  isCasino,
 }: {
   text: string;
   highlights?: string[];
   isTerminal: boolean;
   isNewspaper: boolean;
+  isCasino?: boolean;
 }) {
   if (!highlights || highlights.length === 0) {
-    return <p>{text}</p>;
+    return <p className={isCasino ? "text-[#f0e6d3] font-serif leading-relaxed" : ""}>{text}</p>;
   }
 
   const parts = splitTextByHighlights(text, highlights);
 
   return (
-    <p>
+    <p className={isCasino ? "text-[#f0e6d3] font-serif leading-relaxed" : ""}>
       {parts.map((part, i) => (
         <span key={i}>
           {part.highlighted ? (
@@ -249,6 +307,7 @@ function HighlightedParagraph({
               className={cn(
                 isTerminal && "text-[#00ff41] terminal-glow",
                 isNewspaper && "text-[#5c2e0e] font-bold",
+                isCasino && "text-[#d4a843]",
               )}
             >
               {part.content}
@@ -267,12 +326,28 @@ function AboutStatCard({
   Icon,
   isTerminal,
   isNewspaper,
+  isCasino,
 }: {
   stat: { icon: string; label: string; value: string };
   Icon: React.ComponentType<{ className?: string }>;
   isTerminal: boolean;
   isNewspaper: boolean;
+  isCasino?: boolean;
 }) {
+  if (isCasino) {
+    return (
+      <div className="casino-felt text-center flex flex-col items-center justify-center p-4 gap-2">
+        <Icon className="h-5 w-5 text-[#d4a843] mx-auto flex-shrink-0" />
+        <span className="text-[10px] text-[#8b7355] uppercase tracking-wider font-serif block">
+          {stat.label}
+        </span>
+        <span className="text-sm font-bold font-serif text-[#d4a843] casino-gold leading-tight">
+          {stat.value}
+        </span>
+      </div>
+    );
+  }
+
   if (isTerminal) {
     return (
       <div className="terminal-card p-3">

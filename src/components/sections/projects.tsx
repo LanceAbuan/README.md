@@ -17,6 +17,7 @@ export function Projects() {
   const { theme } = useTheme();
   const isTerminal = theme === "terminal";
   const isNewspaper = theme === "newspaper";
+  const isCasino = theme === "casino";
 
   return (
     <section id="projects" className="py-24 px-6" ref={ref}>
@@ -30,7 +31,19 @@ export function Projects() {
           )}
         >
           <div>
-            {isTerminal ? (
+            {isCasino ? (
+            <div className="text-center mb-12">
+              <p className="text-xs font-serif text-[#d4a843] mb-2 tracking-[0.3em] uppercase">
+                THE HAND
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#d4a843] casino-gold tracking-tight">
+                Show Me What You&apos;ve Got
+              </h2>
+              <p className="text-[#c4b59e] font-serif mt-3 max-w-lg mx-auto">
+                Selected plays from the table.
+              </p>
+            </div>
+          ) : isTerminal ? (
               <>
                 <p className="text-xs font-mono text-[#00aa30] mb-2 tracking-wider" data-terminal-prompt>
                   projects
@@ -81,6 +94,7 @@ export function Projects() {
         <div className={cn(
           "grid sm:grid-cols-2 lg:grid-cols-3 gap-4",
           isNewspaper && "lg:grid-cols-2",
+          isCasino && "lg:grid-cols-2",
         )}>
           {projects.map((project, i) => (
             <ProjectCard
@@ -89,6 +103,7 @@ export function Projects() {
               index={i}
               isTerminal={isTerminal}
               isNewspaper={isNewspaper}
+              isCasino={isCasino}
             />
           ))}
         </div>
@@ -147,14 +162,72 @@ function ProjectCard({
   index,
   isTerminal,
   isNewspaper,
+  isCasino,
 }: {
   project: (typeof projects)[number];
   index: number;
   isTerminal: boolean;
   isNewspaper: boolean;
+  isCasino?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  if (isCasino) {
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 30 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+        transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
+      >
+        <div className="casino-felt h-full flex flex-col gap-3 p-5">
+          {/* Project name */}
+          <div className="flex items-start justify-between">
+            <h3 className="text-base font-bold font-serif text-[#d4a843] casino-gold break-words leading-tight">
+              {project.name}
+            </h3>
+            <div className="flex items-center gap-1 shrink-0 ml-2">
+              {project.demo && (
+                <Link
+                  href={project.demo}
+                  className="h-7 w-7 flex items-center justify-center text-[#d4a843] hover:bg-[#c41e1e40] rounded"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </Link>
+              )}
+              <Link
+                href={project.github}
+                className="h-7 w-7 flex items-center justify-center text-[#d4a843] hover:bg-[#c41e1e40] rounded"
+              >
+                <GitFork className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </div>
+
+          {project.featured && (
+            <span className="casino-chip inline-block w-fit px-2.5 py-1 text-[10px] font-serif uppercase tracking-wider">
+              Featured
+            </span>
+          )}
+
+          <hr className="border-[#d4a84320]" />
+
+          <p className="text-sm text-[#f0e6d3] font-serif leading-relaxed flex-1 break-words overflow-hidden">
+            {project.description}
+          </p>
+
+          <div className="flex flex-wrap gap-1.5">
+            {project.tags.map((tag, i) => (
+              <span key={i} className="casino-chip inline-block px-2.5 py-1 text-[10px] font-serif uppercase tracking-wider">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
 
   if (isTerminal) {
     return (

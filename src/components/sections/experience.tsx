@@ -14,6 +14,7 @@ export function Experience() {
   const { theme } = useTheme();
   const isTerminal = theme === "terminal";
   const isNewspaper = theme === "newspaper";
+  const isCasino = theme === "casino";
 
   return (
     <section id="experience" className="py-24 px-6" ref={ref}>
@@ -24,7 +25,19 @@ export function Experience() {
           transition={{ duration: 0.6 }}
           className={cn(isNewspaper ? "text-center mb-12" : "mb-12")}
         >
-          {isTerminal ? (
+          {isCasino ? (
+            <div className="text-center mb-12">
+              <p className="text-xs font-serif text-[#d4a843] mb-2 tracking-[0.3em] uppercase">
+                TRACK RECORD
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#d4a843] casino-gold tracking-tight">
+                High Stakes History
+              </h2>
+              <p className="text-[#c4b59e] font-serif mt-3 max-w-lg mx-auto">
+                A career built on calculated risks and winning plays.
+              </p>
+            </div>
+          ) : isTerminal ? (
             <div>
               <p className="text-xs font-mono text-[#00aa30] mb-2 tracking-wider" data-terminal-prompt>
                 experience
@@ -62,6 +75,7 @@ export function Experience() {
           "space-y-4",
           isTerminal && "terminal-timeline pl-4 relative",
           isNewspaper && "space-y-8",
+          isCasino && "casino-timeline pl-4 relative space-y-6",
         )}>
           {experiences.map((exp, i) => (
             <ExperienceCard
@@ -71,6 +85,7 @@ export function Experience() {
               isInView={isInView}
               isTerminal={isTerminal}
               isNewspaper={isNewspaper}
+              isCasino={isCasino}
             />
           ))}
         </div>
@@ -113,13 +128,68 @@ function ExperienceCard({
   isInView,
   isTerminal,
   isNewspaper,
+  isCasino,
 }: {
   exp: (typeof experiences)[number];
   index: number;
   isInView: boolean;
   isTerminal: boolean;
   isNewspaper: boolean;
+  isCasino?: boolean;
 }) {
+  if (isCasino) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
+      >
+        <div className="casino-felt p-5 sm:p-6 space-y-3 ml-3">
+          {/* Date as chip */}
+          <div className="flex items-center justify-between">
+            <span className="casino-chip inline-block px-3 py-1 text-[10px] font-serif uppercase tracking-wider">
+              {exp.type}
+            </span>
+            <span className="text-xs text-[#8b7355] font-serif italic">
+              {exp.period}
+            </span>
+          </div>
+
+          {/* Role as gold heading */}
+          <h3 className="text-lg font-bold font-serif text-[#d4a843] casino-gold">
+            {exp.role}
+          </h3>
+
+          {/* Company + location */}
+          <div className="flex items-center gap-2 text-sm text-[#c4b59e] font-serif">
+            <Building2 className="h-3.5 w-3.5 text-[#d4a843]" />
+            <span>{exp.company}</span>
+            <span>&middot;</span>
+            <span className="text-[#8b7355]">{exp.location}</span>
+          </div>
+
+          <hr className="border-[#d4a84320]" />
+
+          <p className="text-sm text-[#f0e6d3] font-serif leading-relaxed">
+            {exp.description}
+          </p>
+
+          {/* Skills as chip badges */}
+          <div className="flex flex-wrap gap-1.5">
+            {exp.skills.map((skill, j) => (
+              <span
+                key={j}
+                className="casino-chip inline-block px-2.5 py-1 text-[10px] font-serif uppercase tracking-wider"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
   if (isTerminal) {
     return (
       <motion.div
