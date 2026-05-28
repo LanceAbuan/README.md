@@ -19,7 +19,6 @@
   --font-terminal: var(--font-terminal);
   --font-newspaper-heading: var(--font-newspaper-heading);
   --font-newspaper-body: var(--font-newspaper-body);
-  --font-synthwave: var(--font-synthwave);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -898,13 +897,6 @@
 .synthwave body,
 .synthwave {
   background: linear-gradient(180deg, #0a0520 0%, #1a0a3e 40%, #2d1b69 70%, #1a0a3e 100%) !important;
-}
-
-/* Synthwave headings use Orbitron */
-.synthwave h1,
-.synthwave h2,
-.synthwave h3 {
-  font-family: var(--font-synthwave), sans-serif !important;
 }
 
 /* Perspective grid overlay */

@@ -13,18 +13,19 @@ type Particle = {
   pulse: number;
 };
 
-/** Fractal shape floating in the background. */
-type Fractal = {
+/** Thematic symbol floating in the background. */
+type BackgroundSymbol = {
   x: number;
   y: number;
+  char: string;
   size: number;
-  rotation: number;
-  type: number;
   alpha: number;
   vx: number;
   vy: number;
   driftPhase: number;
   driftSpeed: number;
+  rotationSpeed: number;
+  rotation: number;
 };
 
 /** Shape drawn for theme-specific particles. */
@@ -33,6 +34,17 @@ type ParticleShape = "circle" | "diamond" | "hex" | "square" | "star" | "chip";
 const CONNECTION_DIST = 160;
 const MOUSE_RADIUS = 120;
 const MOUSE_FORCE = 0.8;
+const MAX_SYMBOLS = 15;
+
+/** Theme-specific floating symbols. */
+const THEME_SYMBOLS: Record<string, string[]> = {
+  terminal: ["0", "1"],
+  synthwave: ["★", "◆", "♪", "♫", "✦"],
+  casino: ["♠", "♥", "♦", "♣", "$"],
+  newspaper: ["§", "¶", "†", "‡", "—"],
+  dark: [],
+  light: [],
+};
 
 /**
  * Adaptive particle count based on screen width and DPR.
@@ -71,8 +83,7 @@ function detectTheme(): string {
 const THEME_COLORS: Record<
   string,
   {
-    fractalStroke: string;
-    fractalFill: string;
+    symbolColor: string;
     connection: string;
     connectionAlpha: number;
     particleColor: string;
@@ -82,8 +93,7 @@ const THEME_COLORS: Record<
   }
 > = {
   terminal: {
-    fractalStroke: "80,255,80",
-    fractalFill: "80,255,80",
+    symbolColor: "80,255,80",
     connection: "80,255,80",
     connectionAlpha: 0.2,
     particleColor: "80,255,80",
@@ -92,8 +102,7 @@ const THEME_COLORS: Record<
     particleShape: "square",
   },
   newspaper: {
-    fractalStroke: "122,107,90",
-    fractalFill: "196,181,158",
+    symbolColor: "122,107,90",
     connection: "122,107,90",
     connectionAlpha: 0.06,
     particleColor: "122,107,90",
@@ -102,8 +111,7 @@ const THEME_COLORS: Record<
     particleShape: "hex",
   },
   synthwave: {
-    fractalStroke: "255,0,255",
-    fractalFill: "0,255,255",
+    symbolColor: "255,0,255",
     connection: "0,255,255",
     connectionAlpha: 0.12,
     particleColor: "255,0,255",
@@ -112,8 +120,7 @@ const THEME_COLORS: Record<
     particleShape: "diamond",
   },
   casino: {
-    fractalStroke: "212,168,67",
-    fractalFill: "196,30,30",
+    symbolColor: "212,168,67",
     connection: "196,30,30",
     connectionAlpha: 0.08,
     particleColor: "212,168,67",
@@ -122,8 +129,7 @@ const THEME_COLORS: Record<
     particleShape: "star",
   },
   dark: {
-    fractalStroke: "200,200,220",
-    fractalFill: "180,180,200",
+    symbolColor: "200,200,220",
     connection: "120,120,130",
     connectionAlpha: 0.18,
     particleColor: "120,120,130",
@@ -132,8 +138,7 @@ const THEME_COLORS: Record<
     particleShape: "circle",
   },
   light: {
-    fractalStroke: "40,40,60",
-    fractalFill: "30,30,50",
+    symbolColor: "40,40,60",
     connection: "60,60,70",
     connectionAlpha: 0.1,
     particleColor: "60,60,70",
@@ -143,70 +148,20 @@ const THEME_COLORS: Record<
   },
 };
 
-/** Draw a Sierpinski triangle fractal. */
-function drawSierpinski(
+/** Draw a thematic background symbol (character-based). */
+function drawBackgroundSymbol(
   ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  size: number,
-  depth: number,
-) {
-  if (depth === 0) {
-    ctx.beginPath();
-    ctx.moveTo(x, y - size / 2);
-    ctx.lineTo(x - size / 2, y + size / 2);
-    ctx.lineTo(x + size / 2, y + size / 2);
-    ctx.closePath();
-    ctx.fill();
-    return;
-  }
-  const half = size / 2;
-  drawSierpinski(ctx, x, y - half / 2, half, depth - 1);
-  drawSierpinski(ctx, x - half / 2, y + half / 2, half, depth - 1);
-  drawSierpinski(ctx, x + half / 2, y + half / 2, half, depth - 1);
-}
-
-/** Draw nested hexagon fractal. */
-function drawHexagon(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  size: number,
-) {
-  for (let layer = 3; layer >= 1; layer--) {
-    const r = size * (layer / 3);
-    ctx.beginPath();
-    for (let i = 0; i < 6; i++) {
-      const angle = (Math.PI / 3) * i - Math.PI / 6;
-      const px = x + r * Math.cos(angle);
-      const py = y + r * Math.sin(angle);
-      if (i === 0) ctx.moveTo(px, py);
-      else ctx.lineTo(px, py);
-    }
-    ctx.closePath();
-    ctx.stroke();
-  }
-}
-
-/** Draw diamond fractal. */
-function drawDiamond(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  size: number,
+  symbol: BackgroundSymbol,
+  colorRGB: string,
 ) {
   ctx.save();
-  ctx.translate(x, y);
-  for (let layer = 3; layer >= 1; layer--) {
-    const s = size * (layer / 3);
-    ctx.beginPath();
-    ctx.moveTo(0, -s);
-    ctx.lineTo(s * 0.6, 0);
-    ctx.lineTo(0, s);
-    ctx.lineTo(-s * 0.6, 0);
-    ctx.closePath();
-    ctx.stroke();
-  }
+  ctx.translate(symbol.x, symbol.y);
+  ctx.rotate(symbol.rotation);
+  ctx.font = `${symbol.size}px monospace`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = `rgba(${colorRGB},${symbol.alpha})`;
+  ctx.fillText(symbol.char, 0, 0);
   ctx.restore();
 }
 
@@ -332,10 +287,13 @@ export function AnimatedBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: -9999, y: -9999 });
   const particlesRef = useRef<Particle[]>([]);
-  const fractalsRef = useRef<Fractal[]>([]);
+  const symbolsRef = useRef<BackgroundSymbol[]>([]);
   const animRef = useRef<number>(0);
   const isRunningRef = useRef(false);
   const [mounted, setMounted] = useState(false);
+
+  // Stable ref accessible from both draw() and useEffect
+  const BACKGROUND_SYMBOLS_REF = symbolsRef;
 
   const draw = useCallback(
     (_timestamp: number) => {
@@ -350,36 +308,23 @@ export function AnimatedBackground() {
       const theme = detectTheme();
       const tc = THEME_COLORS[theme] ?? THEME_COLORS.dark;
 
-      /* ── Layer 1: Floating fractals ── */
-      ctx.save();
-      fractalsRef.current.forEach((f) => {
-        f.driftPhase += f.driftSpeed;
-        const driftX = Math.sin(f.driftPhase) * 0.3;
-        const driftY = Math.cos(f.driftPhase * 0.7) * 0.2;
-        f.x += f.vx + driftX;
-        f.y += f.vy + driftY;
-        f.rotation += 0.001;
+      /* ── Layer 1: Thematic floating symbols ── */
+      BACKGROUND_SYMBOLS_REF.current.forEach((s) => {
+        s.driftPhase += s.driftSpeed;
+        const driftX = Math.sin(s.driftPhase) * 0.3;
+        const driftY = Math.cos(s.driftPhase * 0.7) * 0.2;
+        s.x += s.vx + driftX;
+        s.y += s.vy + driftY;
+        s.rotation += s.rotationSpeed;
 
         // Wrap
-        if (f.x < -100) f.x = w + 100;
-        if (f.x > w + 100) f.x = -100;
-        if (f.y < -100) f.y = h + 100;
-        if (f.y > h + 100) f.y = -100;
+        if (s.x < -50) s.x = w + 50;
+        if (s.x > w + 50) s.x = -50;
+        if (s.y < -50) s.y = h + 50;
+        if (s.y > h + 50) s.y = -50;
 
-        ctx.save();
-        ctx.translate(f.x, f.y);
-        ctx.rotate(f.rotation);
-        ctx.strokeStyle = `rgba(${tc.fractalStroke},${f.alpha})`;
-        ctx.fillStyle = `rgba(${tc.fractalFill},${f.alpha * 0.3})`;
-        ctx.lineWidth = 0.5;
-
-        if (f.type === 0) drawSierpinski(ctx, 0, 0, f.size, 3);
-        else if (f.type === 1) drawHexagon(ctx, 0, 0, f.size);
-        else drawDiamond(ctx, 0, 0, f.size);
-
-        ctx.restore();
+        drawBackgroundSymbol(ctx, s, tc.symbolColor);
       });
-      ctx.restore();
 
       /* ── Layer 2: Particles + connections ── */
       const particles = particlesRef.current;
@@ -531,21 +476,58 @@ export function AnimatedBackground() {
       });
     }
 
-    // Init fractals — boosted alpha so they're actually visible
-    for (let i = 0; i < 5; i++) {
-      fractalsRef.current.push({
-        x: Math.random() * pw,
-        y: Math.random() * ph,
-        size: Math.random() * 40 + 25,
-        rotation: Math.random() * Math.PI * 2,
-        type: Math.floor(Math.random() * 3),
-        alpha: 0.08 + Math.random() * 0.06,
-        vx: (Math.random() - 0.5) * 0.15,
-        vy: (Math.random() - 0.5) * 0.15,
-        driftPhase: Math.random() * Math.PI * 2,
-        driftSpeed: 0.008 + Math.random() * 0.012,
-      });
-    }
+    // Init thematic background symbols
+    const initSymbols = () => {
+      const currentTheme = detectTheme();
+      const chars = THEME_SYMBOLS[currentTheme] ?? THEME_SYMBOLS.dark;
+      if (chars.length === 0) return;
+      for (let i = 0; i < MAX_SYMBOLS; i++) {
+        symbolsRef.current.push({
+          x: Math.random() * pw,
+          y: Math.random() * ph,
+          char: chars[Math.floor(Math.random() * chars.length)],
+          size: Math.random() * 14 + 10,
+          alpha: 0.06 + Math.random() * 0.06,
+          vx: (Math.random() - 0.5) * 0.15,
+          vy: (Math.random() - 0.5) * 0.1,
+          driftPhase: Math.random() * Math.PI * 2,
+          driftSpeed: 0.005 + Math.random() * 0.01,
+          rotationSpeed: (Math.random() - 0.5) * 0.003,
+          rotation: Math.random() * Math.PI * 2,
+        });
+      }
+    };
+    initSymbols();
+
+    // Reinit symbols on theme change
+    let lastTheme = detectTheme();
+    const handleThemeChange = () => {
+      const newTheme = detectTheme();
+      if (newTheme !== lastTheme) {
+        lastTheme = newTheme;
+        const chars = THEME_SYMBOLS[newTheme] ?? THEME_SYMBOLS.dark;
+        symbolsRef.current = [];
+        if (chars.length === 0) return;
+        const cw = window.innerWidth;
+        const ch = window.innerHeight;
+        for (let i = 0; i < MAX_SYMBOLS; i++) {
+          symbolsRef.current.push({
+            x: Math.random() * cw,
+            y: Math.random() * ch,
+            char: chars[Math.floor(Math.random() * chars.length)],
+            size: Math.random() * 14 + 10,
+            alpha: 0.06 + Math.random() * 0.06,
+            vx: (Math.random() - 0.5) * 0.15,
+            vy: (Math.random() - 0.5) * 0.1,
+            driftPhase: Math.random() * Math.PI * 2,
+            driftSpeed: 0.005 + Math.random() * 0.01,
+            rotationSpeed: (Math.random() - 0.5) * 0.003,
+            rotation: Math.random() * Math.PI * 2,
+          });
+        }
+      }
+    };
+    const themeInterval = setInterval(handleThemeChange, 1000);
 
     // Pause/resume on tab visibility change
     const handleVisibility = () => {
@@ -566,12 +548,13 @@ export function AnimatedBackground() {
     return () => {
       isRunningRef.current = false;
       cancelAnimationFrame(animRef.current);
+      clearInterval(themeInterval);
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMove);
       document.removeEventListener("visibilitychange", handleVisibility);
       // Clear refs
       particlesRef.current = [];
-      fractalsRef.current = [];
+      symbolsRef.current = [];
     };
   }, [mounted, draw]);
 

@@ -11,7 +11,6 @@ export function Skills() {
   const { theme } = useTheme();
   const isTerminal = theme === "terminal";
   const isNewspaper = theme === "newspaper";
-  const isCasino = theme === "casino";
 
   return (
     <section id="skills" className="py-24 px-6" ref={ref}>
@@ -22,19 +21,7 @@ export function Skills() {
           transition={{ duration: 0.6 }}
           className={cn(isNewspaper ? "text-center mb-12" : "mb-12")}
         >
-          {isCasino ? (
-            <div className="text-center mb-12">
-              <p className="text-xs font-serif text-[#d4a843] mb-2 tracking-[0.3em] uppercase">
-                ARSENAL
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#d4a843] casino-gold tracking-tight">
-                Tools of the Trade
-              </h2>
-              <p className="text-[#c4b59e] font-serif mt-3 max-w-lg mx-auto">
-                The skills that keep the edge sharp.
-              </p>
-            </div>
-          ) : isTerminal ? (
+          {isTerminal ? (
             <div>
               <p className="text-xs font-mono text-[#00aa30] mb-2 tracking-wider" data-terminal-prompt>
                 skills
@@ -80,7 +67,6 @@ export function Skills() {
               isInView={isInView}
               isTerminal={isTerminal}
               isNewspaper={isNewspaper}
-              isCasino={isCasino}
             />
           ))}
         </div>
@@ -123,42 +109,13 @@ function SkillCategoryCard({
   isInView,
   isTerminal,
   isNewspaper,
-  isCasino,
 }: {
   category: (typeof skillCategories)[number];
   index: number;
   isInView: boolean;
   isTerminal: boolean;
   isNewspaper: boolean;
-  isCasino?: boolean;
 }) {
-  if (isCasino) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
-      >
-        <div className="casino-felt p-5 space-y-3">
-          <h3 className="text-xs font-serif text-[#d4a843] uppercase tracking-[0.2em]">
-            {category.name}
-          </h3>
-          <hr className="border-[#d4a84320]" />
-          <div className="flex flex-wrap gap-1.5">
-            {category.items.map((skill, i) => (
-              <span
-                key={i}
-                className="casino-chip inline-block px-2.5 py-1 text-[10px] font-serif uppercase tracking-wider"
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-      </motion.div>
-    );
-  }
-
   if (isTerminal) {
     return (
       <motion.div

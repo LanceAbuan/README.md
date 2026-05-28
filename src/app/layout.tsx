@@ -4,7 +4,6 @@ import {
   JetBrains_Mono,
   Playfair_Display,
   Source_Serif_4,
-  Orbitron,
 } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
@@ -31,13 +30,6 @@ const sourceSerif4 = Source_Serif_4({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700"],
   variable: "--font-newspaper-body",
-});
-
-// Synthwave theme: retro-futuristic headings
-const orbitron = Orbitron({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-synthwave",
 });
 
 export const viewport: Viewport = {
@@ -129,7 +121,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
       </head>
       <body
-        className={`${inter.variable} ${jetBrainsMono.variable} ${playfairDisplay.variable} ${sourceSerif4.variable} ${orbitron.variable} font-sans antialiased`}
+        className={`${inter.variable} ${jetBrainsMono.variable} ${playfairDisplay.variable} ${sourceSerif4.variable} font-sans antialiased`}
       >
         <Providers>{children}</Providers>
         <Script

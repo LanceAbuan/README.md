@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { useActiveSection } from "@/hooks/use-active-section";
 import { useTheme } from "next-themes";
 import { useThemeConfig } from "@/hooks/use-theme-config";
+import { CoinFlipNav } from "@/components/casino/coin-flip";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -28,6 +29,8 @@ export function Navbar() {
   const activeSection = useActiveSection();
   const { theme } = useTheme();
   const config = useThemeConfig();
+
+  const isCoinFlip = config.features.coinFlip;
 
   const resolveHref = (href: string) => {
     if (href.startsWith("#")) {
@@ -57,6 +60,14 @@ export function Navbar() {
     ? { backgroundColor: config.nav.dividerColor }
     : undefined;
 
+  const NavLinkWrapper = isCoinFlip ? CoinFlipNav : "div";
+
+  const navLinkProps = isCoinFlip
+    ? {
+        sectionId: (href: string) => ({ sectionId: href.replace("#", "") }),
+      }
+    : {};
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -74,16 +85,23 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-1">
             {NAV_LINKS.map((link) => {
               const href = resolveHref(link.href);
+              const sectionId = link.href.replace("#", "");
+
               return (
-                <Link key={link.href} href={href} className="block">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={linkButtonClass(link.href)}
-                  >
-                    {link.label}
-                  </Button>
-                </Link>
+                <NavLinkWrapper
+                  key={link.href}
+                  {...(isCoinFlip ? { sectionId } : {})}
+                >
+                  <Link href={href} className="block">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={linkButtonClass(link.href)}
+                    >
+                      {link.label}
+                    </Button>
+                  </Link>
+                </NavLinkWrapper>
               );
             })}
             <div className="w-px h-4 mx-1" style={dividerStyle}>
