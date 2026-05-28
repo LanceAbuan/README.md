@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
 
+/** Duration of the theme-switch fade transition (ms). */
+const TRANSITION_DURATION = 400;
+
 /** Particle (star) for the constellation animation. */
 type Particle = {
   x: number;
@@ -221,6 +224,8 @@ export function AnimatedBackground() {
   const animRef = useRef<number>(0);
   const isRunningRef = useRef(false);
   const [mounted, setMounted] = useState(false);
+  const [opacity, setOpacity] = useState(1);
+  const pendingRebuildRef = useRef(false);
 
   const THEME_CHARS_REF = THEME_CHARS;
 
@@ -481,52 +486,78 @@ export function AnimatedBackground() {
       }
     }
 
-    // Reinit on theme change
+    // Reinit on theme change (with fade transition)
     let lastTheme = currentTheme;
     const rebuildParticles = () => {
       const newTheme = detectTheme();
       if (newTheme !== lastTheme) {
         lastTheme = newTheme;
-        const newChars = THEME_CHARS_REF[newTheme] ?? [];
-        const cw = window.innerWidth;
-        const ch = window.innerHeight;
 
-        themedRef.current = [];
-        particlesRef.current = [];
+        // Fade out
+        setOpacity(0);
+        pendingRebuildRef.current = true;
+      }
+    };
 
-        if (newChars.length > 0) {
-          for (let i = 0; i < count; i++) {
-            themedRef.current.push({
-              x: Math.random() * cw,
-              y: Math.random() * ch,
-              char: newChars[Math.floor(Math.random() * newChars.length)],
-              size: Math.random() * 10 + 18,
-              alpha: Math.random() * 0.4 + 0.6,
-              pulse: Math.random() * Math.PI * 2,
-              vx: (Math.random() - 0.5) * 0.3,
-              vy: (Math.random() - 0.5) * 0.3,
-              driftPhase: Math.random() * Math.PI * 2,
-              driftSpeed: 0.005 + Math.random() * 0.01,
-              rotationSpeed: (Math.random() - 0.5) * 0.003,
-              rotation: Math.random() * Math.PI * 2,
-            });
-          }
-        } else {
-          for (let i = 0; i < count; i++) {
-            particlesRef.current.push({
-              x: Math.random() * cw,
-              y: Math.random() * ch,
-              vx: (Math.random() - 0.5) * 0.3,
-              vy: (Math.random() - 0.5) * 0.3,
-              r: Math.random() * 2.2 + 0.8,
-              alpha: Math.random() * 0.4 + 0.45,
-              pulse: Math.random() * Math.PI * 2,
-            });
-          }
+    // Helper to rebuild particle arrays for a given theme
+    const initParticlesForTheme = (theme: string) => {
+      const newChars = THEME_CHARS_REF[theme] ?? [];
+      const cw = window.innerWidth;
+      const ch = window.innerHeight;
+
+      themedRef.current = [];
+      particlesRef.current = [];
+
+      if (newChars.length > 0) {
+        for (let i = 0; i < count; i++) {
+          themedRef.current.push({
+            x: Math.random() * cw,
+            y: Math.random() * ch,
+            char: newChars[Math.floor(Math.random() * newChars.length)],
+            size: Math.random() * 10 + 18,
+            alpha: Math.random() * 0.4 + 0.6,
+            pulse: Math.random() * Math.PI * 2,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: (Math.random() - 0.5) * 0.3,
+            driftPhase: Math.random() * Math.PI * 2,
+            driftSpeed: 0.005 + Math.random() * 0.01,
+            rotationSpeed: (Math.random() - 0.5) * 0.003,
+            rotation: Math.random() * Math.PI * 2,
+          });
+        }
+      } else {
+        for (let i = 0; i < count; i++) {
+          particlesRef.current.push({
+            x: Math.random() * cw,
+            y: Math.random() * ch,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: (Math.random() - 0.5) * 0.3,
+            r: Math.random() * 2.2 + 0.8,
+            alpha: Math.random() * 0.4 + 0.45,
+            pulse: Math.random() * Math.PI * 2,
+          });
         }
       }
     };
     const themeInterval = setInterval(rebuildParticles, 1000);
+
+    // Fade in callback: rebuild particles for new theme, then fade back in
+    const fadeIn = () => {
+      if (pendingRebuildRef.current) {
+        const newTheme = detectTheme();
+        initParticlesForTheme(newTheme);
+        pendingRebuildRef.current = false;
+        setOpacity(1);
+      }
+    };
+
+    // Watch for fade-out → schedule fade-in after CSS transition completes
+    useEffect(() => {
+      if (opacity === 0) {
+        const timer = setTimeout(fadeIn, TRANSITION_DURATION);
+        return () => clearTimeout(timer);
+      }
+    }, [opacity]);
 
     // Pause/resume on tab visibility change
     const handleVisibility = () => {
@@ -570,6 +601,8 @@ export function AnimatedBackground() {
         width: "100%",
         height: "100%",
         contain: "strict",
+        opacity,
+        transition: `opacity ${TRANSITION_DURATION}ms ease-in-out`,
       }}
       aria-hidden="true"
     />
