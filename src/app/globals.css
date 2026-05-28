@@ -1013,6 +1013,50 @@
   box-shadow: 0 0 8px rgba(255, 0, 255, 0.4);
 }
 
+/* Synthwave sunset glow — radial horizon effect */
+.synthwave .background-container::after {
+  content: "";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50vh;
+  pointer-events: none;
+  z-index: 9995;
+  background: radial-gradient(ellipse at 50% 100%, rgba(255, 0, 255, 0.08) 0%, rgba(0, 255, 255, 0.04) 40%, transparent 70%);
+}
+
+/* Synthwave section header ornament — neon divider */
+.synthwave .synthwave-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+.synthwave .synthwave-divider::before,
+.synthwave .synthwave-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #ff00ff60, transparent);
+}
+
+.synthwave .synthwave-divider span {
+  color: #00ffff;
+  font-size: 0.75rem;
+  font-family: var(--font-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+/* Synthwave heading glow */
+.synthwave h1.synthwave-neon-text,
+.synthwave h2.synthwave-neon-text {
+  filter: drop-shadow(0 0 16px rgba(255, 0, 255, 0.3));
+}
+
 /* ============================================================
    CASINO THEME
    Las Vegas / James Bond aesthetic. Deep reds, blacks,
