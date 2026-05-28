@@ -778,6 +778,41 @@
   text-indent: 0;
 }
 
+/* Newspaper experience timeline — ruled vertical line */
+.newspaper .newspaper-timeline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #1a1208;
+}
+
+/* Newspaper caption style */
+.newspaper .newspaper-caption {
+  font-family: var(--font-newspaper-body), serif;
+  font-size: 0.75rem;
+  color: #7a6b5a;
+  font-style: italic;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* Newspaper card hover effect — subtle shadow shift */
+.newspaper .newspaper-card:hover {
+  box-shadow: 2px 2px 0 rgba(26, 18, 8, 0.08);
+}
+
+/* Newspaper blockquote — indented with left rule */
+.newspaper blockquote {
+  border-left: 3px solid #1a1208;
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  color: #5c2e0e;
+  font-style: italic;
+}
+
 /* Mobile: single column to prevent layout thrashing */
 @media (max-width: 640px) {
   .newspaper .newspaper-body-columns {
