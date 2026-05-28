@@ -1160,6 +1160,35 @@
   box-shadow: 0 0 6px rgba(212, 168, 67, 0.3);
 }
 
+/* Casino section header ornament — gold divider */
+.casino .casino-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+.casino .casino-divider::before,
+.casino .casino-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d4a84360, transparent);
+}
+
+.casino .casino-divider span {
+  color: #d4a843;
+  font-size: 1rem;
+}
+
+/* Casino heading glow — subtle gold aura behind headings */
+.casino h1.casino-gold,
+.casino h2.casino-gold {
+  position: relative;
+  filter: drop-shadow(0 0 12px rgba(212, 168, 67, 0.25));
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
