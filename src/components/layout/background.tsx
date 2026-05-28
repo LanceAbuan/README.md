@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 
 /** Particle (star) for the constellation animation. */
 type Particle = {
@@ -325,6 +325,7 @@ export function AnimatedBackground() {
   const fractalsRef = useRef<Fractal[]>([]);
   const animRef = useRef<number>(0);
   const isRunningRef = useRef(true);
+  const [reducedMotion, setReducedMotion] = useState(true);
 
   const draw = useCallback(
     (_timestamp: number) => {
@@ -472,9 +473,16 @@ export function AnimatedBackground() {
     [],
   );
 
+  // Resolve reduced-motion preference after mount to avoid SSR mismatch.
+  // Start with reducedMotion=true (null render) and flip to false only when
+  // we know the user wants animations.
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    if (!prefersReducedMotion()) {
+      setReducedMotion(false);
+    }
+  }, []);
 
+  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d")!;
@@ -543,6 +551,7 @@ export function AnimatedBackground() {
     isRunningRef.current = true;
     animRef.current = requestAnimationFrame(draw);
 
+    // Cleanup particles on unmount
     return () => {
       isRunningRef.current = false;
       cancelAnimationFrame(animRef.current);
@@ -552,17 +561,11 @@ export function AnimatedBackground() {
     };
   }, [draw]);
 
-  // Static gradient fallback for reduced-motion
-  if (typeof window !== "undefined" && prefersReducedMotion()) {
-    return (
-      <div
-        className="fixed inset-0 -z-10 pointer-events-none"
-        style={{
-          background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)",
-        }}
-        aria-hidden="true"
-      />
-    );
+  // During SSR / before hydration, render a neutral gradient placeholder.
+  // This prevents hydration mismatches: the server can't know the user's
+  // reduced-motion preference, and the canvas dimensions aren't known yet.
+  if (reducedMotion) {
+    return null;
   }
 
   return (
