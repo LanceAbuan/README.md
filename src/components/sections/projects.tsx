@@ -17,6 +17,7 @@ export function Projects() {
   const { theme } = useTheme();
   const isTerminal = theme === "terminal";
   const isNewspaper = theme === "newspaper";
+  const isCasino = theme === "casino";
 
   return (
     <section id="projects" className="py-24 px-6" ref={ref}>
@@ -30,7 +31,19 @@ export function Projects() {
           )}
         >
           <div>
-            {isTerminal ? (
+            {isCasino ? (
+              <>
+                <p className="text-xs font-serif text-[#d4a843] mb-2 tracking-[0.3em] uppercase">
+                  THE HAND
+                </p>
+                <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#d4a843] casino-gold tracking-tight">
+                  Show Me What You&apos;ve Got
+                </h2>
+                <p className="text-[#c4b59e] font-serif mt-3 max-w-lg">
+                  Selected plays from the table.
+                </p>
+              </>
+            ) : isTerminal ? (
               <>
                 <p className="text-xs font-mono text-[#00aa30] mb-2 tracking-wider" data-terminal-prompt>
                   projects
@@ -71,6 +84,7 @@ export function Projects() {
                 buttonVariants({ variant: "ghost", className: "hidden sm:flex items-center gap-1 text-sm" }),
                 isTerminal && "rounded-none font-mono text-[#00ff41] hover:bg-[#0d1a0d]",
                 isNewspaper && "rounded-none font-serif text-[#5c2e0e] hover:bg-[#ddd2be]",
+                isCasino && "rounded-md font-serif text-[#d4a843] hover:bg-[#c41e1e40]",
               )}
             >
               View all <ArrowUpRight className="h-3.5 w-3.5" />
@@ -89,6 +103,7 @@ export function Projects() {
               index={i}
               isTerminal={isTerminal}
               isNewspaper={isNewspaper}
+              isCasino={isCasino}
             />
           ))}
         </div>
@@ -147,14 +162,58 @@ function ProjectCard({
   index,
   isTerminal,
   isNewspaper,
+  isCasino,
 }: {
   project: (typeof projects)[number];
   index: number;
   isTerminal: boolean;
   isNewspaper: boolean;
+  isCasino?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  if (isCasino) {
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 30 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+        transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
+      >
+        <div className="casino-felt p-5 h-full flex flex-col gap-3">
+          <div className="flex items-start justify-between">
+            <h3 className="text-base font-bold font-serif text-[#d4a843] casino-gold">
+              {project.name}
+            </h3>
+            <div className="flex items-center gap-1">
+              {project.demo && (
+                <Link href={project.demo} className="h-7 w-7 flex items-center justify-center text-[#d4a843] hover:bg-[#c41e1e40] rounded-md">
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </Link>
+              )}
+              <Link href={project.github} className="h-7 w-7 flex items-center justify-center text-[#d4a843] hover:bg-[#c41e1e40] rounded-md">
+                <GitFork className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </div>
+          {project.featured && (
+            <span className="casino-chip h-5 w-5 flex items-center justify-center text-[10px]">
+              ★
+            </span>
+          )}
+          <p className="text-sm text-[#f0e6d3] font-serif leading-relaxed flex-1">
+            {project.description}
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {project.tags.map((tag, i) => (
+              <span key={i} className="casino-chip text-[10px] px-2 py-0.5 rounded-full font-serif">{tag}</span>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
 
   if (isTerminal) {
     return (

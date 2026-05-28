@@ -11,6 +11,8 @@ import {
   Check,
   Newspaper,
   X,
+  Sparkles,
+  Trophy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +26,8 @@ const THEME_OPTIONS: Array<{
   { value: "system", label: "System", icon: <Monitor className="h-4 w-4" /> },
   { value: "terminal", label: "Terminal", icon: <Terminal className="h-4 w-4" /> },
   { value: "newspaper", label: "Newspaper", icon: <Newspaper className="h-4 w-4" /> },
+  { value: "synthwave", label: "Synthwave", icon: <Sparkles className="h-4 w-4" /> },
+  { value: "casino", label: "Casino", icon: <Trophy className="h-4 w-4" /> },
   { value: "custom", label: "Custom", icon: <Palette className="h-4 w-4" /> },
 ];
 
