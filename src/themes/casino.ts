@@ -2,19 +2,20 @@
  * ============================================================
  * CASINO THEME
  * ============================================================
- * Las Vegas / James Bond aesthetic. Deep reds, blacks,
+ * Las Vegas / high-roller aesthetic. Deep reds, blacks,
  * and gold accents. Elegant serif headings. Velvet-drape
  * background. Felt-green card surfaces.
  *
- * Gimmick: Coin-flip navigation. When a user clicks any nav
- * link, a coin-flip animation plays. Heads = they navigate.
- * Tails = they get "Better luck next time" and stay put.
+ * Layout: card-table inspired. Sections flow like a poker
+ * table — felt-green cards with gold trim, chip-style badges,
+ * playing-card corner ornaments. Clean, premium, no gimmicks.
  *
  * Visual effects (handled in globals.css):
  *   - .casino: Deep red/black/gold color vars
  *   - .casino-felt: Green felt texture on cards
  *   - .casino-gold: Gold shimmer text
  *   - .casino-chip: Roulette chip-style badges
+ *   - .casino-card-ornament: Playing card corner decorations
  * ============================================================
  */
 import { ThemeConfig } from "./types";
@@ -109,9 +110,9 @@ export const casinoTheme: ThemeConfig = {
   },
 
   features: {
-    coinFlip: true,
+    coinFlip: false,
     typingAnimation: false,
     scrollArrows: false,
-    customLayout: false,
+    customLayout: true,
   },
 };

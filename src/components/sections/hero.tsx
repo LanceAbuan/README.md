@@ -11,6 +11,7 @@ export function Hero() {
   const { theme } = useTheme();
   const isTerminal = theme === "terminal";
   const isNewspaper = theme === "newspaper";
+  const isCasino = theme === "casino";
 
   if (isTerminal) {
     return <HeroTerminal />;
@@ -18,6 +19,10 @@ export function Hero() {
 
   if (isNewspaper) {
     return <HeroNewspaper />;
+  }
+
+  if (isCasino) {
+    return <HeroCasino />;
   }
 
   return <HeroDefault />;
@@ -209,6 +214,128 @@ function HeroTerminal() {
    NEWSPAPER HERO
    Full masthead with volume line, headline, deck, and byline.
    ============================================================ */
+/* ============================================================
+   CASINO HERO
+   High-roller aesthetic. Gold-accented headline on felt,
+   chip-style badge, velvet-drape vibe.
+   ============================================================ */
+function HeroCasino() {
+  return (
+    <section className="min-h-screen flex items-center justify-center px-6 pt-16">
+      <div className="max-w-3xl mx-auto text-center">
+        {/* Decorative suit symbols */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="flex items-center justify-center gap-6 text-2xl text-[#d4a84360] mb-6"
+        >
+          <span>♠</span>
+          <span className="text-[#d4a84330] text-lg">◆</span>
+          <span>♥</span>
+          <span className="text-[#d4a84330] text-lg">◆</span>
+          <span>♦</span>
+        </motion.div>
+
+        {/* Title chip */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#d4a84340] bg-[#1a0a0a]/80 mb-6"
+        >
+          <span className="text-xs font-serif text-[#d4a843] tracking-[0.2em] uppercase">
+            Software Developer
+          </span>
+        </motion.div>
+
+        {/* Main headline */}
+        <motion.h1
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-serif tracking-tight leading-[1.1] mb-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <span className="block text-[#f0e6d3]">Hi, I&apos;m Lance Abuan</span>
+          <span className="block text-[#d4a843] casino-gold text-2xl sm:text-3xl md:text-4xl mt-2 font-serif">
+            I build things that scale
+          </span>
+        </motion.h1>
+
+        {/* Subtitle */}
+        <motion.p
+          className="mt-6 text-base sm:text-lg text-[#c4b59e] max-w-xl mx-auto leading-relaxed font-serif"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+        >
+          Currently developing AI tools and agentic workflows at{" "}
+          <span className="text-[#d4a843] font-medium">Saltech Systems</span>.
+          Building intelligent systems that automate complex workflows and push
+          the boundaries of what AI agents can do.
+        </motion.p>
+
+        {/* CTA buttons */}
+        <motion.div
+          className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.7 }}
+        >
+          <Link
+            href="#projects"
+            className={cn(
+              buttonVariants({
+                className:
+                  "casino-btn px-8 text-sm tracking-wider",
+              }),
+            )}
+          >
+            View Projects
+          </Link>
+          <Link
+            href="#contact"
+            className={cn(
+              buttonVariants({
+                variant: "outline",
+                className:
+                  "rounded-md px-8 text-sm font-serif tracking-wider border border-[#d4a84340] text-[#d4a843] hover:bg-[#d4a843] hover:text-[#1a0a0a] bg-transparent transition-colors",
+              }),
+            )}
+          >
+            Get In Touch
+          </Link>
+        </motion.div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          className="mt-16 animate-bounce cursor-pointer"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 1.1 }}
+          onClick={() => {
+            document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
+          }}
+        >
+          <svg
+            className="w-5 h-5 mx-auto text-[#d4a843]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
 function HeroNewspaper() {
   return (
     <section className="min-h-screen flex items-center justify-center px-6 pt-16">
