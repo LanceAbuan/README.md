@@ -541,8 +541,9 @@ export function AnimatedBackground() {
     };
     const themeInterval = setInterval(rebuildParticles, 1000);
 
-    // Fade in callback: rebuild particles for new theme, then fade back in
-    const fadeIn = () => {
+    // Fade transition: when theme changes, fade out → rebuild → fade in
+    const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const triggerFadeIn = () => {
       if (pendingRebuildRef.current) {
         const newTheme = detectTheme();
         initParticlesForTheme(newTheme);
@@ -551,13 +552,15 @@ export function AnimatedBackground() {
       }
     };
 
-    // Watch for fade-out → schedule fade-in after CSS transition completes
-    useEffect(() => {
-      if (opacity === 0) {
-        const timer = setTimeout(fadeIn, TRANSITION_DURATION);
-        return () => clearTimeout(timer);
+    // We track lastTheme inside the interval callback.
+    // Instead of a nested useEffect (invalid), we use setInterval
+    // to poll for the fade-out flag and trigger fade-in.
+    const fadeLoop = setInterval(() => {
+      if (pendingRebuildRef.current) {
+        if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
+        fadeTimerRef.current = setTimeout(triggerFadeIn, TRANSITION_DURATION);
       }
-    }, [opacity]);
+    }, 50);
 
     // Pause/resume on tab visibility change
     const handleVisibility = () => {
@@ -579,6 +582,8 @@ export function AnimatedBackground() {
       isRunningRef.current = false;
       cancelAnimationFrame(animRef.current);
       clearInterval(themeInterval);
+      clearInterval(fadeLoop);
+      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMove);
       document.removeEventListener("visibilitychange", handleVisibility);
