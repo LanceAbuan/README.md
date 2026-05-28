@@ -41,7 +41,7 @@ export const synthwaveTheme: ThemeConfig = {
 
   typography: {
     bodyFont: "var(--font-sans)",
-    headingFont: "'Orbitron', var(--font-sans)",
+    headingFont: "var(--font-synthwave), var(--font-sans)",
     headingWeight: "700",
     headingTransform: "uppercase",
     letterSpacing: "0.05em",

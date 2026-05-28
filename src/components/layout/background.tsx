@@ -9,7 +9,6 @@ type Particle = {
   vx: number;
   vy: number;
   r: number;
-  hue: number;
   alpha: number;
   pulse: number;
 };
@@ -96,7 +95,7 @@ const THEME_COLORS: Record<
     fractalStroke: "122,107,90",
     fractalFill: "196,181,158",
     connection: "122,107,90",
-    connectionAlpha: 0.03,
+    connectionAlpha: 0.06,
     particleColor: "122,107,90",
     particleCore: "92,46,14",
     glowRadius: 4,
@@ -106,7 +105,7 @@ const THEME_COLORS: Record<
     fractalStroke: "255,0,255",
     fractalFill: "0,255,255",
     connection: "0,255,255",
-    connectionAlpha: 0.1,
+    connectionAlpha: 0.12,
     particleColor: "255,0,255",
     particleCore: "0,255,255",
     glowRadius: 6,
@@ -116,7 +115,7 @@ const THEME_COLORS: Record<
     fractalStroke: "212,168,67",
     fractalFill: "196,30,30",
     connection: "196,30,30",
-    connectionAlpha: 0.06,
+    connectionAlpha: 0.08,
     particleColor: "212,168,67",
     particleCore: "255,215,0",
     glowRadius: 5,
@@ -168,7 +167,12 @@ function drawSierpinski(
 }
 
 /** Draw nested hexagon fractal. */
-function drawHexagon(ctx: CanvasRenderingContext2D, x: number, y: number, size: number) {
+function drawHexagon(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  size: number,
+) {
   for (let layer = 3; layer >= 1; layer--) {
     const r = size * (layer / 3);
     ctx.beginPath();
@@ -185,7 +189,12 @@ function drawHexagon(ctx: CanvasRenderingContext2D, x: number, y: number, size: 
 }
 
 /** Draw diamond fractal. */
-function drawDiamond(ctx: CanvasRenderingContext2D, x: number, y: number, size: number) {
+function drawDiamond(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  size: number,
+) {
   ctx.save();
   ctx.translate(x, y);
   for (let layer = 3; layer >= 1; layer--) {
@@ -317,6 +326,7 @@ function drawParticleShape(
  * - Pauses animation when tab is hidden
  * - Spatial hash grid for O(n) connection lookups instead of O(n²)
  * - CSS containment for better compositing
+ * - Lazy mount: canvas only mounts after hydration to avoid SSR mismatch
  */
 export function AnimatedBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -324,8 +334,8 @@ export function AnimatedBackground() {
   const particlesRef = useRef<Particle[]>([]);
   const fractalsRef = useRef<Fractal[]>([]);
   const animRef = useRef<number>(0);
-  const isRunningRef = useRef(true);
-  const [reducedMotion, setReducedMotion] = useState(true);
+  const isRunningRef = useRef(false);
+  const [mounted, setMounted] = useState(false);
 
   const draw = useCallback(
     (_timestamp: number) => {
@@ -340,9 +350,8 @@ export function AnimatedBackground() {
       const theme = detectTheme();
       const tc = THEME_COLORS[theme] ?? THEME_COLORS.dark;
 
-      // Layer 1: Fractals (with natural sinusoidal drift)
+      /* ── Layer 1: Floating fractals ── */
       ctx.save();
-      ctx.globalAlpha = 1;
       fractalsRef.current.forEach((f) => {
         f.driftPhase += f.driftSpeed;
         const driftX = Math.sin(f.driftPhase) * 0.3;
@@ -350,6 +359,8 @@ export function AnimatedBackground() {
         f.x += f.vx + driftX;
         f.y += f.vy + driftY;
         f.rotation += 0.001;
+
+        // Wrap
         if (f.x < -100) f.x = w + 100;
         if (f.x > w + 100) f.x = -100;
         if (f.y < -100) f.y = h + 100;
@@ -370,7 +381,7 @@ export function AnimatedBackground() {
       });
       ctx.restore();
 
-      // Layer 2: Particles + connections
+      /* ── Layer 2: Particles + connections ── */
       const particles = particlesRef.current;
 
       // Update positions
@@ -452,7 +463,10 @@ export function AnimatedBackground() {
         const glowRadius = p.r * tc.glowRadius;
 
         // Glow halo
-        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowRadius);
+        const grad = ctx.createRadialGradient(
+          p.x, p.y, 0,
+          p.x, p.y, glowRadius,
+        );
         grad.addColorStop(0, `rgba(${tc.particleColor},${pulseAlpha})`);
         grad.addColorStop(0.4, `rgba(${tc.particleColor},${pulseAlpha * 0.4})`);
         grad.addColorStop(1, `rgba(${tc.particleColor},0)`);
@@ -473,16 +487,15 @@ export function AnimatedBackground() {
     [],
   );
 
-  // Resolve reduced-motion preference after mount to avoid SSR mismatch.
-  // Start with reducedMotion=true (null render) and flip to false only when
-  // we know the user wants animations.
+  /* ── Mount canvas after hydration to avoid SSR mismatch ── */
   useEffect(() => {
-    if (!prefersReducedMotion()) {
-      setReducedMotion(false);
-    }
+    setMounted(true);
   }, []);
 
   useEffect(() => {
+    if (!mounted) return;
+    if (prefersReducedMotion()) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d")!;
@@ -513,13 +526,12 @@ export function AnimatedBackground() {
         vx: (Math.random() - 0.5) * 0.3,
         vy: (Math.random() - 0.5) * 0.3,
         r: Math.random() * 2.2 + 0.8,
-        hue: Math.random() > 0.5 ? 25 + Math.random() * 20 : 200 + Math.random() * 30,
         alpha: Math.random() * 0.4 + 0.45,
         pulse: Math.random() * Math.PI * 2,
       });
     }
 
-    // Init fractals
+    // Init fractals — boosted alpha so they're actually visible
     for (let i = 0; i < 5; i++) {
       fractalsRef.current.push({
         x: Math.random() * pw,
@@ -527,7 +539,7 @@ export function AnimatedBackground() {
         size: Math.random() * 40 + 25,
         rotation: Math.random() * Math.PI * 2,
         type: Math.floor(Math.random() * 3),
-        alpha: 0.04 + Math.random() * 0.03,
+        alpha: 0.08 + Math.random() * 0.06,
         vx: (Math.random() - 0.5) * 0.15,
         vy: (Math.random() - 0.5) * 0.15,
         driftPhase: Math.random() * Math.PI * 2,
@@ -547,24 +559,24 @@ export function AnimatedBackground() {
     };
     document.addEventListener("visibilitychange", handleVisibility);
 
-    // Start
+    // Start animation loop
     isRunningRef.current = true;
     animRef.current = requestAnimationFrame(draw);
 
-    // Cleanup particles on unmount
     return () => {
       isRunningRef.current = false;
       cancelAnimationFrame(animRef.current);
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMove);
       document.removeEventListener("visibilitychange", handleVisibility);
+      // Clear refs
+      particlesRef.current = [];
+      fractalsRef.current = [];
     };
-  }, [draw]);
+  }, [mounted, draw]);
 
-  // During SSR / before hydration, render a neutral gradient placeholder.
-  // This prevents hydration mismatches: the server can't know the user's
-  // reduced-motion preference, and the canvas dimensions aren't known yet.
-  if (reducedMotion) {
+  /* ── SSR / pre-mount: render nothing to avoid hydration mismatch ── */
+  if (!mounted) {
     return null;
   }
 
