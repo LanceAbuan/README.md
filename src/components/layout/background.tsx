@@ -224,6 +224,7 @@ export function AnimatedBackground() {
   const animRef = useRef<number>(0);
   const isRunningRef = useRef(false);
   const lastThemeRef = useRef<string>("dark");
+  const ensureParticlesRef = useRef<(theme: string) => void>(() => {});
   const [mounted, setMounted] = useState(false);
   const [opacity, setOpacity] = useState(1);
 
@@ -242,10 +243,13 @@ export function AnimatedBackground() {
       const theme = detectTheme();
       const tc = THEME_COLORS[theme] ?? THEME_COLORS.dark;
 
-      // Sync lastThemeRef so observer doesn't re-trigger on initial load
+      // Sync lastThemeRef on first frame so observer doesn't fire on init
       if (lastThemeRef.current === "dark" && mounted) {
         lastThemeRef.current = theme;
       }
+
+      // Lazy-init: ensure the current theme's particle pool is populated
+      ensureParticlesRef.current(theme);
 
       // Use themed characters when available, otherwise classic particles
       const hasTheme = (THEME_CHARS_REF[theme] ?? []).length > 0;
@@ -428,82 +432,73 @@ export function AnimatedBackground() {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (!mounted) return;
-    if (prefersReducedMotion()) return;
+  // Lazily create particles for a theme — called on first frame or on theme switch
+  const ensureParticles = useCallback(
+    (theme: string) => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const count = getParticleCount();
+      const chars = THEME_CHARS_REF[theme] ?? [];
 
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d")!;
-    const dpr = window.devicePixelRatio || 1;
-
-    function resize() {
-      canvas!.width = window.innerWidth * dpr;
-      canvas!.height = window.innerHeight * dpr;
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(dpr, dpr);
-    }
-    resize();
-    window.addEventListener("resize", resize);
-
-    function onMove(e: MouseEvent) {
-      mouseRef.current = { x: e.clientX, y: e.clientY };
-    }
-    window.addEventListener("mousemove", onMove);
-
-    // Init particles based on theme
-    const count = getParticleCount();
-    const pw = window.innerWidth;
-    const ph = window.innerHeight;
-    const currentTheme = detectTheme();
-    const chars = THEME_CHARS_REF[currentTheme] ?? [];
-
-    if (chars.length > 0) {
-      // Themed character particles
-      for (let i = 0; i < count; i++) {
-        themedRef.current.push({
-          x: Math.random() * pw,
-          y: Math.random() * ph,
-          char: chars[Math.floor(Math.random() * chars.length)],
-          size: Math.random() * 10 + 18,
-          alpha: Math.random() * 0.4 + 0.6,
-          pulse: Math.random() * Math.PI * 2,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          driftPhase: Math.random() * Math.PI * 2,
-          driftSpeed: 0.005 + Math.random() * 0.01,
-          rotationSpeed: (Math.random() - 0.5) * 0.003,
-          rotation: Math.random() * Math.PI * 2,
-        });
+      if (chars.length > 0) {
+        // Need themed particles but pool is empty → fill it
+        if (themedRef.current.length === 0) {
+          for (let i = 0; i < count; i++) {
+            themedRef.current.push({
+              x: Math.random() * w,
+              y: Math.random() * h,
+              char: chars[Math.floor(Math.random() * chars.length)],
+              size: Math.random() * 10 + 18,
+              alpha: Math.random() * 0.4 + 0.6,
+              pulse: Math.random() * Math.PI * 2,
+              vx: (Math.random() - 0.5) * 0.3,
+              vy: (Math.random() - 0.5) * 0.3,
+              driftPhase: Math.random() * Math.PI * 2,
+              driftSpeed: 0.005 + Math.random() * 0.01,
+              rotationSpeed: (Math.random() - 0.5) * 0.003,
+              rotation: Math.random() * Math.PI * 2,
+            });
+          }
+        }
+        particlesRef.current = [];
+      } else {
+        // Need classic particles but pool is empty → fill it
+        if (particlesRef.current.length === 0) {
+          for (let i = 0; i < count; i++) {
+            particlesRef.current.push({
+              x: Math.random() * w,
+              y: Math.random() * h,
+              vx: (Math.random() - 0.5) * 0.3,
+              vy: (Math.random() - 0.5) * 0.3,
+              r: Math.random() * 2.2 + 0.8,
+              alpha: Math.random() * 0.4 + 0.45,
+              pulse: Math.random() * Math.PI * 2,
+            });
+          }
+        }
+        themedRef.current = [];
       }
-    } else {
-      // Classic circle particles
-      for (let i = 0; i < count; i++) {
-        particlesRef.current.push({
-          x: Math.random() * pw,
-          y: Math.random() * ph,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          r: Math.random() * 2.2 + 0.8,
-          alpha: Math.random() * 0.4 + 0.45,
-          pulse: Math.random() * Math.PI * 2,
-        });
-      }
-    }
+    },
+    [],
+  );
 
-    // Helper to rebuild particle arrays for a given theme
-    const initParticlesForTheme = (theme: string, w: number, h: number, count: number) => {
-      const newChars = THEME_CHARS_REF[theme] ?? [];
+  // Full rebuild for a theme (used on theme switch)
+  const rebuildForTheme = useCallback(
+    (theme: string) => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const count = getParticleCount();
+      const chars = THEME_CHARS_REF[theme] ?? [];
 
       themedRef.current = [];
       particlesRef.current = [];
 
-      if (newChars.length > 0) {
+      if (chars.length > 0) {
         for (let i = 0; i < count; i++) {
           themedRef.current.push({
             x: Math.random() * w,
             y: Math.random() * h,
-            char: newChars[Math.floor(Math.random() * newChars.length)],
+            char: chars[Math.floor(Math.random() * chars.length)],
             size: Math.random() * 10 + 18,
             alpha: Math.random() * 0.4 + 0.6,
             pulse: Math.random() * Math.PI * 2,
@@ -528,17 +523,37 @@ export function AnimatedBackground() {
           });
         }
       }
-    };
+    },
+    [],
+  );
 
-    // Fade transition: when theme changes, fade out → rebuild → fade in
-    const rebuildForTheme = (newTheme: string) => {
-      const cw = window.innerWidth;
-      const ch = window.innerHeight;
-      const newCount = getParticleCount();
+  // Keep a stable ref so draw (which has [] deps) can call it
+  useEffect(() => {
+    ensureParticlesRef.current = ensureParticles;
+  }, [ensureParticles]);
 
-      initParticlesForTheme(newTheme, cw, ch, newCount);
-      lastThemeRef.current = newTheme;
-    };
+  useEffect(() => {
+    if (!mounted) return;
+    if (prefersReducedMotion()) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d")!;
+    const dpr = window.devicePixelRatio || 1;
+
+    function resize() {
+      canvas!.width = window.innerWidth * dpr;
+      canvas!.height = window.innerHeight * dpr;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    function onMove(e: MouseEvent) {
+      mouseRef.current = { x: e.clientX, y: e.clientY };
+    }
+    window.addEventListener("mousemove", onMove);
 
     // Use MutationObserver to detect theme class changes on <html>
     const observer = new MutationObserver(() => {
@@ -550,6 +565,7 @@ export function AnimatedBackground() {
         // After CSS transition finishes, rebuild and fade back in
         setTimeout(() => {
           rebuildForTheme(newTheme);
+          lastThemeRef.current = newTheme;
           setOpacity(1);
         }, TRANSITION_DURATION);
       }
@@ -583,11 +599,10 @@ export function AnimatedBackground() {
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMove);
       document.removeEventListener("visibilitychange", handleVisibility);
-      // Clear refs
       particlesRef.current = [];
       themedRef.current = [];
     };
-  }, [mounted, draw]);
+  }, [mounted, draw, rebuildForTheme]);
 
   /* ── SSR / pre-mount: render nothing to avoid hydration mismatch ── */
   if (!mounted) {
