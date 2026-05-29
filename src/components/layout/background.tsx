@@ -617,7 +617,7 @@ export function AnimatedBackground() {
         width: "100%",
         height: "100%",
         contain: "strict",
-        zIndex: -2, /* above theme overlays (-10) but below all content */
+        zIndex: -1, /* above theme overlays (-999) but below all content */
         opacity,
         transition: `opacity ${TRANSITION_DURATION}ms ease-in-out`,
       }}
