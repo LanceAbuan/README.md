@@ -1,13 +1,11 @@
 "use client";
 
 import { Separator } from "@/components/ui/separator";
-import { useTheme } from "next-themes";
 import { useThemeConfig } from "@/hooks/use-theme-config";
 import { cn } from "@/lib/utils";
 
 export function Footer() {
   const year = new Date().getFullYear();
-  const { theme } = useTheme();
   const config = useThemeConfig();
 
   // For newspaper, render triple rule + editorial footer
@@ -31,8 +29,7 @@ export function Footer() {
         <div className="max-w-4xl mx-auto flex flex-col items-center gap-4">
           <div className="w-full border-t border-[#00ff4130]" />
           <p className={config.footer.textClass}>
-            {/* eslint-disable-next-line @next/next/no-svg */}
-            &lt;/&gt; {year} Lance Abuan &bull; Next.js &bull; shadcn/ui
+            {'</>'} {year} Lance Abuan &bull; Next.js &bull; shadcn/ui
           </p>
         </div>
       </footer>
