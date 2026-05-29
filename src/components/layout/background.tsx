@@ -226,6 +226,7 @@ export function AnimatedBackground() {
   const [mounted, setMounted] = useState(false);
   const [opacity, setOpacity] = useState(1);
   const pendingRebuildRef = useRef(false);
+  const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const THEME_CHARS_REF = THEME_CHARS;
 
@@ -542,7 +543,6 @@ export function AnimatedBackground() {
     const themeInterval = setInterval(rebuildParticles, 1000);
 
     // Fade transition: when theme changes, fade out → rebuild → fade in
-    const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const triggerFadeIn = () => {
       if (pendingRebuildRef.current) {
         const newTheme = detectTheme();
