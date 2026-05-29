@@ -223,10 +223,9 @@ export function AnimatedBackground() {
   const themedRef = useRef<ThemedParticle[]>([]);
   const animRef = useRef<number>(0);
   const isRunningRef = useRef(false);
+  const lastThemeRef = useRef<string>("dark");
   const [mounted, setMounted] = useState(false);
   const [opacity, setOpacity] = useState(1);
-  const pendingRebuildRef = useRef(false);
-  const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const THEME_CHARS_REF = THEME_CHARS;
 
@@ -242,6 +241,11 @@ export function AnimatedBackground() {
 
       const theme = detectTheme();
       const tc = THEME_COLORS[theme] ?? THEME_COLORS.dark;
+
+      // Sync lastThemeRef so observer doesn't re-trigger on initial load
+      if (lastThemeRef.current === "dark" && mounted) {
+        lastThemeRef.current = theme;
+      }
 
       // Use themed characters when available, otherwise classic particles
       const hasTheme = (THEME_CHARS_REF[theme] ?? []).length > 0;
@@ -487,24 +491,9 @@ export function AnimatedBackground() {
       }
     }
 
-    // Reinit on theme change (with fade transition)
-    let lastTheme = currentTheme;
-    const rebuildParticles = () => {
-      const newTheme = detectTheme();
-      if (newTheme !== lastTheme) {
-        lastTheme = newTheme;
-
-        // Fade out
-        setOpacity(0);
-        pendingRebuildRef.current = true;
-      }
-    };
-
     // Helper to rebuild particle arrays for a given theme
-    const initParticlesForTheme = (theme: string) => {
+    const initParticlesForTheme = (theme: string, w: number, h: number, count: number) => {
       const newChars = THEME_CHARS_REF[theme] ?? [];
-      const cw = window.innerWidth;
-      const ch = window.innerHeight;
 
       themedRef.current = [];
       particlesRef.current = [];
@@ -512,8 +501,8 @@ export function AnimatedBackground() {
       if (newChars.length > 0) {
         for (let i = 0; i < count; i++) {
           themedRef.current.push({
-            x: Math.random() * cw,
-            y: Math.random() * ch,
+            x: Math.random() * w,
+            y: Math.random() * h,
             char: newChars[Math.floor(Math.random() * newChars.length)],
             size: Math.random() * 10 + 18,
             alpha: Math.random() * 0.4 + 0.6,
@@ -529,8 +518,8 @@ export function AnimatedBackground() {
       } else {
         for (let i = 0; i < count; i++) {
           particlesRef.current.push({
-            x: Math.random() * cw,
-            y: Math.random() * ch,
+            x: Math.random() * w,
+            y: Math.random() * h,
             vx: (Math.random() - 0.5) * 0.3,
             vy: (Math.random() - 0.5) * 0.3,
             r: Math.random() * 2.2 + 0.8,
@@ -540,27 +529,36 @@ export function AnimatedBackground() {
         }
       }
     };
-    const themeInterval = setInterval(rebuildParticles, 1000);
 
     // Fade transition: when theme changes, fade out → rebuild → fade in
-    const triggerFadeIn = () => {
-      if (pendingRebuildRef.current) {
-        const newTheme = detectTheme();
-        initParticlesForTheme(newTheme);
-        pendingRebuildRef.current = false;
-        setOpacity(1);
-      }
+    const rebuildForTheme = (newTheme: string) => {
+      const cw = window.innerWidth;
+      const ch = window.innerHeight;
+      const newCount = getParticleCount();
+
+      initParticlesForTheme(newTheme, cw, ch, newCount);
+      lastThemeRef.current = newTheme;
     };
 
-    // We track lastTheme inside the interval callback.
-    // Instead of a nested useEffect (invalid), we use setInterval
-    // to poll for the fade-out flag and trigger fade-in.
-    const fadeLoop = setInterval(() => {
-      if (pendingRebuildRef.current) {
-        if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
-        fadeTimerRef.current = setTimeout(triggerFadeIn, TRANSITION_DURATION);
+    // Use MutationObserver to detect theme class changes on <html>
+    const observer = new MutationObserver(() => {
+      const newTheme = detectTheme();
+      if (newTheme !== lastThemeRef.current) {
+        // Fade out immediately
+        setOpacity(0);
+
+        // After CSS transition finishes, rebuild and fade back in
+        setTimeout(() => {
+          rebuildForTheme(newTheme);
+          setOpacity(1);
+        }, TRANSITION_DURATION);
       }
-    }, 50);
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
 
     // Pause/resume on tab visibility change
     const handleVisibility = () => {
@@ -581,9 +579,7 @@ export function AnimatedBackground() {
     return () => {
       isRunningRef.current = false;
       cancelAnimationFrame(animRef.current);
-      clearInterval(themeInterval);
-      clearInterval(fadeLoop);
-      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
+      observer.disconnect();
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMove);
       document.removeEventListener("visibilitychange", handleVisibility);
