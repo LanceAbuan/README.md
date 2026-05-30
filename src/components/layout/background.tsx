@@ -610,7 +610,7 @@ export function AnimatedBackground() {
   }
 
   return (
-    <div className="background-container fixed inset-0 pointer-events-none" style={{ zIndex: -1 }}>
+    <div className="background-container fixed inset-0 pointer-events-none" style={{ zIndex: 0 }}>
       <canvas
         ref={canvasRef}
         className="fixed inset-0 pointer-events-none"
