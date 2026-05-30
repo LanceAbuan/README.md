@@ -128,6 +128,18 @@ export function Navbar() {
               <Download className="h-3.5 w-3.5" />
             </a>
             <ThemeSelector />
+            {theme === "casino" && (
+              <button
+                onClick={() => setGamesOpen(true)}
+                className={cn(
+                  "inline-flex items-center justify-center h-8 w-8 rounded-lg text-sm font-medium transition-colors hover:bg-[#2a0a0a]",
+                  "text-[#d4af37] border border-[#d4af3715]",
+                )}
+                aria-label="Open games"
+              >
+                <Gamepad2 className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
 
           {/* Mobile */}
