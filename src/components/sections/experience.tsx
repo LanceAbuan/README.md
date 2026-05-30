@@ -28,7 +28,7 @@ export function Experience() {
           {isCasino ? (
             <div className="text-center mb-12">
               <p className="casino-label mb-2">
-                ♠ TRACK RECORD ♥
+                TRACK RECORD
               </p>
               <h2 className="text-3xl sm:text-4xl font-bold font-serif casino-neon tracking-tight">
                 High Stakes History
@@ -36,7 +36,7 @@ export function Experience() {
               <div className="casino-divider mt-4 mb-4">
                 <span>♦</span>
               </div>
-              <p className="text-[#d1d5db] font-serif mt-3 max-w-lg mx-auto">
+              <p className="text-[#fef3c7] font-serif mt-3 max-w-lg mx-auto">
                 A career built on calculated risks and winning plays.
               </p>
             </div>
@@ -158,7 +158,7 @@ function ExperienceCard({
             <h3 className="text-lg font-bold font-serif text-[#fef3c7]">
               {exp.role}
             </h3>
-            <span className="text-xs text-[#d1d5db] font-serif whitespace-nowrap pt-0.5">
+            <span className="text-xs text-[#fef3c7] font-serif whitespace-nowrap pt-0.5">
               {exp.period}
             </span>
           </div>

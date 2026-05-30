@@ -35,7 +35,7 @@ export function About() {
               <div className="casino-divider mt-4 mb-4">
                 <span>♦</span>
               </div>
-              <p className="text-[#d1d5db] font-serif mt-3 max-w-lg mx-auto">
+              <p className="text-[#fef3c7] font-serif mt-3 max-w-lg mx-auto">
                 Every great hand starts with reading the table.
               </p>
             </div>
@@ -344,7 +344,7 @@ function AboutStatCard({
     return (
       <div className="casino-card-red text-center flex flex-col items-center justify-center p-4 gap-2">
         <Icon className="h-5 w-5 text-[#dc2626] mx-auto flex-shrink-0" />
-        <span className="text-[10px] text-[#d1d5db] uppercase tracking-wider font-serif block">
+        <span className="text-[10px] text-[#fef3c7] uppercase tracking-wider font-serif block">
           {stat.label}
         </span>
         <span className="text-sm font-bold font-serif text-[#dc2626] leading-tight" style={{ textShadow: '0 0 8px rgba(224,16,32,0.4)' }}>

@@ -25,12 +25,12 @@ export function Skills() {
           {isCasino ? (
             <div className="text-center mb-12">
               <p className="casino-label mb-2">
-                ♠ ARSENAL ♥
+                ARSENAL
               </p>
               <h2 className="text-3xl sm:text-4xl font-bold font-serif casino-neon tracking-tight">
                 Tools of the Trade
               </h2>
-              <p className="text-[#d1d5db] font-serif mt-3 max-w-lg mx-auto">
+              <p className="text-[#fef3c7] font-serif mt-3 max-w-lg mx-auto">
                 The skills that keep the edge sharp.
               </p>
             </div>

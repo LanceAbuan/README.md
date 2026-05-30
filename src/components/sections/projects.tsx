@@ -34,12 +34,12 @@ export function Projects() {
             {isCasino ? (
               <>
                 <p className="casino-label mb-2">
-                  ♠ THE HAND ♥
+                  THE HAND
                 </p>
                 <h2 className="text-3xl sm:text-4xl font-bold font-serif casino-neon tracking-tight">
                   Show Me What You&apos;ve Got
                 </h2>
-                <p className="text-[#d1d5db] font-serif mt-3 max-w-lg">
+                <p className="text-[#fef3c7] font-serif mt-3 max-w-lg">
                   Selected plays from the table.
                 </p>
               </>

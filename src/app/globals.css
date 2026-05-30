@@ -1155,35 +1155,30 @@
   color: #f59e0b;
 }
 
-/* Neon red text glow */
+/* Accent heading — clean, no glow */
 .casino .casino-neon {
-  color: #ff0040;
-  text-shadow:
-    0 0 7px #ff0040,
-    0 0 15px rgba(255, 0, 64, 0.6),
-    0 0 30px rgba(255, 0, 64, 0.3);
+  color: #ffffff;
+  letter-spacing: -0.01em;
 }
 
-/* Red felt card */
+/* Card — thin gold border, clean elevation */
 .casino .casino-card {
-  border: 1px solid rgba(220, 38, 38, 0.25) !important;
-  border-radius: 0.75rem !important;
-  background: linear-gradient(145deg, rgba(45, 8, 8, 0.95) 0%, rgba(30, 3, 3, 0.98) 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.15) !important;
+  border-radius: 0.375rem !important;
+  background: rgba(18, 6, 6, 0.85) !important;
   backdrop-filter: blur(8px);
-  box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.6),
-    0 0 1px rgba(220, 38, 38, 0.3);
-  color: #fef3c7;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  color: #f5f0e8;
 }
 
-/* Playing card surface — white card with red accents */
+/* Playing card surface — subtle, refined */
 .casino .casino-playing-card {
-  border: 1px solid rgba(220, 38, 38, 0.2) !important;
-  border-radius: 0.75rem !important;
-  background: linear-gradient(135deg, rgba(255, 247, 237, 0.06) 0%, rgba(255, 247, 237, 0.02) 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.12) !important;
+  border-radius: 0.375rem !important;
+  background: rgba(18, 6, 6, 0.85) !important;
   backdrop-filter: blur(8px);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-  color: #fef3c7;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  color: #f5f0e8;
   position: relative;
   overflow: hidden;
 }
@@ -1198,55 +1193,47 @@
   color: rgba(220, 38, 38, 0.15);
 }
 
-/* Neon glow box */
+/* Subtle accent border — no glow */
 .casino .casino-neon-box {
-  border: 1px solid rgba(255, 0, 64, 0.3) !important;
-  box-shadow:
-    0 0 10px rgba(255, 0, 64, 0.1),
-    0 0 30px rgba(255, 0, 64, 0.05),
-    inset 0 0 10px rgba(255, 0, 64, 0.03);
+  border: 1px solid rgba(180, 30, 30, 0.25) !important;
 }
 
-/* Chip badge */
+/* Chip badge — thin, muted */
 .casino .casino-chip {
-  border-radius: 9999px !important;
-  border: 2px solid rgba(220, 38, 38, 0.5) !important;
-  background: rgba(40, 5, 5, 0.8) !important;
-  color: #ff6b6b !important;
-  font-size: 0.65rem !important;
-  font-weight: 700;
+  border-radius: 0.25rem !important;
+  border: 1px solid rgba(180, 30, 30, 0.3) !important;
+  background: rgba(40, 8, 8, 0.5) !important;
+  color: #d4a0a0 !important;
+  font-size: 0.625rem !important;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 0.2rem 0.7rem !important;
-  box-shadow: 0 0 8px rgba(220, 38, 38, 0.15), 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.08em;
+  padding: 0.15rem 0.6rem !important;
   white-space: nowrap;
 }
 
 /* Gold chip variant */
 .casino .casino-chip-gold {
-  border-color: rgba(245, 158, 11, 0.5) !important;
-  color: #f59e0b !important;
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.15), 0 2px 4px rgba(0, 0, 0, 0.3);
+  border-color: rgba(212, 175, 55, 0.25) !important;
+  color: #d4af37 !important;
 }
 
-/* Primary button — red neon */
+/* Primary button — clean, no glow */
 .casino .casino-btn {
-  border-radius: 0.5rem !important;
-  border: 1px solid #dc2626 !important;
-  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+  border-radius: 0.25rem !important;
+  border: 1px solid rgba(180, 30, 30, 0.6) !important;
+  background: linear-gradient(135deg, #8b1a1a 0%, #6b1515 100%) !important;
   color: #ffffff !important;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.8rem !important;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem !important;
   transition: all 0.25s !important;
-  box-shadow: 0 0 15px rgba(220, 38, 38, 0.3), 0 2px 8px rgba(0, 0, 0, 0.4) !important;
 }
 
 .casino .casino-btn:hover {
-  background: linear-gradient(135deg, #ff0040 0%, #dc2626 100%) !important;
-  box-shadow: 0 0 25px rgba(255, 0, 64, 0.4), 0 0 50px rgba(255, 0, 64, 0.15), 0 2px 8px rgba(0, 0, 0, 0.4) !important;
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #9e2020 0%, #7a1a1a 100%) !important;
+  border-color: rgba(200, 40, 40, 0.7) !important;
 }
 
 /* Nav bar */
@@ -1264,7 +1251,7 @@
   padding: 5rem 1.5rem;
 }
 
-/* Timeline rail — red with gold dots */
+/* Timeline rail — thin, muted */
 .casino .casino-timeline {
   position: relative;
   padding-left: 2rem;
@@ -1276,35 +1263,31 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 2px;
-  background: linear-gradient(180deg, transparent 0%, #dc2626 5%, #dc2626 95%, transparent 100%);
-  border-radius: 1px;
-  box-shadow: 0 0 8px rgba(220, 38, 38, 0.3);
+  width: 1px;
+  background: linear-gradient(180deg, transparent 0%, rgba(212, 175, 55, 0.25) 5%, rgba(212, 175, 55, 0.25) 95%, transparent 100%);
 }
 
 .casino .casino-timeline-dot {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: #dc2626;
-  border: 2px solid #f59e0b;
-  box-shadow: 0 0 10px rgba(220, 38, 38, 0.4);
+  background: #8b1a1a;
+  border: 1px solid rgba(212, 175, 55, 0.3);
   flex-shrink: 0;
 }
 
 .casino .casino-timeline-dot--gold {
-  background: #f59e0b;
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+  background: #d4af37;
+  border-color: rgba(212, 175, 55, 0.5);
 }
 
-/* Section label */
+/* Section label — clean, muted */
 .casino .casino-label {
   font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.25em;
+  font-weight: 600;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #dc2626;
-  text-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+  color: #d4af37;
 }
 
 /* Gold divider */
@@ -1331,48 +1314,23 @@
   line-height: 1;
 }
 
-/* Hero display frame */
+/* Hero display frame — thin gold border, no animation */
 .casino .casino-hero-display {
   position: relative;
   padding: 2.5rem 2rem;
-  border: 2px solid rgba(220, 38, 38, 0.3);
-  border-radius: 1rem;
-  background: linear-gradient(180deg, rgba(30, 3, 3, 0.95) 0%, rgba(20, 2, 2, 0.9) 100%);
-  box-shadow:
-    0 0 40px rgba(220, 38, 38, 0.1),
-    0 0 80px rgba(220, 38, 38, 0.05),
-    0 8px 32px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 0.375rem;
+  background: rgba(18, 6, 6, 0.7);
   overflow: hidden;
 }
 
-/* Rotating neon border */
-.casino .casino-hero-display::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border-radius: 1rem;
-  background: conic-gradient(from 0deg, #dc2626, #f59e0b, #dc2626, #f59e0b, #dc2626);
-  opacity: 0.2;
-  z-index: -1;
-  animation: casino-rotate 6s linear infinite;
-}
-
-@keyframes casino-rotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Jackpot headline */
+/* Jackpot headline — clean white, no gradient glow */
 .casino .casino-jackpot {
   font-size: clamp(2.5rem, 8vw, 5rem);
-  font-weight: 900;
+  font-weight: 700;
   font-family: 'Playfair Display', Georgia, serif;
   line-height: 1.05;
-  background: linear-gradient(180deg, #ffffff 0%, #f59e0b 50%, #d97706 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.3));
+  color: #ffffff;
   letter-spacing: -0.02em;
 }
 
@@ -1389,20 +1347,20 @@
   display: inline-block;
 }
 
-/* Form inputs */
+/* Form inputs — clean, subtle focus */
 .casino .casino-input {
-  border: 1px solid rgba(220, 38, 38, 0.25) !important;
-  border-radius: 0.5rem !important;
-  background: rgba(20, 2, 2, 0.8) !important;
-  color: #fef3c7 !important;
+  border: 1px solid rgba(212, 175, 55, 0.15) !important;
+  border-radius: 0.25rem !important;
+  background: rgba(18, 6, 6, 0.6) !important;
+  color: #f5f0e8 !important;
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 0.875rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s;
 }
 
 .casino .casino-input:focus {
-  border-color: rgba(220, 38, 38, 0.5) !important;
-  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15), 0 0 15px rgba(220, 38, 38, 0.1) !important;
+  border-color: rgba(212, 175, 55, 0.35) !important;
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.1) !important;
   outline: none;
 }
 

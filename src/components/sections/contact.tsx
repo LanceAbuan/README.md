@@ -83,7 +83,7 @@ export function Contact() {
           ) : isCasino ? (
             <div>
               <p className="casino-label mb-3">
-                ♠ Contact ♥
+                CONTACT
               </p>
               <h2 className="text-3xl sm:text-4xl font-bold font-serif casino-neon tracking-tight mb-4">
                 Place Your Hand
@@ -91,7 +91,7 @@ export function Contact() {
               <div className="casino-divider mb-4">
                 <span>♦</span>
               </div>
-              <p className="text-[#b8a896] font-serif max-w-lg leading-relaxed">
+              <p className="text-[#fef3c7] font-serif max-w-lg leading-relaxed">
                 Have a project in mind, want to collaborate, or just want to say hi?
                 Drop me a message and I&apos;ll get back to you.
               </p>
@@ -162,7 +162,7 @@ export function Contact() {
                       isTerminal
                         ? "terminal-card rounded-none text-[#00ff41]"
                         : isCasino
-                          ? "casino-card rounded-lg border-[#dc262620] text-[#fef3c7] hover:bg-[#2a0505]/80"
+                          ? "casino-card rounded-lg border-[#d4af3715] text-[#fef3c7] hover:bg-[#2a0505]/80"
                           : isNewspaper
                             ? "newspaper-card rounded-none text-[#1a1208]"
                             : "border-neutral-200/50 dark:border-neutral-700/50 bg-white/30 dark:bg-neutral-900/30 hover:bg-white/60 dark:hover:bg-neutral-800/60",
@@ -191,7 +191,7 @@ export function Contact() {
                       className={cn(
                         "h-3.5 w-3.5 ml-auto transition-colors",
                         isTerminal && "text-[#00ff4140] group-hover:text-[#00ff41]",
-                        isCasino && "text-[#dc262660] group-hover:text-[#dc2626]",
+                        isCasino && "text-[#d4af3730] group-hover:text-[#dc2626]",
                         isNewspaper && "text-[#c4b59e] group-hover:text-[#1a1208]",
                         !isTerminal && !isCasino && !isNewspaper && "text-neutral-300 dark:text-neutral-600 group-hover:text-foreground",
                       )}
@@ -217,7 +217,7 @@ export function Contact() {
                     isTerminal
                       ? "terminal-card rounded-none text-[#00ff41]"
                       : isCasino
-                        ? "casino-card rounded-lg border-[#dc262620] text-[#fef3c7] hover:bg-[#2a0505]/80"
+                        ? "casino-card rounded-lg border-[#d4af3715] text-[#fef3c7] hover:bg-[#2a0505]/80"
                         : isNewspaper
                           ? "newspaper-card rounded-none text-[#1a1208]"
                           : "border-neutral-200/50 dark:border-neutral-700/50 bg-white/30 dark:bg-neutral-900/30 hover:bg-white/60 dark:hover:bg-neutral-800/60",
@@ -354,7 +354,7 @@ export function Contact() {
             </div>
 
             {status === "error" && (
-              <div className="flex items-center gap-2 text-sm" style={{ color: isTerminal ? "#ff3333" : isCasino ? "#ff6b6b" : undefined }}>
+              <div className="flex items-center gap-2 text-sm" style={{ color: isTerminal ? "#ff3333" : isCasino ? "#dc2626" : undefined }}>
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 <span className={isTerminal ? "font-mono" : isCasino ? "font-serif" : isNewspaper ? "font-serif" : ""}>
                   {errorMsg}
