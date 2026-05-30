@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { CasinoGames } from "@/components/sections/casino-games";
+import { Gamepad2 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { ThemeSelector } from "@/components/theme-selector";
@@ -31,6 +33,7 @@ export function Navbar() {
   const config = useThemeConfig();
 
   const isCoinFlip = config.features.coinFlip;
+  const [gamesOpen, setGamesOpen] = useState(false);
 
   const resolveHref = (href: string) => {
     if (href.startsWith("#")) {
@@ -69,6 +72,7 @@ export function Navbar() {
     : {};
 
   return (
+    <>
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -117,7 +121,7 @@ export function Navbar() {
                 theme === "terminal" && "rounded-none text-[#00ff41] hover:bg-[#0d1a0d]",
                 theme === "newspaper" && "rounded-none text-[#5c2e0e] hover:bg-[#ddd2be]",
                 theme === "synthwave" && "rounded-lg text-[#00ffff] hover:bg-[#ff00ff20]",
-                theme === "casino" && "rounded-lg text-[#d4a843] hover:bg-[#c41e1e40]",
+                theme === "casino" && "rounded-lg text-[#d4af37] hover:bg-[#2a0a0a] border border-[#d4af3715]",
               )}
               aria-label="Download resume"
             >
@@ -168,6 +172,15 @@ export function Navbar() {
                 })}
                 <div className="flex items-center justify-between pt-2">
                   <ThemeSelector />
+                  {theme === "casino" && (
+                    <button
+                      onClick={() => setGamesOpen(true)}
+                      className="h-8 w-8 flex items-center justify-center rounded-lg text-[#d4af37] hover:bg-[#2a0a0a] border border-[#d4af3715] transition-colors"
+                      aria-label="Open games"
+                    >
+                      <Gamepad2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                   <a
                     href="/resume.pdf"
                     download
@@ -186,5 +199,7 @@ export function Navbar() {
         </div>
       </div>
     </motion.nav>
+    {theme === "casino" && gamesOpen && <CasinoGames onClose={() => setGamesOpen(false)} />}
+    </>
   );
 }
