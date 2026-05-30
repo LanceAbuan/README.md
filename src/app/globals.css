@@ -1130,73 +1130,88 @@
   --radius: 0.375rem;
 }
 
-/* Casino velvet-drape background */
+/* ============================================================
+   CASINO THEME — Premium high-stakes VIP room
+   ============================================================
+   Every element reinforces a poker-table aesthetic.
+   Sections are laid out like cards dealt on felt.
+   "James Bond" energy, not slot parlor.
+   ============================================================ */
+
+/* --- Velvet-drape background with table-felt vignette --- */
 .casino body,
 .casino {
-  background: radial-gradient(ellipse at 50% 80%, #3d1a1a 0%, #2a0e0e 30%, #1a0a0a 60%, #0d0606 100%) !important;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(42, 80, 42, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 100%, #1a0a0a 0%, #0d0606 100%) !important;
 }
 
-/* Subtle gold sparkle overlay */
+/* Subtle noise grain — like fabric texture */
 .casino::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 9996;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-size: 200px 200px;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
 }
 
-/* Gold shimmer text */
+/* Gold shimmer text (restrained, premium) */
 .casino .casino-gold {
   background: linear-gradient(
     90deg,
-    #d4a843 0%,
-    #ffd700 25%,
-    #d4a843 50%,
-    #ffd700 75%,
-    #d4a843 100%
+    #b8942e 0%,
+    #d4a843 20%,
+    #f0d060 50%,
+    #d4a843 80%,
+    #b8942e 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: casino-shimmer 3s linear infinite;
+  animation: casino-shimmer 4s linear infinite;
 }
 
 @keyframes casino-shimmer {
-  0% { background-position: 0% center; }
+  0%   { background-position: 0% center; }
   100% { background-position: 200% center; }
 }
 
-/* Felt green card */
+/* --- Felt card surface (deepened, more weight) --- */
 .casino .casino-felt {
-  border: 1px solid #d4a84340 !important;
+  border: 1px solid rgba(212, 168, 67, 0.25) !important;
   border-radius: 0.5rem !important;
-  background: rgba(20, 60, 20, 0.6) !important;
-  backdrop-filter: blur(8px);
+  background:
+    linear-gradient(145deg, rgba(22, 65, 22, 0.85) 0%, rgba(14, 45, 14, 0.95) 100%) !important;
+  backdrop-filter: blur(10px);
   box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(212, 168, 67, 0.1);
+    0 4px 16px rgba(0, 0, 0, 0.4),
+    0 1px 3px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(212, 168, 67, 0.08),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
 }
 
-/* Roulette chip badge */
+/* --- Chip badge (more realistic, less gimmicky) --- */
 .casino .casino-chip {
-  border-radius: 50% !important;
-  border: 2px dashed #d4a843 !important;
-  background: linear-gradient(135deg, #c41e1e 0%, #8b0000 100%) !important;
+  border-radius: 9999px !important;
+  border: 2px dashed rgba(212, 168, 67, 0.7) !important;
+  background: linear-gradient(135deg, #1a0a0a 0%, #2a1515 100%) !important;
   color: #d4a843 !important;
-  font-size: 0.7rem !important;
+  font-size: 0.65rem !important;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.6rem !important;
   box-shadow:
-    0 0 8px rgba(212, 168, 67, 0.2),
-    inset 0 1px 2px rgba(255, 255, 255, 0.1);
+    0 1px 4px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(212, 168, 67, 0.1);
+  white-space: nowrap;
 }
 
-/* Casino gold button */
+/* --- Primary action button --- */
 .casino .casino-btn {
   border-radius: 0.375rem !important;
   border: 1px solid #d4a843 !important;
@@ -1206,62 +1221,184 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   transition: all 0.2s !important;
+  box-shadow: 0 2px 8px rgba(139, 0, 0, 0.4) !important;
 }
 
 .casino .casino-btn:hover {
   background: linear-gradient(135deg, #d4a843 0%, #c41e1e 100%) !important;
   color: #1a0a0a !important;
-  box-shadow: 0 0 15px rgba(212, 168, 67, 0.3) !important;
+  box-shadow: 0 0 20px rgba(212, 168, 67, 0.35) !important;
 }
 
-/* Casino nav */
+/* --- Nav bar --- */
 .casino .casino-nav {
   backdrop-filter: blur(12px) !important;
   background: rgba(26, 10, 10, 0.9) !important;
-  border: 1px solid #d4a84340 !important;
+  border: 1px solid rgba(212, 168, 67, 0.15) !important;
   border-radius: 0.75rem !important;
-  box-shadow: 0 0 15px rgba(196, 30, 30, 0.15) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Casino experience timeline */
+/* --- Section wrapper: deals each section like a card on the table --- */
+.casino .casino-section {
+  position: relative;
+  padding: 5rem 1.5rem;
+}
+
+/* Gold timeline rail (for experience) */
+.casino .casino-timeline {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
 .casino .casino-timeline::before {
   content: "";
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
-  width: 2px;
-  background: linear-gradient(180deg, #d4a843, #c41e1e);
-  box-shadow: 0 0 6px rgba(212, 168, 67, 0.3);
+  width: 1px;
+  background: linear-gradient(180deg, transparent, #d4a843 5%, #d4a843 95%, transparent);
+  box-shadow: 0 0 4px rgba(212, 168, 67, 0.2);
 }
 
-/* Casino section header ornament — gold divider */
+/* Timeline dots */
+.casino .casino-timeline::after {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #d4a843;
+  box-shadow: 0 0 6px rgba(212, 168, 67, 0.5);
+}
+
+/* --- Gold divider ornament --- */
 .casino .casino-divider {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  margin: 1.5rem 0;
+  gap: 1rem;
+  margin: 2rem 0;
 }
 
 .casino .casino-divider::before,
 .casino .casino-divider::after {
   content: "";
   flex: 1;
+  max-width: 120px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #d4a84360, transparent);
+  background: linear-gradient(90deg, transparent, rgba(212, 168, 67, 0.4), transparent);
 }
 
 .casino .casino-divider span {
   color: #d4a843;
-  font-size: 1rem;
+  font-size: 0.75rem;
+  line-height: 1;
 }
 
-/* Casino heading glow — subtle gold aura behind headings */
+/* --- Heading glow --- */
 .casino h1.casino-gold,
 .casino h2.casino-gold {
   position: relative;
-  filter: drop-shadow(0 0 12px rgba(212, 168, 67, 0.25));
+  filter: drop-shadow(0 0 10px rgba(212, 168, 67, 0.2));
+}
+
+/* --- Playing-card frame (for hero) --- */
+.casino .casino-card-frame {
+  position: relative;
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+/* Corner ornaments (A♠ style) */
+.casino .casino-card-corner {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  color: rgba(212, 168, 67, 0.3);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 0.65rem;
+}
+
+.casino .casino-card-corner span:first-child {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.casino .casino-card-corner--tl { top: 0.75rem; left: 1rem; }
+.casino .casino-card-corner--tr {
+  top: 0.75rem; right: 1rem;
+  transform: rotate(180deg);
+}
+.casino .casino-card-corner--bl {
+  bottom: 0.75rem; left: 1rem;
+  transform: rotate(90deg);
+}
+.casino .casino-card-corner--br {
+  bottom: 0.75rem; right: 1rem;
+  transform: rotate(-90deg);
+}
+
+/* Center spade ornament (hero) */
+.casino .casino-center-suit {
+  font-size: 6rem;
+  line-height: 1;
+  color: rgba(212, 168, 67, 0.06);
+  margin-bottom: -2rem;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* VIP table label */
+.casino .casino-table-label span {
+  border: 1px solid rgba(212, 168, 67, 0.3);
+  padding: 0.35rem 1rem;
+  border-radius: 9999px;
+  display: inline-block;
+}
+
+/* --- Contact form styling --- */
+.casino .casino-input {
+  border: 1px solid rgba(212, 168, 67, 0.2) !important;
+  border-radius: 0.375rem !important;
+  background: rgba(14, 45, 14, 0.6) !important;
+  color: #f0e6d3 !important;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 0.875rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.casino .casino-input:focus {
+  border-color: rgba(212, 168, 67, 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(212, 168, 67, 0.1) !important;
+  outline: none;
+}
+
+.casino .casino-input::placeholder {
+  color: rgba(139, 115, 85, 0.7) !important;
+}
+
+/* Project card suit ornaments */
+.casino .casino-suit-ornament {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  font-size: 1.5rem;
+  color: rgba(212, 168, 67, 0.1);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Skill chips grid */
+.casino .casino-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 @layer base {

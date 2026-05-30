@@ -26,12 +26,15 @@ export function About() {
         >
           {isCasino ? (
             <div className="text-center mb-12">
-              <p className="text-xs font-serif text-[#d4a843] mb-2 tracking-[0.3em] uppercase">
+              <p className="text-[10px] font-serif text-[#d4a843] mb-2 tracking-[0.35em] uppercase">
                 THE PLAYER
               </p>
               <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#d4a843] casino-gold tracking-tight">
                 Know Your Opponent
               </h2>
+              <div className="casino-divider mt-4 mb-4">
+                <span>◆</span>
+              </div>
               <p className="text-[#c4b59e] font-serif mt-3 max-w-lg mx-auto">
                 Every great hand starts with reading the table.
               </p>
@@ -71,47 +74,50 @@ export function About() {
         </motion.div>
 
         {isCasino ? (
-          /* Casino layout — felt cards, gold accents */
-          <div className="space-y-8">
-            {/* Bio paragraphs in a felt card */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="casino-felt p-6 sm:p-8 space-y-4"
-            >
-              {aboutData.paragraphs.map((paragraph, i) => (
-                <HighlightedParagraph
-                  key={i}
-                  {...paragraph}
-                  isTerminal={false}
-                  isNewspaper={false}
-                  isCasino={true}
-                />
-              ))}
-            </motion.div>
-
-            {/* Stat cards — chip-style */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="grid grid-cols-2 sm:grid-cols-4 gap-3"
-            >
-              {aboutData.stats.map((stat, i) => {
-                const Icon = getIcon(stat.icon);
-                return (
-                  <AboutStatCard
+          /* Casino layout — player dossier on felt, two-column */
+          <div className="space-y-6">
+            {/* Bio + stats side by side */}
+            <div className="grid md:grid-cols-5 gap-6">
+              {/* Bio paragraphs — left column (3 cols) */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.15 }}
+                className="md:col-span-3 casino-felt p-6 sm:p-8 space-y-4"
+              >
+                {aboutData.paragraphs.map((paragraph, i) => (
+                  <HighlightedParagraph
                     key={i}
-                    stat={stat}
-                    Icon={Icon}
+                    {...paragraph}
                     isTerminal={false}
                     isNewspaper={false}
                     isCasino={true}
                   />
-                );
-              })}
-            </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Stat cards — right column (2 cols) */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.25 }}
+                className="md:col-span-2 grid grid-cols-2 gap-3"
+              >
+                {aboutData.stats.map((stat, i) => {
+                  const Icon = getIcon(stat.icon);
+                  return (
+                    <AboutStatCard
+                      key={i}
+                      stat={stat}
+                      Icon={Icon}
+                      isTerminal={false}
+                      isNewspaper={false}
+                      isCasino={true}
+                    />
+                  );
+                })}
+              </motion.div>
+            </div>
           </div>
         ) : isNewspaper ? (
           /* Newspaper editorial layout */
