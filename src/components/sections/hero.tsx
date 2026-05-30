@@ -226,87 +226,92 @@ function HeroCasino() {
   return (
     <section className="min-h-screen flex items-center justify-center px-6 pt-16">
       <div className="max-w-3xl mx-auto text-center">
-        {/* Subtle spade watermark */}
+        {/* Slot-machine display frame */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.1 }}
-          className="casino-center-suit"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7 }}
         >
-          ♠
+          <div className="casino-hero-display">
+            {/* Neon accent line at top */}
+            <div className="h-px bg-gradient-to-r from-transparent via-[#dc2626] to-transparent mb-8" />
+
+            {/* VIP table label */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="casino-table-label mb-8"
+            >
+              <span className="text-[10px] font-serif text-[#f59e0b] tracking-[0.35em] uppercase">
+                ♠ Software Developer ♥
+              </span>
+            </motion.div>
+
+            {/* Jackpot headline */}
+            <motion.h1
+              className="casino-jackpot mb-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              Lance Abuan
+            </motion.h1>
+
+            {/* Neon tagline */}
+            <motion.p
+              className="casino-neon text-lg sm:text-xl font-serif tracking-wide mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              Building Systems That Scale
+            </motion.p>
+
+            {/* Divider */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="casino-divider mb-6"
+            >
+              <span>♦</span>
+            </motion.div>
+
+            {/* Body copy */}
+            <motion.p
+              className="text-sm sm:text-base text-[#fef3c7] max-w-lg mx-auto leading-relaxed font-serif mb-10"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.55 }}
+            >
+              Developing AI tools and agentic workflows at{" "}
+              <span className="text-[#f59e0b] font-semibold">Saltech Systems</span>
+              . Building intelligent systems that automate complex workflows
+              and push the boundaries of what AI agents can do.
+            </motion.p>
+
+            {/* Neon accent line at bottom */}
+            <div className="h-px bg-gradient-to-r from-transparent via-[#dc2626] to-transparent mt-8" />
+          </div>
         </motion.div>
 
-        {/* VIP table label */}
+        {/* CTAs — outside the frame */}
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="casino-table-label mb-6"
-        >
-          <span className="text-[10px] font-serif text-[#d4a843] tracking-[0.35em] uppercase">
-            Private Table · Software Developer
-          </span>
-        </motion.div>
-
-        {/* Name */}
-        <motion.h1
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-serif tracking-tight leading-[1.1] mb-3"
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
-          <span className="block text-[#f0e6d3]">Lance Abuan</span>
-        </motion.h1>
-
-        {/* Gold tagline */}
-        <motion.p
-          className="casino-gold text-lg sm:text-xl md:text-2xl font-serif tracking-wide mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          Building Systems That Scale
-        </motion.p>
-
-        {/* Divider */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="casino-divider mb-8"
-        >
-          <span>◆</span>
-        </motion.div>
-
-        {/* Body copy */}
-        <motion.p
-          className="text-sm sm:text-base text-[#c4b59e] max-w-lg mx-auto leading-relaxed font-serif mb-10"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.55 }}
-        >
-          Developing AI tools and agentic workflows at{" "}
-          <span className="text-[#d4a843] font-medium">Saltech Systems</span>
-          . Building intelligent systems that automate complex workflows
-          and push the boundaries of what AI agents can do.
-        </motion.p>
-
-        {/* CTAs */}
-        <motion.div
-          className="flex flex-col sm:flex-row items-center justify-center gap-3"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.65 }}
+          transition={{ duration: 0.6, delay: 0.7 }}
         >
           <Link
             href="#projects"
             className={cn(
               buttonVariants({
-                className: "casino-btn px-8 text-sm tracking-wider",
+                className: "casino-btn px-10 py-3",
               }),
             )}
           >
-            View Projects
+            ♠ View Projects
           </Link>
           <Link
             href="#contact"
@@ -314,16 +319,38 @@ function HeroCasino() {
               buttonVariants({
                 variant: "outline",
                 className:
-                  "rounded-md px-8 text-sm font-serif tracking-wider border border-[#d4a84340] text-[#d4a843] hover:bg-[#d4a843] hover:text-[#1a0a0a] bg-transparent transition-colors",
+                  "rounded-lg px-10 py-3 text-sm font-serif tracking-wider border border-[#f59e0b40] text-[#f59e0b] hover:border-[#dc2626] hover:text-[#dc2626] bg-transparent transition-all",
               }),
             )}
           >
-            Get In Touch
+            ♥ Get In Touch
           </Link>
         </motion.div>
 
         {/* Scroll indicator */}
-        <SectionScrollArrow targetId="about" isInView={true} />
+        <motion.div
+          className="mt-16 animate-bounce cursor-pointer flex justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 1.2 }}
+          onClick={() => {
+            document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
+          }}
+        >
+          <svg
+            className="w-5 h-5 text-[#dc2626] drop-shadow-[0_0_6px_rgba(220,38,38,0.5)]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
+        </motion.div>
       </div>
     </section>
   );
