@@ -936,7 +936,7 @@
 
 /* Perspective grid overlay */
 /* Perspective grid overlay */
-.synthwave body::before {
+.synthwave::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -1050,13 +1050,10 @@
 }
 
 /* Synthwave sunset glow — radial horizon effect */
-.synthwave body::after {
+.synthwave::after {
   content: "";
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 50vh;
+  inset: 0;
   pointer-events: none;
   z-index: 9995;
   background: radial-gradient(ellipse at 50% 100%, rgba(255, 0, 255, 0.2) 0%, rgba(0, 255, 255, 0.1) 40%, transparent 70%);
@@ -1140,7 +1137,7 @@
 }
 
 </* Subtle gold sparkle overlay */
-.casino .background-container::before {
+.casino::before {
   content: "";
   position: fixed;
   inset: 0;
