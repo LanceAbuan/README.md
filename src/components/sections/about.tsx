@@ -26,13 +26,16 @@ export function About() {
         >
           {isCasino ? (
             <div className="text-center mb-12">
-              <p className="text-xs font-serif text-[#d4a843] mb-2 tracking-[0.3em] uppercase">
-                THE PLAYER
+              <p className="casino-label mb-2">
+                ♠ THE PLAYER ♥
               </p>
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#d4a843] casino-gold tracking-tight">
+              <h2 className="text-3xl sm:text-4xl font-bold font-serif casino-neon tracking-tight">
                 Know Your Opponent
               </h2>
-              <p className="text-[#c4b59e] font-serif mt-3 max-w-lg mx-auto">
+              <div className="casino-divider mt-4 mb-4">
+                <span>♦</span>
+              </div>
+              <p className="text-[#fef3c7] font-serif mt-3 max-w-lg mx-auto">
                 Every great hand starts with reading the table.
               </p>
             </div>
@@ -71,47 +74,50 @@ export function About() {
         </motion.div>
 
         {isCasino ? (
-          /* Casino layout — felt cards, gold accents */
-          <div className="space-y-8">
-            {/* Bio paragraphs in a felt card */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="casino-felt p-6 sm:p-8 space-y-4"
-            >
-              {aboutData.paragraphs.map((paragraph, i) => (
-                <HighlightedParagraph
-                  key={i}
-                  {...paragraph}
-                  isTerminal={false}
-                  isNewspaper={false}
-                  isCasino={true}
-                />
-              ))}
-            </motion.div>
-
-            {/* Stat cards — chip-style */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="grid grid-cols-2 sm:grid-cols-4 gap-3"
-            >
-              {aboutData.stats.map((stat, i) => {
-                const Icon = getIcon(stat.icon);
-                return (
-                  <AboutStatCard
+          /* Casino layout — player dossier on felt, two-column */
+          <div className="space-y-6">
+            {/* Bio + stats side by side */}
+            <div className="grid md:grid-cols-5 gap-6">
+              {/* Bio paragraphs — left column (3 cols) */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.15 }}
+                className="md:col-span-3 casino-card p-6 sm:p-8 space-y-4"
+              >
+                {aboutData.paragraphs.map((paragraph, i) => (
+                  <HighlightedParagraph
                     key={i}
-                    stat={stat}
-                    Icon={Icon}
+                    {...paragraph}
                     isTerminal={false}
                     isNewspaper={false}
                     isCasino={true}
                   />
-                );
-              })}
-            </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Stat cards — right column (2 cols) */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.25 }}
+                className="md:col-span-2 grid grid-cols-2 gap-3"
+              >
+                {aboutData.stats.map((stat, i) => {
+                  const Icon = getIcon(stat.icon);
+                  return (
+                    <AboutStatCard
+                      key={i}
+                      stat={stat}
+                      Icon={Icon}
+                      isTerminal={false}
+                      isNewspaper={false}
+                      isCasino={true}
+                    />
+                  );
+                })}
+              </motion.div>
+            </div>
           </div>
         ) : isNewspaper ? (
           /* Newspaper editorial layout */
@@ -293,13 +299,13 @@ function HighlightedParagraph({
   isCasino?: boolean;
 }) {
   if (!highlights || highlights.length === 0) {
-    return <p className={isCasino ? "text-[#f0e6d3] font-serif leading-relaxed" : ""}>{text}</p>;
+    return <p className={isCasino ? "text-[#fef3c7] font-serif leading-relaxed" : ""}>{text}</p>;
   }
 
   const parts = splitTextByHighlights(text, highlights);
 
   return (
-    <p className={isCasino ? "text-[#f0e6d3] font-serif leading-relaxed" : ""}>
+    <p className={isCasino ? "text-[#fef3c7] font-serif leading-relaxed" : ""}>
       {parts.map((part, i) => (
         <span key={i}>
           {part.highlighted ? (
@@ -307,7 +313,7 @@ function HighlightedParagraph({
               className={cn(
                 isTerminal && "text-[#00ff41] terminal-glow",
                 isNewspaper && "text-[#5c2e0e] font-bold",
-                isCasino && "text-[#d4a843]",
+                isCasino && "casino-neon text-[#fef3c7]",
               )}
             >
               {part.content}
@@ -336,12 +342,12 @@ function AboutStatCard({
 }) {
   if (isCasino) {
     return (
-      <div className="casino-felt text-center flex flex-col items-center justify-center p-4 gap-2">
-        <Icon className="h-5 w-5 text-[#d4a843] mx-auto flex-shrink-0" />
-        <span className="text-[10px] text-[#8b7355] uppercase tracking-wider font-serif block">
+      <div className="casino-card-red text-center flex flex-col items-center justify-center p-4 gap-2">
+        <Icon className="h-5 w-5 text-[#dc2626] mx-auto flex-shrink-0" />
+        <span className="text-[10px] text-[#fef3c7] uppercase tracking-wider font-serif block">
           {stat.label}
         </span>
-        <span className="text-sm font-bold font-serif text-[#d4a843] casino-gold leading-tight">
+        <span className="text-sm font-bold font-serif text-[#dc2626] leading-tight" style={{ textShadow: '0 0 8px rgba(224,16,32,0.4)' }}>
           {stat.value}
         </span>
       </div>
