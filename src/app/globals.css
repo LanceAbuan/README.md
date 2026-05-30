@@ -1139,8 +1139,8 @@
   background: radial-gradient(ellipse at 50% 80%, #3d1a1a 0%, #2a0e0e 30%, #1a0a0a 60%, #0d0606 100%) !important;
 }
 
-/* Subtle gold sparkle overlay — attached to body to avoid html clipping */
-.casino body::after {
+</* Subtle gold sparkle overlay */
+.casino .background-container::before {
   content: "";
   position: fixed;
   inset: 0;

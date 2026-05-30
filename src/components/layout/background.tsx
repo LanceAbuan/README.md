@@ -610,18 +610,19 @@ export function AnimatedBackground() {
   }
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none"
-      style={{
-        width: "100%",
-        height: "100%",
-        contain: "strict",
-        zIndex: -1, /* above theme overlays (-999) but below all content */
-        opacity,
-        transition: `opacity ${TRANSITION_DURATION}ms ease-in-out`,
-      }}
-      aria-hidden="true"
-    />
+    <div className="background-container fixed inset-0 pointer-events-none" style={{ zIndex: -1 }}>
+      <canvas
+        ref={canvasRef}
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          width: "100%",
+          height: "100%",
+          contain: "strict",
+          opacity,
+          transition: `opacity ${TRANSITION_DURATION}ms ease-in-out`,
+        }}
+        aria-hidden="true"
+      />
+    </div>
   );
 }
