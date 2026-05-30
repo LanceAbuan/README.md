@@ -191,14 +191,14 @@ function SkillCategoryCard({
             {category.name}
           </h3>
           <hr className="newspaper-rule" />
-          {/* Skills as comma-separated editorial list */}
-          <div className="font-serif text-sm text-[#3d2b1f] leading-relaxed break-words overflow-hidden">
+          {/* Skills as wrapped editorial list */}
+          <div className="flex flex-wrap font-serif text-sm text-[#3d2b1f] leading-relaxed">
             {category.items.map((skill, i) => (
               <span key={i} className="whitespace-nowrap">
                 {skill}
-                {i < category.items.length - 1 ? <>
+                {i < category.items.length - 1 && (
                   <span className="mx-1.5 text-[#c4b59e]">·</span>
-                </> : ""}
+                )}
               </span>
             ))}
           </div>

@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
 
+/** Duration of the theme-switch fade transition (ms). */
+const TRANSITION_DURATION = 400;
+
 /** Particle (star) for the constellation animation. */
 type Particle = {
   x: number;
@@ -220,7 +223,10 @@ export function AnimatedBackground() {
   const themedRef = useRef<ThemedParticle[]>([]);
   const animRef = useRef<number>(0);
   const isRunningRef = useRef(false);
+  const lastThemeRef = useRef<string>("dark");
+  const ensureParticlesRef = useRef<(theme: string) => void>(() => {});
   const [mounted, setMounted] = useState(false);
+  const [opacity, setOpacity] = useState(1);
 
   const THEME_CHARS_REF = THEME_CHARS;
 
@@ -236,6 +242,14 @@ export function AnimatedBackground() {
 
       const theme = detectTheme();
       const tc = THEME_COLORS[theme] ?? THEME_COLORS.dark;
+
+      // Sync lastThemeRef on first frame so observer doesn't fire on init
+      if (lastThemeRef.current === "dark" && mounted) {
+        lastThemeRef.current = theme;
+      }
+
+      // Lazy-init: ensure the current theme's particle pool is populated
+      ensureParticlesRef.current(theme);
 
       // Use themed characters when available, otherwise classic particles
       const hasTheme = (THEME_CHARS_REF[theme] ?? []).length > 0;
@@ -418,6 +432,106 @@ export function AnimatedBackground() {
     setMounted(true);
   }, []);
 
+  // Lazily create particles for a theme — called on first frame or on theme switch
+  const ensureParticles = useCallback(
+    (theme: string) => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const count = getParticleCount();
+      const chars = THEME_CHARS_REF[theme] ?? [];
+
+      if (chars.length > 0) {
+        // Need themed particles but pool is empty → fill it
+        if (themedRef.current.length === 0) {
+          for (let i = 0; i < count; i++) {
+            themedRef.current.push({
+              x: Math.random() * w,
+              y: Math.random() * h,
+              char: chars[Math.floor(Math.random() * chars.length)],
+              size: Math.random() * 10 + 18,
+              alpha: Math.random() * 0.4 + 0.6,
+              pulse: Math.random() * Math.PI * 2,
+              vx: (Math.random() - 0.5) * 0.3,
+              vy: (Math.random() - 0.5) * 0.3,
+              driftPhase: Math.random() * Math.PI * 2,
+              driftSpeed: 0.005 + Math.random() * 0.01,
+              rotationSpeed: (Math.random() - 0.5) * 0.003,
+              rotation: Math.random() * Math.PI * 2,
+            });
+          }
+        }
+        particlesRef.current = [];
+      } else {
+        // Need classic particles but pool is empty → fill it
+        if (particlesRef.current.length === 0) {
+          for (let i = 0; i < count; i++) {
+            particlesRef.current.push({
+              x: Math.random() * w,
+              y: Math.random() * h,
+              vx: (Math.random() - 0.5) * 0.3,
+              vy: (Math.random() - 0.5) * 0.3,
+              r: Math.random() * 2.2 + 0.8,
+              alpha: Math.random() * 0.4 + 0.45,
+              pulse: Math.random() * Math.PI * 2,
+            });
+          }
+        }
+        themedRef.current = [];
+      }
+    },
+    [],
+  );
+
+  // Full rebuild for a theme (used on theme switch)
+  const rebuildForTheme = useCallback(
+    (theme: string) => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const count = getParticleCount();
+      const chars = THEME_CHARS_REF[theme] ?? [];
+
+      themedRef.current = [];
+      particlesRef.current = [];
+
+      if (chars.length > 0) {
+        for (let i = 0; i < count; i++) {
+          themedRef.current.push({
+            x: Math.random() * w,
+            y: Math.random() * h,
+            char: chars[Math.floor(Math.random() * chars.length)],
+            size: Math.random() * 10 + 18,
+            alpha: Math.random() * 0.4 + 0.6,
+            pulse: Math.random() * Math.PI * 2,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: (Math.random() - 0.5) * 0.3,
+            driftPhase: Math.random() * Math.PI * 2,
+            driftSpeed: 0.005 + Math.random() * 0.01,
+            rotationSpeed: (Math.random() - 0.5) * 0.003,
+            rotation: Math.random() * Math.PI * 2,
+          });
+        }
+      } else {
+        for (let i = 0; i < count; i++) {
+          particlesRef.current.push({
+            x: Math.random() * w,
+            y: Math.random() * h,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: (Math.random() - 0.5) * 0.3,
+            r: Math.random() * 2.2 + 0.8,
+            alpha: Math.random() * 0.4 + 0.45,
+            pulse: Math.random() * Math.PI * 2,
+          });
+        }
+      }
+    },
+    [],
+  );
+
+  // Keep a stable ref so draw (which has [] deps) can call it
+  useEffect(() => {
+    ensureParticlesRef.current = ensureParticles;
+  }, [ensureParticles]);
+
   useEffect(() => {
     if (!mounted) return;
     if (prefersReducedMotion()) return;
@@ -441,92 +555,26 @@ export function AnimatedBackground() {
     }
     window.addEventListener("mousemove", onMove);
 
-    // Init particles based on theme
-    const count = getParticleCount();
-    const pw = window.innerWidth;
-    const ph = window.innerHeight;
-    const currentTheme = detectTheme();
-    const chars = THEME_CHARS_REF[currentTheme] ?? [];
-
-    if (chars.length > 0) {
-      // Themed character particles
-      for (let i = 0; i < count; i++) {
-        themedRef.current.push({
-          x: Math.random() * pw,
-          y: Math.random() * ph,
-          char: chars[Math.floor(Math.random() * chars.length)],
-          size: Math.random() * 10 + 18,
-          alpha: Math.random() * 0.4 + 0.6,
-          pulse: Math.random() * Math.PI * 2,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          driftPhase: Math.random() * Math.PI * 2,
-          driftSpeed: 0.005 + Math.random() * 0.01,
-          rotationSpeed: (Math.random() - 0.5) * 0.003,
-          rotation: Math.random() * Math.PI * 2,
-        });
-      }
-    } else {
-      // Classic circle particles
-      for (let i = 0; i < count; i++) {
-        particlesRef.current.push({
-          x: Math.random() * pw,
-          y: Math.random() * ph,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          r: Math.random() * 2.2 + 0.8,
-          alpha: Math.random() * 0.4 + 0.45,
-          pulse: Math.random() * Math.PI * 2,
-        });
-      }
-    }
-
-    // Reinit on theme change
-    let lastTheme = currentTheme;
-    const rebuildParticles = () => {
+    // Use MutationObserver to detect theme class changes on <html>
+    const observer = new MutationObserver(() => {
       const newTheme = detectTheme();
-      if (newTheme !== lastTheme) {
-        lastTheme = newTheme;
-        const newChars = THEME_CHARS_REF[newTheme] ?? [];
-        const cw = window.innerWidth;
-        const ch = window.innerHeight;
+      if (newTheme !== lastThemeRef.current) {
+        // Fade out immediately
+        setOpacity(0);
 
-        themedRef.current = [];
-        particlesRef.current = [];
-
-        if (newChars.length > 0) {
-          for (let i = 0; i < count; i++) {
-            themedRef.current.push({
-              x: Math.random() * cw,
-              y: Math.random() * ch,
-              char: newChars[Math.floor(Math.random() * newChars.length)],
-              size: Math.random() * 10 + 18,
-              alpha: Math.random() * 0.4 + 0.6,
-              pulse: Math.random() * Math.PI * 2,
-              vx: (Math.random() - 0.5) * 0.3,
-              vy: (Math.random() - 0.5) * 0.3,
-              driftPhase: Math.random() * Math.PI * 2,
-              driftSpeed: 0.005 + Math.random() * 0.01,
-              rotationSpeed: (Math.random() - 0.5) * 0.003,
-              rotation: Math.random() * Math.PI * 2,
-            });
-          }
-        } else {
-          for (let i = 0; i < count; i++) {
-            particlesRef.current.push({
-              x: Math.random() * cw,
-              y: Math.random() * ch,
-              vx: (Math.random() - 0.5) * 0.3,
-              vy: (Math.random() - 0.5) * 0.3,
-              r: Math.random() * 2.2 + 0.8,
-              alpha: Math.random() * 0.4 + 0.45,
-              pulse: Math.random() * Math.PI * 2,
-            });
-          }
-        }
+        // After CSS transition finishes, rebuild and fade back in
+        setTimeout(() => {
+          rebuildForTheme(newTheme);
+          lastThemeRef.current = newTheme;
+          setOpacity(1);
+        }, TRANSITION_DURATION);
       }
-    };
-    const themeInterval = setInterval(rebuildParticles, 1000);
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
 
     // Pause/resume on tab visibility change
     const handleVisibility = () => {
@@ -547,15 +595,14 @@ export function AnimatedBackground() {
     return () => {
       isRunningRef.current = false;
       cancelAnimationFrame(animRef.current);
-      clearInterval(themeInterval);
+      observer.disconnect();
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMove);
       document.removeEventListener("visibilitychange", handleVisibility);
-      // Clear refs
       particlesRef.current = [];
       themedRef.current = [];
     };
-  }, [mounted, draw]);
+  }, [mounted, draw, rebuildForTheme]);
 
   /* ── SSR / pre-mount: render nothing to avoid hydration mismatch ── */
   if (!mounted) {
@@ -563,15 +610,19 @@ export function AnimatedBackground() {
   }
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 -z-10 pointer-events-none"
-      style={{
-        width: "100%",
-        height: "100%",
-        contain: "strict",
-      }}
-      aria-hidden="true"
-    />
+    <div className="background-container fixed inset-0 pointer-events-none" style={{ zIndex: 0 }}>
+      <canvas
+        ref={canvasRef}
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          width: "100%",
+          height: "100%",
+          contain: "strict",
+          opacity,
+          transition: `opacity ${TRANSITION_DURATION}ms ease-in-out`,
+        }}
+        aria-hidden="true"
+      />
+    </div>
   );
 }

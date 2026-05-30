@@ -18,7 +18,7 @@ import { AnimatedBackground } from "@/components/layout/background";
  * MDX component map — created at module scope to avoid
  * calling hooks inside an async Server Component.
  */
-const mdxComponents = useMDXComponents({});
+const mdxComponents: MDXComponents = useMDXComponents({});
 
 /** Generate static params for all blog slugs. */
 export async function generateStaticParams() {
