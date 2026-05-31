@@ -1,6 +1,7 @@
 import Script from "next/script";
 import { Navbar } from "@/components/layout/navbar";
 import { AnimatedBackground } from "@/components/layout/background";
+import { SynthwaveBackground } from "@/components/synthwave-background";
 import { Hero } from "@/components/sections/hero";
 import { About } from "@/components/sections/about";
 import { Experience } from "@/components/sections/experience";
@@ -49,6 +50,7 @@ export default function Home() {
   return (
     <>
       <AnimatedBackground />
+      <SynthwaveBackground />
       <Navbar />
       <main>
         <Script
