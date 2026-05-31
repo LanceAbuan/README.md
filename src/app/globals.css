@@ -889,23 +889,47 @@
 }
 
 /* ============================================================
-   SYNTHWAVE '90S THEME
+   SYNTHWAVE '90S THEME — FULL OVERHAUL
+   ============================================================
    Retro-futuristic neon aesthetic. Deep purples, hot pinks,
-   electric cyans. Chrome-style headings. Perspective grid.
+   electric cyans. CRT monitor effect, animated perspective
+   grid road, retro sunset, stars, distant cityscape.
+
+   Background layers (fixed, pointer-events: none):
+     ::before  → CRT scanlines + vignette + flicker
+     ::after   → Retro sunset horizon glow
+     .synthwave-grid → Animated perspective road grid
+     .synthwave-stars → Twinkling star field
+     .synthwave-sun    → Retro setting sun
+     .synthwave-city   → Distant cityscape silhouette
    ============================================================ */
+
+/* ── Custom properties ── */
+.synthwave {
+  --synth-pink: #ff00ff;
+  --synth-cyan: #00ffff;
+  --synth-purple: #8b5cf6;
+  --synth-neon-pink: #ff6ec7;
+  --synth-red: #ff0055;
+  --synth-bg-dark: #0a0520;
+  --synth-bg-mid: #1a0a3e;
+  --synth-bg-light: #2d1b69;
+  --synth-text: #ede5ff;
+}
+
 .synthwave {
   --background: #0a0520;
-  --foreground: #e0d0ff;
-  --card: rgba(15, 5, 30, 0.85);
-  --card-foreground: #e0d0ff;
-  --popover: rgba(15, 5, 30, 0.95);
-  --popover-foreground: #e0d0ff;
+  --foreground: #ede5ff;
+  --card: rgba(10, 5, 30, 0.98);
+  --card-foreground: #ede5ff;
+  --popover: rgba(10, 5, 30, 0.98);
+  --popover-foreground: #ede5ff;
   --primary: #ff00ff;
   --primary-foreground: #0a0520;
   --secondary: #00ffff;
   --secondary-foreground: #0a0520;
   --muted: #8b5cf6;
-  --muted-foreground: #c4b5fd;
+  --muted-foreground: #d4c8f7;
   --accent: #ff6ec7;
   --accent-foreground: #0a0520;
   --destructive: #ff0055;
@@ -917,40 +941,554 @@
   --chart-3: #ff6ec7;
   --chart-4: #8b5cf6;
   --chart-5: #6d28d9;
-  --sidebar: rgba(15, 5, 30, 0.9);
-  --sidebar-foreground: #e0d0ff;
+  --sidebar: rgba(10, 5, 30, 0.98);
+  --sidebar-foreground: #ede5ff;
   --sidebar-primary: #ff00ff;
   --sidebar-primary-foreground: #0a0520;
   --sidebar-accent: #1a0a40;
   --sidebar-accent-foreground: #00ffff;
   --sidebar-border: #ff00ff30;
   --sidebar-ring: #ff00ff80;
-  --radius: 0.5rem;
+  --radius: 0.25rem;
 }
 
-/* Synthwave background gradient */
+/* ── Neutral color overrides ── */
+/* Components use hardcoded text-neutral-* classes that bypass CSS vars.
+   Override them so body text is actually readable on the dark synthwave bg.
+   Since .synthwave is on <body>, descendant selectors catch everything. */
+
+.synthwave .text-neutral-300,
+.synthwave .text-neutral-400,
+.synthwave .text-neutral-500,
+.synthwave .text-neutral-600 {
+  color: #dcd0f7 !important;
+}
+
+.synthwave .text-neutral-700 {
+  color: #ede5ff !important;
+}
+
+/* Hover states that switch to foreground */
+.synthwave .group:hover .group-hover\:text-foreground {
+  color: #ede5ff !important;
+}
+
+/* Background overrides for badges/tags */
+.synthwave .bg-neutral-100,
+.synthwave .bg-neutral-800 {
+  background-color: rgba(139, 92, 246, 0.15) !important;
+}
+
+/* ── Background: deep night sky gradient ── */
 .synthwave body,
 .synthwave {
-  background: linear-gradient(180deg, #0a0520 0%, #1a0a3e 40%, #2d1b69 70%, #1a0a3e 100%) !important;
+  background: linear-gradient(180deg, #05021a 0%, #0a0520 30%, #1a0a3e 60%, #2d1b69 85%, #1a0a3e 100%) !important;
 }
 
-/* Perspective grid overlay */
-/* Perspective grid overlay */
+/* ═══════════════════════════════════════════════════════════
+   CRT EFFECTS
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Scanline overlay ── */
 .synthwave::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 9996;
-  opacity: 0.25;
+  z-index: 0;
   background-image:
-    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255, 0, 255, 0.5) 39px, rgba(255, 0, 255, 0.5) 40px),
-    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(0, 255, 255, 0.25) 39px, rgba(0, 255, 255, 0.25) 40px);
-  transform: perspective(500px) rotateX(60deg);
-  transform-origin: center bottom;
-  mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%);
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%);
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.02) 0px,
+      rgba(0, 0, 0, 0.04) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  background-size: 100% 4px;
 }
+
+/* ── CRT screen curvature vignette ── */
+.synthwave::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  box-shadow: inset 0 0 150px 60px rgba(0, 0, 0, 0.03),
+              inset 0 0 400px 150px rgba(10, 5, 32, 0.01);
+}
+
+/* ── Subtle CRT flicker ── */
+@keyframes synthwave-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.97; }
+  94% { opacity: 1; }
+  96% { opacity: 0.98; }
+  97% { opacity: 1; }
+}
+
+.synthwave > main,
+.synthwave > * {
+  animation: synthwave-flicker 4s infinite;
+}
+
+/* Ensure page content renders above fixed background elements */
+/* The synthwave class is on <body>, so use descendant selectors, not direct-child */
+.synthwave body {
+  position: relative;
+  z-index: 1;
+}
+
+.synthwave main {
+  position: relative;
+  z-index: 2;
+}
+
+.synthwave main > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* ── RGB chromatic aberration on headings ── */
+.synthwave .synthwave-chromatic {
+  position: relative;
+  text-shadow:
+    -2px 0 rgba(255, 0, 100, 0.35),
+     2px 0 rgba(0, 255, 255, 0.35),
+     0 0 10px rgba(255, 0, 255, 0.3);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RETRO SUN
+   ═══════════════════════════════════════════════════════════ */
+
+.synthwave-sun {
+  position: fixed;
+  bottom: 28%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  background: linear-gradient(180deg, #ff0055 0%, #ff6ec7 30%, #ffcc00 60%, #fffc9e 100%);
+  box-shadow:
+    0 0 40px rgba(255, 0, 85, 0.5),
+    0 0 80px rgba(255, 0, 85, 0.3),
+    0 0 120px rgba(255, 0, 85, 0.15);
+  /* Horizontal stripe cutout — classic retro sun */
+  mask-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 8px,
+      black 8px,
+      black 10px,
+      transparent 10px,
+      transparent 14px,
+      black 14px,
+      black 15px,
+      transparent 15px,
+      transparent 20px,
+      black 20px,
+      black 20.5px,
+      transparent 20.5px,
+      transparent 27px,
+      black 27px,
+      black 27.5px,
+      transparent 27.5px,
+      transparent 36px,
+      black 36px,
+      black 37px,
+      transparent 37px,
+      transparent 50px,
+      black 50px,
+      black 51.5px,
+      transparent 51.5px,
+      transparent 68px,
+      black 68px,
+      black 70px,
+      transparent 70px,
+      transparent 92px,
+      black 92px,
+      black 95px,
+      transparent 95px,
+      transparent 126px,
+      black 126px,
+      black 130px,
+      transparent 130px,
+      transparent 170px,
+      black 170px,
+      black 176px,
+      transparent 176px,
+      transparent 220px
+    );
+  -webkit-mask-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 8px,
+      black 8px,
+      black 10px,
+      transparent 10px,
+      transparent 14px,
+      black 14px,
+      black 15px,
+      transparent 15px,
+      transparent 20px,
+      black 20px,
+      black 20.5px,
+      transparent 20.5px,
+      transparent 27px,
+      black 27px,
+      black 27.5px,
+      transparent 27.5px,
+      transparent 36px,
+      black 36px,
+      black 37px,
+      transparent 37px,
+      transparent 50px,
+      black 50px,
+      black 51.5px,
+      transparent 51.5px,
+      transparent 68px,
+      black 68px,
+      black 70px,
+      transparent 70px,
+      transparent 92px,
+      black 92px,
+      black 95px,
+      transparent 95px,
+      transparent 126px,
+      black 126px,
+      black 130px,
+      transparent 130px,
+      transparent 170px,
+      black 170px,
+      black 176px,
+      transparent 176px,
+      transparent 220px
+    );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ANIMATED PERSPECTIVE GRID ROAD + CAR
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes synthwave-grid-scroll {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 0% 60px; }
+}
+
+/* ── Retro car silhouette driving toward horizon ── */
+@keyframes synthwave-car-drive {
+  0% {
+    bottom: 2%;
+    transform: translateX(-50%) scale(1.5);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.9;
+  }
+  100% {
+    bottom: 32%;
+    transform: translateX(-50%) scale(0.1);
+    opacity: 0;
+  }
+}
+
+.synthwave-car {
+  position: fixed;
+  bottom: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 45px;
+  pointer-events: none;
+  z-index: -1;
+  animation: synthwave-car-drive 6s linear infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 0, 255, 0.8)) drop-shadow(0 0 16px rgba(255, 0, 255, 0.4));
+}
+
+/* Car body — simple rear silhouette */
+.synthwave-car::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 90px;
+  height: 27px;
+  background: #0a0520;
+  clip-path: polygon(
+    10% 100%, 0% 60%, 5% 40%, 20% 20%, 80% 20%, 95% 40%, 100% 60%, 90% 100%
+  );
+}
+
+/* Car trunk/rear window */
+.synthwave-car::after {
+  content: "";
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 12px;
+  background: rgba(255, 0, 255, 0.3);
+  clip-path: polygon(
+    10% 100%, 0% 0%, 100% 0%, 90% 100%
+  );
+  box-shadow: 0 0 6px rgba(255, 0, 255, 0.5);
+}
+
+/* Red tail lights */
+.synthwave-car .synthwave-car-tail-left,
+.synthwave-car .synthwave-car-tail-right {
+  position: absolute;
+  bottom: 4px;
+  width: 10px;
+  height: 6px;
+  background: #ff0040;
+  box-shadow: 0 0 12px rgba(255, 0, 64, 1), 0 0 24px rgba(255, 0, 64, 0.8), 0 0 36px rgba(255, 0, 64, 0.5);
+  border-radius: 1px;
+}
+
+.synthwave-car .synthwave-car-tail-left {
+  left: 4px;
+}
+
+.synthwave-car .synthwave-car-tail-right {
+  right: 4px;
+}
+
+.synthwave-grid {
+  position: fixed;
+  bottom: 0;
+  left: -5%;
+  width: 110%;
+  height: 42%;
+  pointer-events: none;
+  z-index: -1;
+  perspective: 300px;
+  overflow: hidden;
+  /* Mask: fade out at horizon, solid at bottom */
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 40%, transparent 65%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 40%, transparent 65%);
+}
+
+.synthwave-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    /* Vertical lines (perspective — converge at horizon) */
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 58px,
+      rgba(255, 0, 255, 0.85) 58px,
+      rgba(255, 0, 255, 0.85) 60px
+    ),
+    /* Horizontal lines (animated scroll toward viewer) */
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 58px,
+      rgba(0, 255, 255, 0.7) 58px,
+      rgba(0, 255, 255, 0.7) 60px
+    );
+  transform: perspective(300px) rotateX(55deg);
+  transform-origin: center top;
+  animation: synthwave-grid-scroll 1.5s linear infinite;
+}
+
+/* Center lane lines */
+.synthwave-grid::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 5px;
+  height: 100%;
+  transform: translateX(-50%);
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 0, 255, 1) 0px,
+    rgba(255, 0, 255, 1) 30px,
+    transparent 30px,
+    transparent 60px
+  );
+  animation: synthwave-grid-scroll 1.5s linear infinite;
+  box-shadow: 0 0 16px rgba(255, 0, 255, 0.8), 0 0 30px rgba(255, 0, 255, 0.5);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HORIZON GLOW (SUNSET GRADIENT)
+   ═══════════════════════════════════════════════════════════ */
+
+.synthwave-horizon {
+  position: fixed;
+  bottom: 25%;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  pointer-events: none;
+  z-index: -1;
+  background: linear-gradient(
+    to top,
+    rgba(255, 0, 85, 0.15) 0%,
+    rgba(255, 0, 255, 0.1) 30%,
+    rgba(255, 110, 199, 0.05) 60%,
+    transparent 100%
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STARS
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes synthwave-twinkle-1 {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+@keyframes synthwave-twinkle-2 {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 0.1; }
+}
+
+@keyframes synthwave-twinkle-3 {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}
+
+.synthwave-stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 80%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 80%);
+}
+
+/* Stars via box-shadow — three twinkling groups */
+.synthwave-stars::before,
+.synthwave-stars::after {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.synthwave-stars::before {
+  top: 0; left: 0;
+  box-shadow:
+    15vw 5vh 1px #fff,
+    35vw 12vh 1px #fff,
+    55vw 3vh 1px #fff,
+    75vw 8vh 1px #fff,
+    90vw 15vh 1px #fff,
+    22vw 18vh 1px #fff,
+    48vw 22vh 1px #fff,
+    65vw 1vh 1px #fff,
+    12vw 25vh 1px #fff,
+    82vw 20vh 1px #fff,
+    38vw 28vh 1px #fff,
+    58vw 16vh 1px #fff,
+    8vw 10vh 1px #fff,
+    72vw 25vh 1px #fff,
+    95vw 5vh 1px #fff,
+    28vw 2vh 1px #fff,
+    42vw 14vh 1px #fff,
+    85vw 30vh 1px #fff,
+    50vw 26vh 1px #fff,
+    5vw 19vh 1px #fff,
+    68vw 9vh 1px #fff,
+    18vw 32vh 1px #fff,
+    93vw 22vh 1px #fff,
+    45vw 6vh 1px #fff,
+    78vw 17vh 1px #fff;
+  animation: synthwave-twinkle-1 3s ease-in-out infinite;
+}
+
+.synthwave-stars::after {
+  top: 0; left: 0;
+  box-shadow:
+    10vw 8vh 1px rgba(0,255,255,0.7),
+    30vw 20vh 1px rgba(255,0,255,0.6),
+    50vw 10vh 1px rgba(0,255,255,0.7),
+    70vw 18vh 1px rgba(255,0,255,0.6),
+    88vw 6vh 1px rgba(0,255,255,0.7),
+    20vw 25vh 1px rgba(255,0,255,0.6),
+    40vw 15vh 1px rgba(0,255,255,0.7),
+    60vw 3vh 1px rgba(255,0,255,0.6),
+    80vw 28vh 1px rgba(0,255,255,0.7),
+    5vw 14vh 1px rgba(255,0,255,0.6),
+    92vw 12vh 1px rgba(0,255,255,0.7),
+    25vw 30vh 1px rgba(255,0,255,0.6),
+    55vw 22vh 1px rgba(0,255,255,0.7),
+    75vw 10vh 1px rgba(255,0,255,0.6),
+    35vw 27vh 1px rgba(0,255,255,0.7);
+  animation: synthwave-twinkle-2 4s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DISTANT CITYSCAPE SILHOUETTE
+   ═══════════════════════════════════════════════════════════ */
+
+.synthwave-city {
+  position: fixed;
+  bottom: 28%;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  pointer-events: none;
+  z-index: -1;
+  /* Cityscape via clip-path */
+  background: rgba(5, 2, 26, 0.95);
+  clip-path: polygon(
+    0% 100%, 0% 70%, 2% 70%, 2% 50%, 3.5% 50%, 3.5% 35%, 5% 35%, 5% 50%, 6% 50%, 6% 60%, 8% 60%, 8% 40%, 9.5% 40%, 9.5% 55%, 11% 55%, 11% 45%, 12.5% 45%, 12.5% 30%, 14% 30%, 14% 50%, 15% 50%, 15% 65%, 17% 65%, 17% 55%, 18.5% 55%, 18.5% 40%, 20% 40%, 20% 50%, 21% 50%, 21% 60%, 23% 60%, 23% 45%, 24.5% 45%, 24.5% 25%, 26% 25%, 26% 50%, 27% 50%, 27% 65%, 29% 65%, 29% 55%, 30.5% 55%, 30.5% 40%, 32% 40%, 32% 50%, 33% 50%, 33% 70%, 35% 70%, 35% 50%, 36.5% 50%, 36.5% 35%, 38% 35%, 38% 50%, 39% 50%, 39% 60%, 41% 60%, 41% 40%, 42.5% 40%, 42.5% 30%, 44% 30%, 44% 50%, 45% 50%, 45% 65%, 47% 65%, 47% 55%, 48.5% 55%, 48.5% 45%, 50% 45%, 50% 35%, 51.5% 35%, 51.5% 50%, 53% 50%, 53% 60%, 55% 60%, 55% 50%, 56.5% 50%, 56.5% 40%, 58% 40%, 58% 55%, 59% 55%, 59% 65%, 61% 65%, 61% 50%, 62.5% 50%, 62.5% 35%, 64% 35%, 64% 50%, 65% 50%, 65% 70%, 67% 70%, 67% 55%, 68.5% 55%, 68.5% 40%, 70% 40%, 70% 50%, 71% 50%, 71% 60%, 73% 60%, 73% 45%, 74.5% 45%, 74.5% 25%, 76% 25%, 76% 50%, 77% 50%, 77% 65%, 79% 65%, 79% 55%, 80.5% 55%, 80.5% 40%, 82% 40%, 82% 50%, 83% 50%, 83% 60%, 85% 60%, 85% 50%, 86.5% 50%, 86.5% 35%, 88% 35%, 88% 50%, 89% 50%, 89% 65%, 91% 65%, 91% 55%, 92.5% 55%, 92.5% 40%, 94% 40%, 94% 50%, 95% 50%, 95% 70%, 97% 70%, 97% 55%, 98.5% 55%, 98.5% 60%, 100% 60%, 100% 100%
+  );
+}
+
+/* Neon windows on cityscape */
+.synthwave-city::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle 1px at 3% 55%, rgba(255,0,255,0.5) 0%, transparent 100%),
+    radial-gradient(circle 1px at 7% 45%, rgba(0,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(circle 1px at 11% 50%, rgba(255,0,255,0.4) 0%, transparent 100%),
+    radial-gradient(circle 1px at 15% 40%, rgba(0,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(circle 1px at 22% 55%, rgba(255,0,255,0.4) 0%, transparent 100%),
+    radial-gradient(circle 1px at 28% 45%, rgba(0,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(circle 1px at 35% 55%, rgba(255,0,255,0.5) 0%, transparent 100%),
+    radial-gradient(circle 1px at 42% 40%, rgba(0,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(circle 1px at 48% 50%, rgba(255,0,255,0.5) 0%, transparent 100%),
+    radial-gradient(circle 1px at 55% 55%, rgba(0,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(circle 1px at 62% 45%, rgba(255,0,255,0.4) 0%, transparent 100%),
+    radial-gradient(circle 1px at 68% 50%, rgba(0,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(circle 1px at 75% 40%, rgba(255,0,255,0.5) 0%, transparent 100%),
+    radial-gradient(circle 1px at 82% 55%, rgba(0,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(circle 1px at 88% 45%, rgba(255,0,255,0.5) 0%, transparent 100%),
+    radial-gradient(circle 1px at 94% 50%, rgba(0,255,255,0.4) 0%, transparent 100%);
+  animation: synthwave-twinkle-3 5s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TEXT EFFECTS
+   ═══════════════════════════════════════════════════════════ */
 
 /* Neon text glow */
 .synthwave .synthwave-neon-text {
@@ -959,6 +1497,14 @@
     0 0 20px rgba(255, 0, 255, 0.4),
     0 0 40px rgba(255, 0, 255, 0.2),
     0 0 80px rgba(255, 0, 255, 0.1);
+}
+
+/* Cyan neon glow (for secondary text) */
+.synthwave .synthwave-neon-cyan {
+  text-shadow:
+    0 0 7px rgba(0, 255, 255, 0.7),
+    0 0 20px rgba(0, 255, 255, 0.4),
+    0 0 40px rgba(0, 255, 255, 0.2);
 }
 
 /* Chrome/metallic gradient text */
@@ -976,68 +1522,134 @@
   -webkit-text-fill-color: transparent;
 }
 
-/* Holographic card effect */
-.synthwave .synthwave-holo-card {
-  border: 1px solid #ff00ff30 !important;
-  border-radius: 0.75rem !important;
-  background: rgba(15, 5, 30, 0.85) !important;
-  backdrop-filter: blur(12px);
-  box-shadow:
-    0 0 15px rgba(255, 0, 255, 0.1),
-    0 0 30px rgba(255, 0, 255, 0.05),
-    inset 0 1px 0 rgba(255, 0, 255, 0.1);
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+/* Retro terminal body text */
+.synthwave .synthwave-terminal {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  color: #d4c8f7;
+  text-shadow: 0 0 4px rgba(139, 92, 246, 0.4);
 }
 
-.synthwave .synthwave-holo-card:hover {
-  border-color: #ff00ff60 !important;
+/* ═══════════════════════════════════════════════════════════
+   CARD / COMPONENT EFFECTS
+   ═══════════════════════════════════════════════════════════ */
+
+/* Synthwave section card — neon bordered, dark glass */
+.synthwave .synthwave-card {
+  border: 1px solid rgba(255, 0, 255, 0.2) !important;
+  border-radius: 0.25rem !important;
+  background: rgba(10, 5, 30, 0.97) !important;
+  backdrop-filter: blur(16px);
   box-shadow:
-    0 0 20px rgba(255, 0, 255, 0.2),
-    0 0 40px rgba(255, 0, 255, 0.1),
-    inset 0 1px 0 rgba(255, 0, 255, 0.2);
+    0 0 1px rgba(255, 0, 255, 0.3),
+    0 0 20px rgba(255, 0, 255, 0.05),
+    inset 0 1px 0 rgba(255, 0, 255, 0.08);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Synthwave neon button */
+.synthwave .synthwave-card:hover {
+  border-color: rgba(255, 0, 255, 0.45) !important;
+  box-shadow:
+    0 0 2px rgba(255, 0, 255, 0.4),
+    0 0 30px rgba(255, 0, 255, 0.1),
+    inset 0 1px 0 rgba(255, 0, 255, 0.12);
+}
+
+/* Cyan-accented card variant */
+.synthwave .synthwave-card-cyan {
+  border: 1px solid rgba(0, 255, 255, 0.2) !important;
+  border-radius: 0.25rem !important;
+  background: rgba(10, 5, 30, 0.97) !important;
+  backdrop-filter: blur(16px);
+  box-shadow:
+    0 0 1px rgba(0, 255, 255, 0.3),
+    0 0 20px rgba(0, 255, 255, 0.05);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.synthwave .synthwave-card-cyan:hover {
+  border-color: rgba(0, 255, 255, 0.45) !important;
+  box-shadow:
+    0 0 2px rgba(0, 255, 255, 0.4),
+    0 0 30px rgba(0, 255, 255, 0.1);
+}
+
+/* Neon button */
 .synthwave .synthwave-btn {
-  border-radius: 0.5rem !important;
+  border-radius: 0.25rem !important;
   border: 1px solid #ff00ff !important;
   background: transparent !important;
   color: #ff00ff !important;
+  font-family: var(--font-mono), monospace;
   font-weight: 700;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   transition: all 0.2s !important;
   text-shadow: 0 0 5px rgba(255, 0, 255, 0.5);
+  box-shadow: 0 0 5px rgba(255, 0, 255, 0.2), inset 0 0 5px rgba(255, 0, 255, 0.05);
 }
 
 .synthwave .synthwave-btn:hover {
   background: #ff00ff !important;
   color: #0a0520 !important;
-  box-shadow: 0 0 20px rgba(255, 0, 255, 0.5) !important;
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.5), inset 0 0 10px rgba(255, 0, 255, 0.2) !important;
   text-shadow: none;
 }
 
-/* Synthwave skill badges */
-.synthwave .synthwave-badge {
-  border-radius: 0.25rem !important;
-  border: 1px solid #00ffff40 !important;
-  background: #00ffff10 !important;
+/* Cyan button variant */
+.synthwave .synthwave-btn-cyan {
+  border: 1px solid #00ffff !important;
   color: #00ffff !important;
-  font-size: 0.75rem !important;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+  box-shadow: 0 0 5px rgba(0, 255, 255, 0.2), inset 0 0 5px rgba(0, 255, 255, 0.05);
+}
+
+.synthwave .synthwave-btn-cyan:hover {
+  background: #00ffff !important;
+  color: #0a0520 !important;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5) !important;
+}
+
+/* Skill badges — neon terminal style */
+.synthwave .synthwave-badge {
+  border-radius: 0.125rem !important;
+  border: 1px solid rgba(0, 255, 255, 0.3) !important;
+  background: rgba(0, 255, 255, 0.08) !important;
+  color: #00ffff !important;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.7rem !important;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+  box-shadow: 0 0 4px rgba(0, 255, 255, 0.15);
+  padding: 0.2rem 0.5rem !important;
 }
 
-/* Synthwave nav */
+/* ═══════════════════════════════════════════════════════════
+   NAV / HUD EFFECTS
+   ═══════════════════════════════════════════════════════════ */
+
+/* Retro HUD nav container */
 .synthwave .synthwave-nav {
-  backdrop-filter: blur(12px) !important;
-  background: rgba(10, 5, 32, 0.8) !important;
-  border: 1px solid #ff00ff30 !important;
-  border-radius: 0.75rem !important;
-  box-shadow: 0 0 15px rgba(255, 0, 255, 0.1) !important;
+  backdrop-filter: blur(16px) !important;
+  background: rgba(10, 5, 32, 0.85) !important;
+  border: 1px solid rgba(255, 0, 255, 0.25) !important;
+  border-radius: 0.25rem !important;
+  box-shadow:
+    0 0 1px rgba(255, 0, 255, 0.4),
+    0 0 20px rgba(255, 0, 255, 0.08);
 }
 
-/* Synthwave experience timeline */
+/* ═══════════════════════════════════════════════════════════
+   TIMELINE / EXPERIENCE
+   ═══════════════════════════════════════════════════════════ */
+
+.synthwave .synthwave-timeline {
+  position: relative;
+}
+
 .synthwave .synthwave-timeline::before {
   content: "";
   position: absolute;
@@ -1045,21 +1657,14 @@
   top: 0;
   bottom: 0;
   width: 2px;
-  background: linear-gradient(180deg, #ff00ff, #00ffff);
-  box-shadow: 0 0 8px rgba(255, 0, 255, 0.4);
+  background: linear-gradient(180deg, #ff00ff, #00ffff, #ff00ff);
+  box-shadow: 0 0 8px rgba(255, 0, 255, 0.4), 0 0 16px rgba(0, 255, 255, 0.2);
 }
 
-/* Synthwave sunset glow — radial horizon effect */
-.synthwave::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9995;
-  background: radial-gradient(ellipse at 50% 100%, rgba(255, 0, 255, 0.2) 0%, rgba(0, 255, 255, 0.1) 40%, transparent 70%);
-}
+/* ═══════════════════════════════════════════════════════════
+   DIVIDER ORNAMENT
+   ═══════════════════════════════════════════════════════════ */
 
-/* Synthwave section header ornament — neon divider */
 .synthwave .synthwave-divider {
   display: flex;
   align-items: center;
@@ -1073,7 +1678,7 @@
   content: "";
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #ff00ff60, transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 0, 255, 0.4), transparent);
 }
 
 .synthwave .synthwave-divider span {
@@ -1082,9 +1687,13 @@
   font-family: var(--font-mono), monospace;
   text-transform: uppercase;
   letter-spacing: 0.15em;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.4);
 }
 
-/* Synthwave heading glow */
+/* ═══════════════════════════════════════════════════════════
+   HEADING GLOW
+   ═══════════════════════════════════════════════════════════ */
+
 .synthwave h1.synthwave-neon-text,
 .synthwave h2.synthwave-neon-text {
   filter: drop-shadow(0 0 16px rgba(255, 0, 255, 0.3));

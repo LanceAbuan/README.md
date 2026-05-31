@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import {
   Inter,
   JetBrains_Mono,
+  Orbitron,
   Playfair_Display,
   Source_Serif_4,
 } from "next/font/google";
@@ -24,6 +25,13 @@ const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800", "900"],
   variable: "--font-newspaper-heading",
+});
+
+// Synthwave theme: retro-futuristic heading font
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-orbitron",
 });
 
 const sourceSerif4 = Source_Serif_4({
@@ -121,7 +129,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
       </head>
       <body
-        className={`${inter.variable} ${jetBrainsMono.variable} ${playfairDisplay.variable} ${sourceSerif4.variable} font-sans antialiased`}
+        className={`${inter.variable} ${jetBrainsMono.variable} ${orbitron.variable} ${playfairDisplay.variable} ${sourceSerif4.variable} font-sans antialiased`}
       >
         <Providers>{children}</Providers>
         <Script
