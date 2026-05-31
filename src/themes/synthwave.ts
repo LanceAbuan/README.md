@@ -47,54 +47,54 @@ export const synthwaveTheme: ThemeConfig = {
     destructive: "#ff0055",
     border: "#ff00ff30",
     ring: "#ff00ff80",
-    cardBg: "rgba(10, 5, 30, 0.9)",
+    cardBg: "rgba(10, 5, 30, 0.95)",
     glow: "rgba(255, 0, 255, 0.6)",
   },
 
   typography: {
-    bodyFont: "var(--font-mono), monospace",
-    headingFont: "'Orbitron', var(--font-sans)",
+    bodyFont: "var(--font-terminal), var(--font-mono), monospace",
+    headingFont: "var(--font-orbitron), sans-serif",
     headingWeight: "700",
     headingTransform: "uppercase",
-    letterSpacing: "0.06em",
+    letterSpacing: "0.08em",
   },
 
   sections: {
     about: {
       label: "// ABOUT",
-      heading: "WHO AM I",
+      heading: "W//H0_AM_1",
       labelClass:
         "text-xs font-mono text-[#00ffff] mb-2 tracking-[0.3em] synthwave-neon-cyan",
       headingClass:
         "text-3xl sm:text-4xl font-bold text-[#ff00ff] synthwave-neon-text synthwave-chromatic uppercase tracking-wider",
     },
     experience: {
-      label: "// CAREER LOG",
-      heading: "EXPERIENCE",
+      label: "// C4R33R_L0G",
+      heading: "EXP3R13NC3",
       labelClass:
         "text-xs font-mono text-[#00ffff] mb-2 tracking-[0.3em] synthwave-neon-cyan",
       headingClass:
         "text-3xl sm:text-4xl font-bold text-[#ff00ff] synthwave-neon-text synthwave-chromatic uppercase tracking-wider",
     },
     projects: {
-      label: "// PROJECTS",
-      heading: "CONSTRUCTIONS",
+      label: "// PR0J3CTS",
+      heading: "C0NSTRUCTIONS",
       labelClass:
         "text-xs font-mono text-[#00ffff] mb-2 tracking-[0.3em] synthwave-neon-cyan",
       headingClass:
         "text-3xl sm:text-4xl font-bold text-[#ff00ff] synthwave-neon-text synthwave-chromatic uppercase tracking-wider",
     },
     skills: {
-      label: "// SKILLS",
-      heading: "POWER LEVELS",
+      label: "// SK1LLS",
+      heading: "P0W3R_L3V3L5",
       labelClass:
         "text-xs font-mono text-[#00ffff] mb-2 tracking-[0.3em] synthwave-neon-cyan",
       headingClass:
         "text-3xl sm:text-4xl font-bold text-[#ff00ff] synthwave-neon-text synthwave-chromatic uppercase tracking-wider",
     },
     contact: {
-      label: "// CONTACT",
-      heading: "TRANSMIT SIGNAL",
+      label: "// C0NT4CT",
+      heading: "TR4NSM1T_S1GN4L",
       labelClass:
         "text-xs font-mono text-[#00ffff] mb-2 tracking-[0.3em] synthwave-neon-cyan",
       headingClass:
