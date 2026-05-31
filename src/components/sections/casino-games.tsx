@@ -171,21 +171,7 @@ function ScreenShake({ shaking, children }: { shaking: boolean; children: React.
 
 /* ─── Neon Glow Pulse ─── */
 function NeonPulse({ active, children }: { active: boolean; children: React.ReactNode }) {
-  return (
-    <motion.div
-      animate={active ? {
-        boxShadow: [
-          "0 0 5px #d4af3730, 0 0 10px #d4af3720",
-          "0 0 15px #d4af3750, 0 0 30px #d4af3730, 0 0 45px #d4af3715",
-          "0 0 5px #d4af3730, 0 0 10px #d4af3720",
-        ]
-      } : { boxShadow: "none" }}
-      transition={{ duration: 1.2, repeat: active ? Infinity : 0 }}
-      className="relative"
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className="relative">{children}</div>;
 }
 
 /* ─── Particle Trail ─── */
