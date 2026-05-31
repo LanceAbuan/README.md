@@ -952,6 +952,33 @@
   --radius: 0.25rem;
 }
 
+/* ── Neutral color overrides ── */
+/* Components use hardcoded text-neutral-* classes that bypass CSS vars.
+   Override them so body text is actually readable on the dark synthwave bg.
+   Since .synthwave is on <body>, descendant selectors catch everything. */
+
+.synthwave .text-neutral-300,
+.synthwave .text-neutral-400,
+.synthwave .text-neutral-500,
+.synthwave .text-neutral-600 {
+  color: #dcd0f7 !important;
+}
+
+.synthwave .text-neutral-700 {
+  color: #ede5ff !important;
+}
+
+/* Hover states that switch to foreground */
+.synthwave .group:hover .group-hover\:text-foreground {
+  color: #ede5ff !important;
+}
+
+/* Background overrides for badges/tags */
+.synthwave .bg-neutral-100,
+.synthwave .bg-neutral-800 {
+  background-color: rgba(139, 92, 246, 0.15) !important;
+}
+
 /* ── Background: deep night sky gradient ── */
 .synthwave body,
 .synthwave {
