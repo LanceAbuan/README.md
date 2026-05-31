@@ -14,7 +14,6 @@ import { useActiveSection } from "@/hooks/use-active-section";
 import { useTheme } from "next-themes";
 import { useThemeConfig } from "@/hooks/use-theme-config";
 import { CoinFlipNav } from "@/components/casino/coin-flip";
-import { CasinoMusic } from "@/components/casino/casino-music";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -128,7 +127,6 @@ export function Navbar() {
             >
               <Download className="h-3.5 w-3.5" />
             </a>
-            {theme === "casino" && <CasinoMusic />}
             <ThemeSelector />
             {theme === "casino" && (
               <button
@@ -188,7 +186,6 @@ export function Navbar() {
                   <ThemeSelector />
                   {theme === "casino" && (
                     <>
-                      <CasinoMusic />
                       <button
                         onClick={() => setGamesOpen(true)}
                         className="h-8 w-8 flex items-center justify-center rounded-lg text-[#d4af37] hover:bg-[#2a0a0a] border border-[#d4af3715] transition-colors"
