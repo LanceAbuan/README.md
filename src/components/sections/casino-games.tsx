@@ -1164,11 +1164,22 @@ function DiceGame({ bet, setBet, balance, setBalance }: { bet: number; setBet: (
     const d1 = 1 + Math.floor(Math.random() * 6);
     const d2 = 1 + Math.floor(Math.random() * 6);
 
-    // Animate dice with 3D rotation
-    const spins1 = { x: 720 + Math.random() * 720, y: 720 + Math.random() * 720, z: 360 + Math.random() * 360 };
-    const spins2 = { x: 720 + Math.random() * 720, y: 720 + Math.random() * 720, z: 360 + Math.random() * 360 };
-    setDice1Rotation(spins1);
-    setDice2Rotation(spins2);
+    // Animate with extra random spins, then land on the correct face
+    const target1 = faceRotations[d1];
+    const target2 = faceRotations[d2];
+    const extraSpins = 3 + Math.floor(Math.random() * 3);
+    const final1 = {
+      x: target1.x + extraSpins * 360 + Math.floor(Math.random() * 2) * 360,
+      y: target1.y + extraSpins * 360 + Math.floor(Math.random() * 2) * 360,
+      z: 0,
+    };
+    const final2 = {
+      x: target2.x + extraSpins * 360 + Math.floor(Math.random() * 2) * 360,
+      y: target2.y + extraSpins * 360 + Math.floor(Math.random() * 2) * 360,
+      z: 0,
+    };
+    setDice1Rotation(final1);
+    setDice2Rotation(final2);
 
     // Flicker numbers during roll
     let flickerCount = 0;
@@ -1217,13 +1228,51 @@ function DiceGame({ bet, setBet, balance, setBalance }: { bet: number; setBet: (
     }, 1800);
   }, [rolling, prediction, bet, balance, setBalance, betOptions]);
 
-  const diceFaces: Record<number, React.ReactNode> = {
-    1: <div className="flex items-center justify-center w-full h-full"><div className="w-3 h-3 rounded-full bg-[#2a1a1a]" /></div>,
-    2: <div className="flex items-center justify-between w-full px-2 h-full"><div className="self-start w-2 h-2 rounded-full bg-[#2a1a1a] mt-1.5" /><div className="self-end w-2 h-2 rounded-full bg-[#2a1a1a] mb-1.5" /></div>,
-    3: <div className="flex items-center justify-between w-full px-2 h-full"><div className="self-start w-2 h-2 rounded-full bg-[#2a1a1a] mt-1.5" /><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /><div className="self-end w-2 h-2 rounded-full bg-[#2a1a1a] mb-1.5" /></div>,
-    4: <div className="flex items-center justify-between w-full px-2 h-full"><div className="flex flex-col justify-between h-full py-1.5"><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /></div><div className="flex flex-col justify-between h-full py-1.5"><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /></div></div>,
-    5: <div className="flex items-center justify-between w-full px-2 h-full"><div className="flex flex-col justify-between h-full py-1"><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /></div><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /><div className="flex flex-col justify-between h-full py-1"><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /></div></div>,
-    6: <div className="flex items-center justify-between w-full px-2 h-full"><div className="flex flex-col justify-between h-full py-1"><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /></div><div className="flex flex-col justify-between h-full py-1"><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /><div className="w-2 h-2 rounded-full bg-[#2a1a1a]" /></div></div>,
+  // Dot pattern for a single face
+  const dotPositions: Record<number, { top?: string; left?: string; bottom?: string; right?: string }[]> = {
+    1: [{ top: "50%", left: "50%", bottom: "auto", right: "auto" }],
+    2: [{ top: "20%", left: "70%" }, { top: "70%", left: "20%" }],
+    3: [{ top: "20%", left: "70%" }, { top: "50%", left: "50%" }, { top: "70%", left: "20%" }],
+    4: [{ top: "20%", left: "20%" }, { top: "20%", left: "70%" }, { top: "70%", left: "20%" }, { top: "70%", left: "70%" }],
+    5: [{ top: "20%", left: "20%" }, { top: "20%", left: "70%" }, { top: "50%", left: "50%" }, { top: "70%", left: "20%" }, { top: "70%", left: "70%" }],
+    6: [{ top: "20%", left: "20%" }, { top: "20%", left: "70%" }, { top: "50%", left: "20%" }, { top: "50%", left: "70%" }, { top: "70%", left: "20%" }, { top: "70%", left: "70%" }],
+  };
+
+  function DiceFace({ value, size = 64 }: { value: number; size?: number }) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center" style={{ backfaceVisibility: "hidden" }}>
+        <div className="w-full h-full rounded-md bg-gradient-to-br from-[#faf5eb] to-[#e8dcc8] border border-[#d4af3720] p-1.5" style={{ boxShadow: "inset 0 1px 3px #00000020" }}>
+          <div className="relative w-full h-full">
+            {dotPositions[value]?.map((pos, i) => (
+              <div
+                key={i}
+                className="absolute rounded-full bg-[#2a1a1a]"
+                style={{
+                  width: value === 1 ? "24%" : "18%",
+                  height: value === 1 ? "24%" : "18%",
+                  top: pos.top ? `calc(${pos.top} - 9%)` : "auto",
+                  left: pos.left ? `calc(${pos.left} - 9%)` : "auto",
+                  bottom: pos.bottom || "auto",
+                  right: pos.right || "auto",
+                  transform: "translate(-50%, -50%)",
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Rotation to show a given face: { x, y } in degrees
+  // Face layout: +Y=front(1), -Y=back(6), +X=bottom(2), -X=top(5), +Z=right(3), -Z=left(4)
+  const faceRotations: Record<number, { x: number; y: number }> = {
+    1: { x: 0, y: 0 },
+    2: { x: 90, y: 0 },
+    3: { x: 0, y: -90 },
+    4: { x: 0, y: 90 },
+    5: { x: -90, y: 0 },
+    6: { x: 180, y: 0 },
   };
 
   return (
@@ -1238,42 +1287,54 @@ function DiceGame({ bet, setBet, balance, setBalance }: { bet: number; setBet: (
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4af3730] to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4af3730] to-transparent" />
 
-            <div className="flex justify-center gap-6 py-4" style={{ perspective: "600px" }}>
+            <div className="flex justify-center gap-8 py-6" style={{ perspective: "800px" }}>
               {/* Die 1 */}
-              <motion.div
-                animate={{
-                  rotateX: dice1Rotation.x,
-                  rotateY: dice1Rotation.y,
-                  rotateZ: dice1Rotation.z,
-                  scale: rolling ? [1, 1.2, 1.1, 1.15, 1] : 1,
-                }}
-                transition={{
-                  duration: 1.6,
-                  ease: [0.15, 0.8, 0.3, 1],
-                }}
-                className="w-[72px] h-[72px] rounded-lg bg-gradient-to-br from-[#faf5eb] to-[#e8dcc8] border-2 border-[#d4af3730] shadow-lg relative"
-                style={{ transformStyle: "preserve-3d", boxShadow: won ? "0 0 20px #d4af3740" : "0 4px 12px #00000040" }}
-              >
-                <div className="absolute inset-1 rounded-md">{diceFaces[dice1Display] || diceFaces[1]}</div>
-              </motion.div>
+              <div className="w-[72px] h-[72px]" style={{ perspective: "600px" }}>
+                <motion.div
+                  animate={{
+                    rotateX: dice1Rotation.x,
+                    rotateY: dice1Rotation.y,
+                    rotateZ: dice1Rotation.z,
+                  }}
+                  transition={{
+                    duration: 1.6,
+                    ease: [0.15, 0.8, 0.3, 1],
+                  }}
+                  className="w-[72px] h-[72px] relative"
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+                  <div style={{ position: "absolute", width: "100%", height: "100%", transform: "translateZ(36px)" }}><DiceFace value={1} /></div>
+                  <div style={{ position: "absolute", width: "100%", height: "100%", transform: "rotateY(180deg) translateZ(36px)" }}><DiceFace value={6} /></div>
+                  <div style={{ position: "absolute", width: "100%", height: "100%", transform: "rotateY(90deg) translateZ(36px)" }}><DiceFace value={3} /></div>
+                  <div style={{ position: "absolute", width: "100%", height: "100%", transform: "rotateY(-90deg) translateZ(36px)" }}><DiceFace value={4} /></div>
+                  <div style={{ position: "absolute", width: "100%", height: "100%", transform: "rotateX(90deg) translateZ(36px)" }}><DiceFace value={5} /></div>
+                  <div style={{ position: "absolute", width: "100%", height: "100%", transform: "rotateX(-90deg) translateZ(36px)" }}><DiceFace value={2} /></div>
+                </motion.div>
+              </div>
 
               {/* Die 2 */}
-              <motion.div
-                animate={{
-                  rotateX: dice2Rotation.x,
-                  rotateY: dice2Rotation.y,
-                  rotateZ: dice2Rotation.z,
-                  scale: rolling ? [1, 1.15, 1.2, 1.1, 1] : 1,
-                }}
-                transition={{
-                  duration: 1.6,
-                  ease: [0.15, 0.8, 0.3, 1],
-                }}
-                className="w-[72px] h-[72px] rounded-lg bg-gradient-to-br from-[#faf5eb] to-[#e8dcc8] border-2 border-[#d4af3730] shadow-lg relative"
-                style={{ transformStyle: "preserve-3d", boxShadow: won ? "0 0 20px #d4af3740" : "0 4px 12px #00000040" }}
-              >
-                <div className="absolute inset-1 rounded-md">{diceFaces[dice2Display] || diceFaces[1]}</div>
-              </motion.div>
+              <div className="w-[72px] h-[72px]" style={{ perspective: "600px" }}>
+                <motion.div
+                  animate={{
+                    rotateX: dice2Rotation.x,
+                    rotateY: dice2Rotation.y,
+                    rotateZ: dice2Rotation.z,
+                  }}
+                  transition={{
+                    duration: 1.6,
+                    ease: [0.15, 0.8, 0.3, 1],
+                  }}
+                  className="w-[72px] h-[72px] relative"
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+                  <div style={{ position: "absolute", width: "100%", height: "100%", transform: "translateZ(36px)" }}><DiceFace value={1} /></div>
+                  <div style={{ position: "absolute", width: "100%", height: "100%", transform: "rotateY(180deg) translateZ(36px)" }}><DiceFace value={6} /></div>
+                  <div style={{ position: "absolute", width: "100%", height: "100%", transform: "rotateY(90deg) translateZ(36px)" }}><DiceFace value={3} /></div>
+                  <div style={{ position: "absolute", width: "100%", height: "100%", transform: "rotateY(-90deg) translateZ(36px)" }}><DiceFace value={4} /></div>
+                  <div style={{ position: "absolute", width: "100%", height: "100%", transform: "rotateX(90deg) translateZ(36px)" }}><DiceFace value={5} /></div>
+                  <div style={{ position: "absolute", width: "100%", height: "100%", transform: "rotateX(-90deg) translateZ(36px)" }}><DiceFace value={2} /></div>
+                </motion.div>
+              </div>
             </div>
 
             {!rolling && dice[0] + dice[1] !== 2 && (
