@@ -170,7 +170,7 @@ function ExperienceCard({
             <span>{exp.location}</span>
           </div>
           {/* Description */}
-          <p className="text-sm text-[#c8bfb2] font-serif leading-relaxed">
+          <p className="text-sm text-[#c8bfb2] font-serif leading-relaxed max-w-xl m-auto">
             {exp.description}
           </p>
           {/* Skills as chips */}
