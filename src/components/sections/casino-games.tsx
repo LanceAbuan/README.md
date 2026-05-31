@@ -204,27 +204,55 @@ function ParticleTrail({ active }: { active: boolean }) {
 /* ─── Points Badge ─── */
 function PointsBadge({ balance }: { balance: number }) {
   const prev = useRef(balance);
-  const [pulse, setPulse] = useState(false);
+  const [display, setDisplay] = useState(balance);
+  const [counting, setCounting] = useState(false);
+  const rafRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null);
+
   useEffect(() => {
-    if (balance > prev.current) { setPulse(true); prev.current = balance; const t = setTimeout(() => setPulse(false), 400); return () => clearTimeout(t); }
-    prev.current = balance;
+    if (balance > prev.current) {
+      const start = prev.current;
+      const diff = balance - start;
+      const duration = Math.min(1500, 400 + diff * 15);
+      const startTime = performance.now();
+      setCounting(true);
+
+      const tick = (now: number) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease-out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setDisplay(Math.floor(start + diff * eased));
+        if (progress < 1) {
+          rafRef.current = requestAnimationFrame(tick);
+        } else {
+          setDisplay(balance);
+          setCounting(false);
+        }
+      };
+      rafRef.current = requestAnimationFrame(tick);
+      prev.current = balance;
+    } else if (balance < prev.current) {
+      setDisplay(balance);
+      prev.current = balance;
+    }
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, [balance]);
 
   return (
     <motion.div
-      animate={pulse ? { scale: [1, 1.1, 1] } : {}}
-      transition={{ duration: 0.4 }}
+      animate={counting ? { scale: [1, 1.06, 1] } : {}}
+      transition={{ duration: 0.5 }}
       className="flex items-center gap-2 bg-[#1a0808] border border-[#d4af3725] px-3 py-1.5 rounded-md"
-      style={{ boxShadow: "0 0 12px #d4af3710" }}
+      style={{ boxShadow: counting ? "0 0 20px #d4af3730" : "0 0 12px #d4af3710" }}
     >
       <Trophy className="h-4 w-4 text-[#d4af37]" />
-      <motion.span
+      <span
         className="text-base font-bold font-serif text-[#d4af37] tabular-nums"
-        animate={pulse ? { scale: [1, 1.3, 1] } : {}}
-        transition={{ duration: 0.4 }}
       >
-        {balance}
-      </motion.span>
+        {display}
+      </span>
       <span className="text-xs text-[#6b5e50] font-serif uppercase tracking-wider">pts</span>
     </motion.div>
   );
