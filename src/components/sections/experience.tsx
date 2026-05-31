@@ -144,7 +144,7 @@ function ExperienceCard({
         initial={{ opacity: 0, x: -20 }}
         animate={isInView ? { opacity: 1, x: 0 } : {}}
         transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
-        className="flex gap-4"
+        className="flex gap-4 items-center"
       >
         {/* Timeline dot */}
         <div className="flex flex-col items-center pt-1">
@@ -152,29 +152,23 @@ function ExperienceCard({
         </div>
 
         {/* Horizontal card */}
-        <div className="casino-card flex-1 p-5 space-y-3 text-center">
-          {/* Role + period centered */}
-          <div className="flex items-center gap-3 w-fit mx-auto">
-            <h3 className="text-lg font-bold font-serif text-white">
-              {exp.role}
-            </h3>
-            <span className="text-xs text-[#8a7e72] font-serif whitespace-nowrap pt-0.5">
+        <div className="casino-card flex-1 p-5 space-y-3">
+          <h3 className="text-lg font-bold font-serif text-white text-center">
+            {exp.role}
+            <span className="text-xs text-[#8a7e72] font-serif whitespace-nowrap ml-2 pt-0.5 align-text-top">
               {exp.period}
             </span>
-          </div>
-          {/* Company line */}
-          <div className="flex items-center gap-2 text-sm text-[#c8bfb2] font-serif flex-wrap w-fit mx-auto">
+          </h3>
+          <div className="flex items-center justify-center gap-2 text-sm text-[#c8bfb2] font-serif flex-wrap">
             <Building2 className="h-3.5 w-3.5 text-[#8b1a1a] flex-shrink-0" />
             <span>{exp.company}</span>
             <span>&#8226;</span>
             <span>{exp.location}</span>
           </div>
-          {/* Description */}
-          <p className="text-sm text-[#c8bfb2] font-serif leading-relaxed max-w-xl m-auto">
+          <p className="text-sm text-[#c8bfb2] font-serif leading-relaxed max-w-xl mx-auto text-center">
             {exp.description}
           </p>
-          {/* Skills as chips */}
-          <div className="flex flex-wrap gap-1.5 w-fit mx-auto">
+          <div className="flex flex-wrap justify-center gap-1.5">
             {exp.skills.map((skill, j) => (
               <span key={j} className="casino-chip text-[10px] px-2 py-0.5 rounded-full font-serif">
                 {skill}

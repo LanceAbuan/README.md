@@ -11,7 +11,7 @@ import { Volume2, VolumeX } from "lucide-react";
  * with a subtle rhythmic pulse reminiscent of a casino floor.
  */
 
-const BASE_VOL = 0.035;
+const BASE_VOL = 0.12;
 
 // A minor pentatonic: A B C D E G
 const SCALE = [220, 246.94, 261.63, 293.66, 329.63, 392];
@@ -121,7 +121,7 @@ export function CasinoMusic() {
     playingRef.current = true;
     setPlaying(true);
     nextNote();
-  }, [muted]);
+  }, []);
 
   const stopMusic = useCallback(() => {
     playingRef.current = false;
