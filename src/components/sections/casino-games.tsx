@@ -129,28 +129,91 @@ function evaluateHand(hand: Card[]): { rank: string; mult: number } {
 /* ─── Enhanced Confetti Burst (30+ particles, varied sizes/colors) ─── */
 function ConfettiBurst({ active, intensity = 1 }: { active: boolean; intensity?: number }) {
   if (!active) return null;
-  const count = Math.floor(35 + Math.random() * 15) * intensity;
+  const count = Math.floor(50 + Math.random() * 30) * intensity;
   const colors = ["#d4af37", "#f5f0e8", "#8b1a1a", "#fff", "#ff6b6b", "#ffd93d", "#6bcb77", "#4d96ff", "#ff6fff", "#ffa500"];
   const particles = Array.from({ length: count }, (_, i) => {
     const angle = (i / count) * 360 + Math.random() * 30;
-    const dist = 60 + Math.random() * 100;
+    const dist = 80 + Math.random() * 140;
     const dx = Math.cos((angle * Math.PI) / 180) * dist;
     const dy = Math.sin((angle * Math.PI) / 180) * dist;
     const color = colors[i % colors.length];
-    const size = 3 + Math.random() * 8;
+    const size = 4 + Math.random() * 10;
     const shape = Math.random() > 0.5 ? "rounded-full" : "rounded-sm";
     return (
       <motion.div
         key={i}
         initial={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: 0 }}
         animate={{ opacity: 0, scale: 0, x: dx, y: dy, rotate: Math.random() * 720 - 360 }}
-        transition={{ duration: 0.8 + Math.random() * 0.6, ease: "easeOut", delay: Math.random() * 0.1 }}
+        transition={{ duration: 1 + Math.random() * 0.8, ease: "easeOut", delay: Math.random() * 0.15 }}
         className={`absolute left-1/2 top-1/2 ${shape}`}
         style={{ backgroundColor: color, width: size, height: size * (0.6 + Math.random() * 0.4) }}
       />
     );
   });
   return <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">{particles}</div>;
+}
+
+/* ─── Collectible Poker Chips ─── */
+function CollectibleChips({ onCollect }: { onCollect: (amount: number) => void }) {
+  const [chips, setChips] = useState<Array<{ id: number; x: number; y: number; value: number; color: string }>>([]);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+
+  useEffect(() => {
+    // Spawn a chip every 4-8 seconds
+    const spawn = () => {
+      const values = [5, 10, 25, 50];
+      const colors: Record<number, string> = { 5: "#ef4444", 10: "#3b82f6", 25: "#22c55e", 50: "#d4af37" };
+      const value = values[Math.floor(Math.random() * values.length)];
+      setChips(prev => [...prev, {
+        id: Date.now() + Math.random(),
+        x: 8 + Math.random() * 84,
+        y: 8 + Math.random() * 84,
+        value,
+        color: colors[value],
+      }]);
+    };
+    // Spawn first one after 3-6 seconds
+    const firstTimeout = setTimeout(spawn, 3000 + Math.random() * 3000);
+    intervalRef.current = setInterval(spawn, 4000 + Math.random() * 4000);
+    return () => {
+      clearTimeout(firstTimeout);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
+  const collect = (id: number, value: number) => {
+    onCollect(value);
+    setChips(prev => prev.filter(c => c.id !== id));
+  };
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {chips.map(chip => (
+        <motion.div
+          key={chip.id}
+          initial={{ opacity: 0, scale: 0, rotate: -180 }}
+          animate={{ opacity: 0.9, scale: 1, rotate: 0 }}
+          exit={{ opacity: 0, scale: 0 }}
+          transition={{ duration: 0.5, type: "spring", damping: 12 }}
+          onClick={() => collect(chip.id, chip.value)}
+          whileHover={{ scale: 1.2, rotate: [0, -10, 10, 0] }}
+          whileTap={{ scale: 0.85 }}
+          className="absolute cursor-pointer pointer-events-auto"
+          style={{ left: `${chip.x}%`, top: `${chip.y}%` }}
+        >
+          <div
+            className="w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-lg border-2 border-white/30"
+            style={{
+              backgroundColor: chip.color,
+              boxShadow: `0 2px 8px ${chip.color + "88"}, 0 0 12px ${chip.color + "40"}`,
+            }}
+          >
+            {chip.value}
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  );
 }
 
 /* ─── Screen Shake Wrapper ─── */
@@ -342,18 +405,24 @@ function ResultBanner({ result }: { result: string | null }) {
     <AnimatePresence>
       {result && (
         <motion.div
-          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+          initial={{ opacity: 0, y: 10, scale: 0.8 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{ type: "spring", damping: 20 }}
-          className={`text-center font-serif py-3 px-4 rounded-md border
+          exit={{ opacity: 0, y: -10, scale: 0.9 }}
+          transition={{ type: "spring", damping: 18, stiffness: 200 }}
+          className={`text-center font-serif rounded-md border
             ${isWin
-              ? "text-[#d4af37] border-[#d4af3725] bg-[#2a1010]"
-              : "text-[#8b8b8b] border-[#33333340] bg-[#0a0a0a]"
+              ? "text-[#d4af37] border-[#d4af3730] bg-[#2a1010] py-4 px-6"
+              : "text-[#8b8b8b] border-[#33333340] bg-[#0a0a0a] py-3 px-4"
             }`}
-          style={isWin ? { boxShadow: "0 0 20px #d4af3715" } : {}}
+          style={isWin ? { boxShadow: "0 0 30px #d4af3725, 0 0 60px #d4af3710" } : {}}
         >
-          <span className="text-base">{result}</span>
+          <motion.span
+            className={isWin ? "text-xl font-bold" : "text-base"}
+            animate={isWin ? { scale: [1, 1.08, 1] } : {}}
+            transition={isWin ? { duration: 0.6, repeat: 1 } : {}}
+          >
+            {result}
+          </motion.span>
         </motion.div>
       )}
     </AnimatePresence>
@@ -1531,6 +1600,7 @@ export function CasinoGames({ onClose }: { onClose: () => void }) {
           style={{ boxShadow: "0 25px 80px #00000080, 0 0 60px #d4af3708, inset 0 1px 0 #d4af3710" }}
         >
           <LoungeParticles />
+          <CollectibleChips onCollect={(amount) => setBalance(b => b + amount)} />
 
           <div className="relative flex items-center justify-between px-6 py-4 border-b border-[#d4af3712] bg-gradient-to-r from-[#0a0303] via-[#120606] to-[#0a0303]">
             <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4af3725] to-transparent" />
