@@ -931,20 +931,20 @@ function VideoPoker({ bet, setBet, balance, setBalance }: { bet: number; setBet:
       while (idx < 5 && held[idx]) idx++;
       if (idx >= 5) {
         // All replacements done
-        const eval = evaluateHand(currentHand);
-        setHandRank(eval.rank);
-        if (eval.mult > 0) {
+        const evalResult = evaluateHand(currentHand);
+        setHandRank(evalResult.rank);
+        if (evalResult.mult > 0) {
           setWon(true);
           setShaking(true);
-          const w = bet * eval.mult;
+          const w = bet * evalResult.mult;
           setBalance(b => b + w);
-          setResult(`${eval.rank}! +${w} pts`);
+          setResult(`${evalResult.rank}! +${w} pts`);
           setScore(s => ({ ...s, w: s.w + 1 }));
-          eval.mult >= 25 ? sfx.jackpot() : sfx.win();
+          evalResult.mult >= 25 ? sfx.jackpot() : sfx.win();
           if (shakeTimeoutRef.current) clearTimeout(shakeTimeoutRef.current);
           shakeTimeoutRef.current = setTimeout(() => setShaking(false), 600);
         } else {
-          setResult(`${eval.rank} — no win. -${bet} pts`);
+          setResult(`${evalResult.rank} — no win. -${bet} pts`);
           setScore(s => ({ ...s, l: s.l + 1 }));
           sfx.lose();
         }
