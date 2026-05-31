@@ -233,21 +233,75 @@ function PointsBadge({ balance }: { balance: number }) {
 /* ─── Betting Control ─── */
 function BetControl({ bet, setBet, balance, disabled }: { bet: number; setBet: (v: number) => void; balance: number; disabled: boolean }) {
   const presets = [5, 10, 25, 50, 100];
+  const [custom, setCustom] = useState("");
+  const [inputMode, setInputMode] = useState(false);
+
+  const applyCustom = () => {
+    const val = parseInt(custom, 10);
+    if (!isNaN(val) && val >= 1) {
+      sfx.tick();
+      setBet(Math.min(val, balance));
+    }
+    setCustom("");
+    setInputMode(false);
+  };
+
   return (
     <div className="flex items-center gap-3 mb-3">
       <span className="text-sm text-[#6b5e50] font-serif uppercase tracking-wider shrink-0">Bet:</span>
-      <div className="flex gap-1.5">
+      <div className="flex gap-1.5 flex-wrap">
         {presets.map(p => (
           <motion.button
             key={p}
             disabled={disabled || balance < p}
-            onClick={() => { sfx.tick(); setBet(p); }}
+            onClick={() => { sfx.tick(); setBet(p); setInputMode(false); }}
             whileHover={disabled ? {} : { scale: 1.08 }}
             whileTap={disabled ? {} : { scale: 0.95 }}
             className={`px-3 py-1 text-xs font-serif border rounded-sm transition-colors disabled:opacity-25
-              ${bet === p ? "border-[#d4af3750] bg-[#2a0a0a] text-[#d4af37]" : "border-[#d4af3710] text-[#6b5e50] hover:border-[#d4af3730]"}`}
+              ${bet === p && !inputMode ? "border-[#d4af3750] bg-[#2a0a0a] text-[#d4af37]" : "border-[#d4af3710] text-[#6b5e50] hover:border-[#d4af3730]"}`}
           >{p}</motion.button>
         ))}
+        {!inputMode ? (
+          <motion.button
+            disabled={disabled}
+            onClick={() => { setInputMode(true); setCustom(String(bet)); }}
+            whileHover={disabled ? {} : { scale: 1.08 }}
+            whileTap={disabled ? {} : { scale: 0.95 }}
+            className="px-3 py-1 text-xs font-serif border rounded-sm border-dashed border-[#d4af3720] text-[#6b5e50] hover:border-[#d4af3740] hover:text-[#d4af37] transition-colors disabled:opacity-25"
+          >Custom</motion.button>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, width: 0 }}
+            animate={{ opacity: 1, width: "auto" }}
+            exit={{ opacity: 0, width: 0 }}
+            className="flex items-center gap-1.5"
+          >
+            <input
+              type="number"
+              min={1}
+              max={balance}
+              value={custom}
+              onChange={e => setCustom(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && applyCustom()}
+              disabled={disabled}
+              autoFocus
+              className="w-20 bg-[#0e0505] border border-[#d4af3740] rounded-sm px-2 py-1 text-xs text-[#d4af37] font-serif outline-none"
+              placeholder="Amt"
+            />
+            <motion.button
+              onClick={applyCustom}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-2 py-1 text-xs font-serif border border-[#d4af3750] bg-[#2a0a0a] text-[#d4af37] rounded-sm"
+            >✓</motion.button>
+            <motion.button
+              onClick={() => { setInputMode(false); setCustom(""); }}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-2 py-1 text-xs font-serif border border-[#d4af3710] text-[#6b5e50] rounded-sm"
+            >✗</motion.button>
+          </motion.div>
+        )}
       </div>
     </div>
   );
