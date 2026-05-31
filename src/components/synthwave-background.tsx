@@ -27,6 +27,12 @@ export function SynthwaveBackground() {
       {/* Distant cityscape silhouette with neon windows */}
       <div className="synthwave-city" aria-hidden="true" />
 
+      {/* Retro car driving toward viewer */}
+      <div className="synthwave-car" aria-hidden="true">
+        <div className="synthwave-car-tail-left" />
+        <div className="synthwave-car-tail-right" />
+      </div>
+
       {/* Twinkling star field */}
       <div className="synthwave-stars" aria-hidden="true" />
     </>

@@ -1142,12 +1142,108 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   ANIMATED PERSPECTIVE GRID ROAD
+   ANIMATED PERSPECTIVE GRID ROAD + CAR
    ═══════════════════════════════════════════════════════════ */
 
 @keyframes synthwave-grid-scroll {
   0% { background-position: 0% 0%; }
   100% { background-position: 0% 60px; }
+}
+
+/* ── Retro car silhouette driving toward viewer ── */
+@keyframes synthwave-car-drive {
+  0% {
+    bottom: 32%;
+    transform: translateX(-50%) scale(0.15);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  100% {
+    bottom: 2%;
+    transform: translateX(-50%) scale(1);
+    opacity: 0.9;
+  }
+}
+
+.synthwave-car {
+  position: fixed;
+  bottom: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 30px;
+  pointer-events: none;
+  z-index: 3;
+  animation: synthwave-car-drive 4s linear infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 0, 255, 0.8)) drop-shadow(0 0 16px rgba(255, 0, 255, 0.4));
+}
+
+/* Car body — simple rear silhouette */
+.synthwave-car::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 18px;
+  background: #0a0520;
+  clip-path: polygon(
+    10% 100%, 0% 60%, 5% 40%, 20% 20%, 80% 20%, 95% 40%, 100% 60%, 90% 100%
+  );
+}
+
+/* Car trunk/rear window */
+.synthwave-car::after {
+  content: "";
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 12px;
+  background: rgba(255, 0, 255, 0.3);
+  clip-path: polygon(
+    10% 100%, 0% 0%, 100% 0%, 90% 100%
+  );
+  box-shadow: 0 0 6px rgba(255, 0, 255, 0.5);
+}
+
+/* Tail lights */
+.synthwave-car::after {
+  content: "";
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 12px;
+  background: rgba(255, 0, 255, 0.3);
+  clip-path: polygon(
+    10% 100%, 0% 0%, 100% 0%, 90% 100%
+  );
+  box-shadow: 0 0 6px rgba(255, 0, 255, 0.5);
+}
+
+/* Red tail lights */
+.synthwave-car .synthwave-car-tail-left,
+.synthwave-car .synthwave-car-tail-right {
+  position: absolute;
+  bottom: 2px;
+  width: 6px;
+  height: 4px;
+  background: #ff0040;
+  box-shadow: 0 0 8px rgba(255, 0, 64, 0.9), 0 0 16px rgba(255, 0, 64, 0.5);
+  border-radius: 1px;
+}
+
+.synthwave-car .synthwave-car-tail-left {
+  left: 4px;
+}
+
+.synthwave-car .synthwave-car-tail-right {
+  right: 4px;
 }
 
 .synthwave-grid {
