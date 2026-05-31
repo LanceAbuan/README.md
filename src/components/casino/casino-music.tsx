@@ -127,7 +127,7 @@ export function CasinoMusic() {
     playingRef.current = false;
     if (rafRef.current) {
       clearTimeout(rafRef.current);
-      rafRef.current = 0;
+      rafRef.current = undefined;
     }
     setPlaying(false);
   }, []);
