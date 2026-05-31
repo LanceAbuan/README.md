@@ -1007,9 +1007,15 @@
 }
 
 /* Ensure page content renders above fixed background elements */
-.synthwave > main {
+/* The synthwave class is on <body>, so use descendant selectors, not direct-child */
+.synthwave main {
   position: relative;
-  z-index: 10;
+  z-index: 100;
+}
+
+.synthwave main > * {
+  position: relative;
+  z-index: 100;
 }
 
 /* ── RGB chromatic aberration on headings ── */
