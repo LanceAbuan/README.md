@@ -88,7 +88,7 @@ function handValue(hand: Hand): number {
 function isBust(h: Hand): boolean { return handValue(h) > 21; }
 function isBlackjack(h: Hand): boolean { return h.length === 2 && handValue(h) === 21; }
 
-/* ─── Video Poker helpers ─── */
+/* ─── Omaha Poker helpers ─── */
 function vpMakeDeck(): Card[] {
   const deck: Card[] = [];
   for (const s of VP_SUITS) for (const r of VP_RANKS) {
@@ -850,7 +850,7 @@ function Blackjack({ bet, setBet, balance, setBalance }: { bet: number; setBet: 
   );
 }
 
-/* ─── Video Poker (5-Card Draw) ─── */
+/* ─── Omaha Poker (5-Card Draw) ─── */
 function VideoPoker({ bet, setBet, balance, setBalance }: { bet: number; setBet: (v: number) => void; balance: number; setBalance: (fn: (b: number) => number) => void }) {
   const [hand, setHand] = useState<Card[]>([]);
   const [phase, setPhase] = useState<"idle" | "select" | "dealing" | "done">("idle");
@@ -1416,7 +1416,7 @@ export function CasinoGames({ onClose }: { onClose: () => void }) {
     { key: "coinflip", label: "COIN", icon: "🪙" },
     { key: "roulette", label: "ROULETTE", icon: "🎡" },
     { key: "blackjack", label: "BLACKJACK", icon: "🃏" },
-    { key: "videopoker", label: "VIDEO POKER", icon: "🂡" },
+    { key: "videopoker", label: "OMAHA POKER", icon: "🂡" },
     { key: "dice", label: "DICE", icon: "🎲" },
   ];
 
