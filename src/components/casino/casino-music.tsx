@@ -28,7 +28,7 @@ export function CasinoMusic() {
   const [muted, setMuted] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const masterGainRef = useRef<GainNode | null>(null);
-  const rafRef = useRef<number>(0);
+  const rafRef = useRef<ReturnType<typeof setTimeout>>(0);
   const playingRef = useRef(false);
 
   const startMusic = useCallback(() => {
