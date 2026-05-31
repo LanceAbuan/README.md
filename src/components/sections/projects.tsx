@@ -36,10 +36,11 @@ export function Projects() {
                 <p className="casino-label mb-2">
                   THE HAND
                 </p>
-                <h2 className="text-3xl sm:text-4xl font-bold font-serif casino-neon tracking-tight">
-                  Show Me What You&apos;ve Got
+                <h2 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight">
+                  Selected Plays
                 </h2>
-                <p className="text-[#fef3c7] font-serif mt-3 max-w-lg">
+                <div className="w-16 h-px bg-gradient-to-r from-[#d4af37] to-transparent mt-3" />
+                <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg">
                   Selected plays from the table.
                 </p>
               </>
@@ -84,7 +85,7 @@ export function Projects() {
                 buttonVariants({ variant: "ghost", className: "hidden sm:flex items-center gap-1 text-sm" }),
                 isTerminal && "rounded-none font-mono text-[#00ff41] hover:bg-[#0d1a0d]",
                 isNewspaper && "rounded-none font-serif text-[#5c2e0e] hover:bg-[#ddd2be]",
-                isCasino && "rounded-md font-serif text-[#dc2626] hover:text-white hover:bg-[#dc262630] border border-[#dc262640]",
+                isCasino && "rounded-md font-serif text-[#d4af37] hover:text-white hover:bg-[#8b1a1a]/60 border border-[#d4af37]/20",
               )}
             >
               View all <ArrowUpRight className="h-3.5 w-3.5" />
@@ -181,21 +182,18 @@ function ProjectCard({
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
         transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
       >
-        <div className="casino-playing-card p-5 h-full flex flex-col gap-3">
-          <div className="casino-suit-ornament">
-            {'♠♥♦♣'[index % 4]}
-          </div>
+        <div className="casino-card h-full flex flex-col gap-3 p-5">
           <div className="flex items-start justify-between">
-            <h3 className="text-base font-bold font-serif text-[#fef3c7]">
+            <h3 className="text-base font-bold font-serif text-white">
               {project.name}
             </h3>
             <div className="flex items-center gap-1">
               {project.demo && (
-                <Link href={project.demo} className="h-7 w-7 flex items-center justify-center text-[#dc2626] hover:text-white rounded-md transition-colors">
+                <Link href={project.demo} className="h-7 w-7 flex items-center justify-center text-[#d4af37] hover:text-white rounded-md transition-colors">
                   <ExternalLink className="h-3.5 w-3.5" />
                 </Link>
               )}
-              <Link href={project.github} className="h-7 w-7 flex items-center justify-center text-[#dc2626] hover:text-white rounded-md transition-colors">
+              <Link href={project.github} className="h-7 w-7 flex items-center justify-center text-[#d4af37] hover:text-white rounded-md transition-colors">
                 <GitFork className="h-3.5 w-3.5" />
               </Link>
             </div>
@@ -205,12 +203,12 @@ function ProjectCard({
               ★
             </span>
           )}
-          <p className="text-sm text-[#fef3c7] font-serif leading-relaxed flex-1">
+          <p className="text-sm text-[#c8bfb2] font-serif leading-relaxed flex-1">
             {project.description}
           </p>
           <div className="flex flex-wrap gap-1.5">
             {project.tags.map((tag, i) => (
-              <span key={i} className="casino-chip-gold text-[10px] px-2 py-0.5 rounded-full font-serif">{tag}</span>
+              <span key={i} className="casino-chip text-[10px] px-2 py-0.5 rounded-full font-serif">{tag}</span>
             ))}
           </div>
         </div>

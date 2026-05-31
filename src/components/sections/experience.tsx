@@ -26,17 +26,15 @@ export function Experience() {
           className={cn(isNewspaper ? "text-center mb-12" : "mb-12")}
         >
           {isCasino ? (
-            <div className="text-center mb-12">
+            <div className="mb-12">
               <p className="casino-label mb-2">
                 TRACK RECORD
               </p>
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif casino-neon tracking-tight">
-                High Stakes History
+              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight">
+                Career History
               </h2>
-              <div className="casino-divider mt-4 mb-4">
-                <span>♦</span>
-              </div>
-              <p className="text-[#fef3c7] font-serif mt-3 max-w-lg mx-auto">
+              <div className="w-16 h-px bg-gradient-to-r from-[#d4af37] to-transparent mt-4" />
+              <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg">
                 A career built on calculated risks and winning plays.
               </p>
             </div>
@@ -143,47 +141,42 @@ function ExperienceCard({
   if (isCasino) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        initial={{ opacity: 0, x: -20 }}
+        animate={isInView ? { opacity: 1, x: 0 } : {}}
         transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
+        className="flex gap-4"
       >
-        <div className="casino-playing-card p-5 space-y-3">
-          {/* Corner suit */}
-          <div className="casino-suit-ornament">
-            {['♠','♥','♦','♣'][index % 4]}
-          </div>
+        {/* Timeline dot */}
+        <div className="flex flex-col items-center pt-1">
+          <div className="casino-timeline-dot" />
+        </div>
 
-          {/* Header row: role + period */}
+        {/* Horizontal card */}
+        <div className="casino-card flex-1 p-5 space-y-3">
+          {/* Role + period on one line */}
           <div className="flex items-start justify-between gap-3">
-            <h3 className="text-lg font-bold font-serif text-[#fef3c7]">
+            <h3 className="text-lg font-bold font-serif text-white">
               {exp.role}
             </h3>
-            <span className="text-xs text-[#fef3c7] font-serif whitespace-nowrap pt-0.5">
+            <span className="text-xs text-[#8a7e72] font-serif whitespace-nowrap pt-0.5">
               {exp.period}
             </span>
           </div>
           {/* Company line */}
-          <div className="flex items-center gap-2 text-sm text-[#fef3c7] font-serif">
-            <Building2 className="h-3.5 w-3.5 text-[#dc2626] flex-shrink-0" />
+          <div className="flex items-center gap-2 text-sm text-[#c8bfb2] font-serif">
+            <Building2 className="h-3.5 w-3.5 text-[#8b1a1a] flex-shrink-0" />
             <span>{exp.company}</span>
             <span>&#8226;</span>
             <span>{exp.location}</span>
-            <span>&#8226;</span>
-            <span className="casino-chip-gold h-5 px-2 py-0 rounded-full">
-              {exp.type}
-            </span>
           </div>
           {/* Description */}
-          <p className="text-sm text-[#fef3c7] font-serif leading-relaxed">
+          <p className="text-sm text-[#c8bfb2] font-serif leading-relaxed">
             {exp.description}
           </p>
           {/* Skills as chips */}
           <div className="flex flex-wrap gap-1.5">
             {exp.skills.map((skill, j) => (
-              <span
-                key={j}
-                className="casino-chip text-[10px] px-2 py-0.5 rounded-full font-serif"
-              >
+              <span key={j} className="casino-chip text-[10px] px-2 py-0.5 rounded-full font-serif">
                 {skill}
               </span>
             ))}

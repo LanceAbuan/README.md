@@ -82,16 +82,14 @@ export function Contact() {
             </div>
           ) : isCasino ? (
             <div>
-              <p className="casino-label mb-3">
+              <p className="casino-label mb-2">
                 CONTACT
               </p>
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif casino-neon tracking-tight mb-4">
+              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight mb-4">
                 Place Your Hand
               </h2>
-              <div className="casino-divider mb-4">
-                <span>♦</span>
-              </div>
-              <p className="text-[#fef3c7] font-serif max-w-lg leading-relaxed">
+              <div className="w-16 h-px bg-gradient-to-r from-[#d4af37] to-transparent mb-4" />
+              <p className="text-[#c8bfb2] font-serif max-w-lg leading-relaxed">
                 Have a project in mind, want to collaborate, or just want to say hi?
                 Drop me a message and I&apos;ll get back to you.
               </p>
@@ -143,7 +141,7 @@ export function Contact() {
                 className={cn(
                   "text-sm font-semibold uppercase tracking-wider text-neutral-400",
                   isTerminal && "font-mono text-[#00aa30]",
-                  isCasino && "font-serif text-[#dc2626] tracking-[0.2em]",
+                  isCasino && "font-serif text-[#d4af37] tracking-[0.2em]",
                   isNewspaper && "font-serif text-[#7a6b5a] tracking-[0.15em]",
                 )}
               >
@@ -162,7 +160,7 @@ export function Contact() {
                       isTerminal
                         ? "terminal-card rounded-none text-[#00ff41]"
                         : isCasino
-                          ? "casino-card rounded-lg border-[#d4af3715] text-[#fef3c7] hover:bg-[#2a0505]/80"
+                          ? "casino-card rounded-lg border-[#d4af37]/15 text-[#c8bfb2] hover:bg-[#1c0c0c]/80"
                           : isNewspaper
                             ? "newspaper-card rounded-none text-[#1a1208]"
                             : "border-neutral-200/50 dark:border-neutral-700/50 bg-white/30 dark:bg-neutral-900/30 hover:bg-white/60 dark:hover:bg-neutral-800/60",
@@ -172,7 +170,7 @@ export function Contact() {
                       className={cn(
                         "h-5 w-5 transition-colors",
                         isTerminal && "text-[#00ff41]",
-                        isCasino && "text-[#dc2626] group-hover:text-white",
+                        isCasino && "text-[#d4af37] group-hover:text-white",
                         isNewspaper && "text-[#5c2e0e] group-hover:text-[#1a1208]",
                         !isTerminal && !isCasino && !isNewspaper && "text-neutral-400 group-hover:text-foreground",
                       )}
@@ -191,7 +189,7 @@ export function Contact() {
                       className={cn(
                         "h-3.5 w-3.5 ml-auto transition-colors",
                         isTerminal && "text-[#00ff4140] group-hover:text-[#00ff41]",
-                        isCasino && "text-[#d4af3730] group-hover:text-[#dc2626]",
+                        isCasino && "text-[#d4af37] group-hover:text-[#d4af37]",
                         isNewspaper && "text-[#c4b59e] group-hover:text-[#1a1208]",
                         !isTerminal && !isCasino && !isNewspaper && "text-neutral-300 dark:text-neutral-600 group-hover:text-foreground",
                       )}
@@ -217,7 +215,7 @@ export function Contact() {
                     isTerminal
                       ? "terminal-card rounded-none text-[#00ff41]"
                       : isCasino
-                        ? "casino-card rounded-lg border-[#d4af3715] text-[#fef3c7] hover:bg-[#2a0505]/80"
+                        ? "casino-card rounded-lg border-[#d4af37]/15 text-[#c8bfb2] hover:bg-[#1c0c0c]/80"
                         : isNewspaper
                           ? "newspaper-card rounded-none text-[#1a1208]"
                           : "border-neutral-200/50 dark:border-neutral-700/50 bg-white/30 dark:bg-neutral-900/30 hover:bg-white/60 dark:hover:bg-neutral-800/60",
@@ -227,7 +225,7 @@ export function Contact() {
                     className={cn(
                       "h-5 w-5 transition-colors",
                       isTerminal && "text-[#00ff41]",
-                      isCasino && "text-[#dc2626] group-hover:text-white",
+                      isCasino && "text-[#d4af37] group-hover:text-white",
                       isNewspaper && "text-[#5c2e0e] group-hover:text-[#1a1208]",
                       !isTerminal && !isCasino && !isNewspaper && "text-neutral-400 group-hover:text-foreground",
                     )}
@@ -270,7 +268,7 @@ export function Contact() {
                 htmlFor="name"
                 className={cn(
                   isTerminal && "font-mono text-[#00aa30]",
-                  isCasino && "font-serif text-[#dc2626] tracking-wider",
+                  isCasino && "font-serif text-[#d4af37] tracking-wider",
                   isNewspaper && "font-serif text-[#5c2e0e]",
                 )}
               >
@@ -286,7 +284,7 @@ export function Contact() {
                   isTerminal
                     ? "rounded-none font-mono border-[#00ff4130] bg-black text-[#00ff41] placeholder:text-[#00aa30] focus:border-[#00ff41]"
                     : isCasino
-                      ? "casino-input font-serif text-[#fef3c7] placeholder:text-[#9ca3af] focus:border-[#dc2626]"
+                      ? "casino-input font-serif text-[#f5f0e8] placeholder:text-[#8a7e72] focus:border-[#d4af37]"
                       : isNewspaper
                         ? "rounded-none font-serif border-[#c4b59e] bg-[#efe8da] text-[#1a1208] placeholder:text-[#7a6b5a] focus:border-[#5c2e0e]"
                         : "bg-white/50 dark:bg-neutral-900/50",
@@ -298,7 +296,7 @@ export function Contact() {
                 htmlFor="email"
                 className={cn(
                   isTerminal && "font-mono text-[#00aa30]",
-                  isCasino && "font-serif text-[#dc2626] tracking-wider",
+                  isCasino && "font-serif text-[#d4af37] tracking-wider",
                   isNewspaper && "font-serif text-[#5c2e0e]",
                 )}
               >
@@ -315,7 +313,7 @@ export function Contact() {
                   isTerminal
                     ? "rounded-none font-mono border-[#00ff4130] bg-black text-[#00ff41] placeholder:text-[#00aa30] focus:border-[#00ff41]"
                     : isCasino
-                      ? "casino-input font-serif text-[#fef3c7] placeholder:text-[#9ca3af] focus:border-[#dc2626]"
+                      ? "casino-input font-serif text-[#f5f0e8] placeholder:text-[#8a7e72] focus:border-[#d4af37]"
                       : isNewspaper
                         ? "rounded-none font-serif border-[#c4b59e] bg-[#efe8da] text-[#1a1208] placeholder:text-[#7a6b5a] focus:border-[#5c2e0e]"
                         : "bg-white/50 dark:bg-neutral-900/50",
@@ -327,7 +325,7 @@ export function Contact() {
                 htmlFor="message"
                 className={cn(
                   isTerminal && "font-mono text-[#00aa30]",
-                  isCasino && "font-serif text-[#dc2626] tracking-wider",
+                  isCasino && "font-serif text-[#d4af37] tracking-wider",
                   isNewspaper && "font-serif text-[#5c2e0e]",
                 )}
               >
@@ -345,7 +343,7 @@ export function Contact() {
                   isTerminal
                     ? "rounded-none font-mono border-[#00ff4130] bg-black text-[#00ff41] placeholder:text-[#00aa30] focus:border-[#00ff41]"
                     : isCasino
-                      ? "casino-input font-serif text-[#fef3c7] placeholder:text-[#9ca3af] focus:border-[#dc2626]"
+                      ? "casino-input font-serif text-[#f5f0e8] placeholder:text-[#8a7e72] focus:border-[#d4af37]"
                       : isNewspaper
                         ? "rounded-none font-serif border-[#c4b59e] bg-[#efe8da] text-[#1a1208] placeholder:text-[#7a6b5a] focus:border-[#5c2e0e]"
                         : "bg-white/50 dark:bg-neutral-900/50",
@@ -354,7 +352,7 @@ export function Contact() {
             </div>
 
             {status === "error" && (
-              <div className="flex items-center gap-2 text-sm" style={{ color: isTerminal ? "#ff3333" : isCasino ? "#dc2626" : undefined }}>
+              <div className="flex items-center gap-2 text-sm" style={{ color: isTerminal ? "#ff3333" : isCasino ? "#d4af37" : undefined }}>
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 <span className={isTerminal ? "font-mono" : isCasino ? "font-serif" : isNewspaper ? "font-serif" : ""}>
                   {errorMsg}

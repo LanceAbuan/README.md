@@ -25,17 +25,15 @@ export function About() {
           transition={{ duration: 0.6 }}
         >
           {isCasino ? (
-            <div className="text-center mb-12">
+            <div className="mb-12">
               <p className="casino-label mb-2">
-                ♠ THE PLAYER ♥
+                THE DOSSIER
               </p>
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif casino-neon tracking-tight">
-                Know Your Opponent
+              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight">
+                The Player
               </h2>
-              <div className="casino-divider mt-4 mb-4">
-                <span>♦</span>
-              </div>
-              <p className="text-[#fef3c7] font-serif mt-3 max-w-lg mx-auto">
+              <div className="w-16 h-px bg-gradient-to-r from-[#d4af37] to-transparent mt-4" />
+              <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg">
                 Every great hand starts with reading the table.
               </p>
             </div>
@@ -74,16 +72,15 @@ export function About() {
         </motion.div>
 
         {isCasino ? (
-          /* Casino layout — player dossier on felt, two-column */
+          /* Casino layout — Player Dossier: left-aligned header, bio card + sidebar stats */
           <div className="space-y-6">
-            {/* Bio + stats side by side */}
-            <div className="grid md:grid-cols-5 gap-6">
-              {/* Bio paragraphs — left column (3 cols) */}
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Bio — wide left panel */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.15 }}
-                className="md:col-span-3 casino-card p-6 sm:p-8 space-y-4"
+                className="md:col-span-2 casino-card p-6 sm:p-8 space-y-4"
               >
                 {aboutData.paragraphs.map((paragraph, i) => (
                   <HighlightedParagraph
@@ -96,12 +93,12 @@ export function About() {
                 ))}
               </motion.div>
 
-              {/* Stat cards — right column (2 cols) */}
+              {/* Stats — narrow right sidebar, vertically stacked */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.25 }}
-                className="md:col-span-2 grid grid-cols-2 gap-3"
+                className="space-y-3"
               >
                 {aboutData.stats.map((stat, i) => {
                   const Icon = getIcon(stat.icon);
@@ -299,13 +296,13 @@ function HighlightedParagraph({
   isCasino?: boolean;
 }) {
   if (!highlights || highlights.length === 0) {
-    return <p className={isCasino ? "text-[#fef3c7] font-serif leading-relaxed" : ""}>{text}</p>;
+    return <p className={isCasino ? "text-[#c8bfb2] font-serif leading-relaxed" : ""}>{text}</p>;
   }
 
   const parts = splitTextByHighlights(text, highlights);
 
   return (
-    <p className={isCasino ? "text-[#fef3c7] font-serif leading-relaxed" : ""}>
+    <p className={isCasino ? "text-[#c8bfb2] font-serif leading-relaxed" : ""}>
       {parts.map((part, i) => (
         <span key={i}>
           {part.highlighted ? (
@@ -313,7 +310,7 @@ function HighlightedParagraph({
               className={cn(
                 isTerminal && "text-[#00ff41] terminal-glow",
                 isNewspaper && "text-[#5c2e0e] font-bold",
-                isCasino && "casino-neon text-[#fef3c7]",
+                isCasino && "text-[#d4af37] font-semibold",
               )}
             >
               {part.content}
@@ -342,14 +339,16 @@ function AboutStatCard({
 }) {
   if (isCasino) {
     return (
-      <div className="casino-card-red text-center flex flex-col items-center justify-center p-4 gap-2">
-        <Icon className="h-5 w-5 text-[#dc2626] mx-auto flex-shrink-0" />
-        <span className="text-[10px] text-[#fef3c7] uppercase tracking-wider font-serif block">
-          {stat.label}
-        </span>
-        <span className="text-sm font-bold font-serif text-[#dc2626] leading-tight" style={{ textShadow: '0 0 8px rgba(224,16,32,0.4)' }}>
-          {stat.value}
-        </span>
+      <div className="casino-card flex items-center gap-4 px-4 py-3">
+        <Icon className="h-5 w-5 text-[#d4af37] flex-shrink-0" />
+        <div className="min-w-0">
+          <span className="text-[10px] text-[#8a7e72] uppercase tracking-wider font-serif block truncate">
+            {stat.label}
+          </span>
+          <span className="text-sm font-bold font-serif text-white leading-tight">
+            {stat.value}
+          </span>
+        </div>
       </div>
     );
   }

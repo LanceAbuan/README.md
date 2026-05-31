@@ -27,10 +27,11 @@ export function Skills() {
               <p className="casino-label mb-2">
                 ARSENAL
               </p>
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif casino-neon tracking-tight">
-                Tools of the Trade
+              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight">
+                Tools & Techniques
               </h2>
-              <p className="text-[#fef3c7] font-serif mt-3 max-w-lg mx-auto">
+              <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto mt-4" />
+              <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg mx-auto">
                 The skills that keep the edge sharp.
               </p>
             </div>
@@ -140,7 +141,7 @@ function SkillCategoryCard({
         transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
       >
         <div className="casino-card p-5 space-y-3">
-          <h3 className="text-xs font-serif text-[#dc2626] uppercase tracking-[0.15em] border-b border-[#dc262630] pb-2">
+          <h3 className="text-xs font-serif text-[#d4af37] uppercase tracking-[0.15em] border-b border-[#d4af37]/15 pb-2">
             {category.name}
           </h3>
           <div className="flex flex-wrap gap-1.5">

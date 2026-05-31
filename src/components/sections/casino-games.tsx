@@ -20,6 +20,34 @@ const RED_NUMBERS = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 
 const POINTS_PER_SECOND = 1;
 const STORAGE_KEY = "casino_points_v1";
 
+/* ─── Sound FX (Web Audio, no files needed) ─── */
+const audioCtx = typeof window !== "undefined" ? new (window.AudioContext || (window as any).webkitAudioContext)() : null;
+
+function playTone(freq: number, dur: number, type: OscillatorType = "sine", vol = 0.12) {
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + dur);
+}
+
+const sfx = {
+  tick: () => playTone(800, 0.06, "square", 0.04),
+  win: () => { playTone(523, 0.15); setTimeout(() => playTone(659, 0.15), 100); setTimeout(() => playTone(784, 0.3), 200); },
+  lose: () => { playTone(200, 0.25, "sine", 0.08); playTone(160, 0.3, "sine", 0.06); },
+  jackpot: () => {
+    [523, 587, 659, 698, 784, 880, 988, 1047].forEach((f, i) => setTimeout(() => playTone(f, 0.18, "sine", 0.1), i * 80));
+  },
+  card: () => playTone(600 + Math.random() * 200, 0.08, "triangle", 0.05),
+  coin: () => playTone(1200, 0.1, "triangle", 0.06),
+  spin: () => playTone(150, 0.4, "sine", 0.04),
+};
+
 /* ─── Helpers ─── */
 function pick<T>(arr: T[]): T { return arr[Math.floor(Math.random() * arr.length)]; }
 
@@ -102,7 +130,7 @@ function PointsBadge({ balance }: { balance: number }) {
       >
         {balance}
       </motion.span>
-      <span className="text-[10px] text-[#6b5e50] font-serif uppercase tracking-wider">pts</span>
+      <span className="text-xs text-[#6b5e50] font-serif uppercase tracking-wider">pts</span>
     </motion.div>
   );
 }
@@ -111,22 +139,47 @@ function PointsBadge({ balance }: { balance: number }) {
 function BetControl({ bet, setBet, balance, disabled }: { bet: number; setBet: (v: number) => void; balance: number; disabled: boolean }) {
   const presets = [5, 10, 25, 50, 100];
   return (
-    <div className="flex items-center gap-2 mb-3">
-      <span className="text-[10px] text-[#6b5e50] font-serif uppercase tracking-wider shrink-0">Bet:</span>
-      <div className="flex gap-1">
+    <div className="flex items-center gap-3 mb-3">
+      <span className="text-sm text-[#6b5e50] font-serif uppercase tracking-wider shrink-0">Bet:</span>
+      <div className="flex gap-1.5">
         {presets.map(p => (
           <motion.button
             key={p}
             disabled={disabled || balance < p}
-            onClick={() => setBet(p)}
+            onClick={() => { sfx.tick(); setBet(p); }}
             whileHover={disabled ? {} : { scale: 1.08 }}
             whileTap={disabled ? {} : { scale: 0.95 }}
-            className={`px-2 py-0.5 text-[10px] font-serif border rounded-sm transition-colors disabled:opacity-25
+            className={`px-3 py-1 text-xs font-serif border rounded-sm transition-colors disabled:opacity-25
               ${bet === p ? "border-[#d4af3750] bg-[#2a0a0a] text-[#d4af37]" : "border-[#d4af3710] text-[#6b5e50] hover:border-[#d4af3730]"}`}
           >{p}</motion.button>
         ))}
       </div>
     </div>
+  );
+}
+
+/* ─── Result Banner ─── */
+function ResultBanner({ result }: { result: string | null }) {
+  const isWin = result?.startsWith("JACKPOT") || result?.startsWith("WIN") || result?.includes("called it") || result?.startsWith("BLACKJACK") || result?.includes("— +");
+  return (
+    <AnimatePresence>
+      {result && (
+        <motion.div
+          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ type: "spring", damping: 20 }}
+          className={`text-center font-serif py-3 px-4 rounded-md border
+            ${isWin
+              ? "text-[#d4af37] border-[#d4af3725] bg-[#2a1010]"
+              : "text-[#8b8b8b] border-[#33333340] bg-[#0a0a0a]"
+            }`}
+          style={isWin ? { boxShadow: "0 0 20px #d4af3715" } : {}}
+        >
+          <span className="text-base">{result}</span>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -143,33 +196,28 @@ function SlotMachine({ bet, setBet, balance, setBalance }: { bet: number; setBet
   const finalsRef = useRef<Grid>(blankGrid());
   const tickRef = useRef(0);
 
-  // Win lines: all possible 3-in-a-row on 3×3
   const WIN_LINES: [number, number][][] = [
-    // Rows
     [[0,0],[0,1],[0,2]], [[1,0],[1,1],[1,2]], [[2,0],[2,1],[2,2]],
-    // Columns
     [[0,0],[1,0],[2,0]], [[0,1],[1,1],[2,1]], [[0,2],[1,2],[2,2]],
-    // Diagonals
     [[0,0],[1,1],[2,2]], [[0,2],[1,1],[2,0]],
   ];
 
   const spin = useCallback(() => {
     if (spinning || balance < bet) return;
+    sfx.spin();
     setBalance(b => b - bet);
     setSpinning(true);
     setResult(null);
     setWon(false);
     setWinningCells(new Set());
     tickRef.current = 0;
-    // Generate final 3×3 grid
-    const fg: Grid = Array.from({ length: 3 }, () => [
-      pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS),
-    ]);
+    const fg: Grid = Array.from({ length: 3 }, () => [pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS)]);
     finalsRef.current = fg;
 
     const iv = setInterval(() => {
       tickRef.current++;
       const t = tickRef.current;
+      if (t < 12) sfx.tick();
       setGrid(prev => {
         const next = prev.map(row => [...row]);
         for (let col = 0; col < 3; col++) {
@@ -184,7 +232,6 @@ function SlotMachine({ bet, setBet, balance, setBalance }: { bet: number; setBet
         clearInterval(iv);
         setGrid(finalsRef.current);
         setSpinning(false);
-        // Check win lines
         const wins: Set<string> = new Set();
         let jackpot = false;
         for (const line of WIN_LINES) {
@@ -200,32 +247,28 @@ function SlotMachine({ bet, setBet, balance, setBalance }: { bet: number; setBet
           const mult = jackpot ? 10 : wins.size >= 2 ? 7 : 3;
           const w = bet * mult;
           setBalance(b => b + w);
-          setResult(`${jackpot ? "JACKPOT" : "WIN"}! +${w} pts`);
+          setResult(`${jackpot ? "🎰 JACKPOT" : "✨ WIN"}! +${w} pts`);
           setWon(true);
           setScore(s => ({ ...s, w: s.w + 1 }));
+          jackpot ? sfx.jackpot() : sfx.win();
         } else {
-          setResult(`No luck. -${bet} pts`);
+          setResult(`No luck —${bet} pts`);
           setScore(s => ({ ...s, l: s.l + 1 }));
+          sfx.lose();
         }
       }
     }, 50);
   }, [spinning, bet, balance, setBalance]);
 
-  // Init grid
   useEffect(() => {
-    if (grid[0][0] === "") {
-      setGrid(Array.from({ length: 3 }, () => [pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS)]));
-    }
+    if (grid[0][0] === "") setGrid(Array.from({ length: 3 }, () => [pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS)]));
     // eslint-disable-next-line
   }, []);
-
-  const cellSize = "w-[72px] h-[72px]";
 
   return (
     <div className="space-y-4">
       <BetControl bet={bet} setBet={setBet} balance={balance} disabled={spinning} />
 
-      {/* Machine frame */}
       <div className="relative bg-gradient-to-b from-[#1a0808] to-[#0a0303] border border-[#d4af3715] rounded-lg p-6 overflow-hidden">
         <ConfettiBurst active={won} />
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4af3730] to-transparent" />
@@ -246,21 +289,11 @@ function SlotMachine({ bet, setBet, balance, setBalance }: { bet: number; setBet
                         : { y: [0, -3, 3, 0] }
                     }
                     transition={!spinning ? {} : { duration: 0.05, repeat: Infinity }}
-                    className={`${cellSize} flex items-center justify-center text-4xl border rounded-md relative overflow-hidden
+                    className={`w-[80px] h-[80px] flex items-center justify-center text-5xl border rounded-md relative overflow-hidden
                       ${isWinning ? "border-[#d4af3760] bg-[#2a1010]" : "border-[#d4af3710] bg-[#060202]"}`}
                   >
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-b from-[#0a0303]/40 via-transparent to-[#0a0303]/40"
-                      animate={{ opacity: spinning ? 0.5 : 0 }}
-                    />
-                    <motion.span
-                      initial={{ y: -12, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      transition={{ duration: 0.12 }}
-                      className="relative z-10"
-                    >
-                      {sym}
-                    </motion.span>
+                    <motion.div className="absolute inset-0 bg-gradient-to-b from-[#0a0303]/40 via-transparent to-[#0a0303]/40" animate={{ opacity: spinning ? 0.5 : 0 }} />
+                    <motion.span initial={{ y: -12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.12 }} className="relative z-10">{sym}</motion.span>
                   </motion.div>
                 );
               })}
@@ -269,26 +302,11 @@ function SlotMachine({ bet, setBet, balance, setBalance }: { bet: number; setBet
         </div>
       </div>
 
-      <motion.button
-        onClick={spin}
-        disabled={spinning || balance < bet}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.97 }}
-        className="casino-btn w-full py-3"
-      >
+      <motion.button onClick={spin} disabled={spinning || balance < bet} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} className="casino-btn w-full py-3.5 text-sm">
         {spinning ? "SPINNING..." : `SPIN (${bet} pts)`}
       </motion.button>
-      <AnimatePresence>
-        {result && (
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="text-center text-sm text-[#d4af37] font-serif"
-          >{result}</motion.p>
-        )}
-      </AnimatePresence>
-      <div className="flex justify-center gap-4 text-xs text-[#6b5e50] font-serif"><span>W: {score.w}</span><span>L: {score.l}</span></div>
+      <ResultBanner result={result} />
+      <div className="flex justify-center gap-4 text-sm text-[#6b5e50] font-serif"><span>W: {score.w}</span><span>L: {score.l}</span></div>
     </div>
   );
 }
@@ -305,6 +323,7 @@ function CoinFlip({ bet, setBet, balance, setBalance }: { bet: number; setBet: (
 
   const flip = useCallback(() => {
     if (flipping || !prediction || balance < bet) return;
+    sfx.coin();
     setBalance(b => b - bet);
     setFlipping(true);
     setResult(null);
@@ -323,9 +342,11 @@ function CoinFlip({ bet, setBet, balance, setBalance }: { bet: number; setBet: (
         setBalance(b => b + w);
         setResult(`${actual} — You called it! +${w} pts`);
         setScore(s => ({ ...s, w: s.w + 1 }));
+        sfx.win();
       } else {
         setResult(`${actual} — Wrong call. -${bet} pts`);
         setScore(s => ({ ...s, l: s.l + 1 }));
+        sfx.lose();
       }
     }, 2200);
   }, [flipping, prediction, bet, balance, setBalance]);
@@ -339,66 +360,39 @@ function CoinFlip({ bet, setBet, balance, setBalance }: { bet: number; setBet: (
         <motion.div
           animate={{ rotateY: coinRotation, scale: flipping ? 1.15 : 1 }}
           transition={{ duration: 2.2, ease: [0.15, 0.8, 0.3, 1] }}
-          className="w-28 h-28 relative"
+          className="w-32 h-32 relative"
           style={{ transformStyle: "preserve-3d" }}
         >
-          {/* Heads */}
-          <motion.div
-            className="absolute inset-0 flex flex-col items-center justify-center border-2 border-[#d4af3740] bg-gradient-to-br from-[#3a1a1a] via-[#2a0e0e] to-[#1a0606] rounded-full shadow-lg"
-            style={{ backfaceVisibility: "hidden", boxShadow: "0 0 20px #d4af3715, inset 0 1px 0 #d4af3720" }}
-          >
-            <span className="text-3xl">🪙</span>
-            <span className="text-[9px] text-[#d4af37] font-serif uppercase tracking-wider mt-1">Heads</span>
+          <motion.div className="absolute inset-0 flex flex-col items-center justify-center border-2 border-[#d4af3740] bg-gradient-to-br from-[#3a1a1a] via-[#2a0e0e] to-[#1a0606] rounded-full shadow-lg" style={{ backfaceVisibility: "hidden", boxShadow: "0 0 20px #d4af3715, inset 0 1px 0 #d4af3720" }}>
+            <span className="text-4xl">🪙</span>
+            <span className="text-xs text-[#d4af37] font-serif uppercase tracking-wider mt-1">Heads</span>
           </motion.div>
-          {/* Tails */}
-          <motion.div
-            className="absolute inset-0 flex flex-col items-center justify-center border-2 border-[#d4af3740] bg-gradient-to-br from-[#1a1a2e] via-[#12122a] to-[#0a0a1a] rounded-full shadow-lg"
-            style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)", boxShadow: "0 0 20px #d4af3715, inset 0 1px 0 #d4af3720" }}
-          >
-            <span className="text-3xl">🪙</span>
-            <span className="text-[9px] text-[#d4af37] font-serif uppercase tracking-wider mt-1">Tails</span>
+          <motion.div className="absolute inset-0 flex flex-col items-center justify-center border-2 border-[#d4af3740] bg-gradient-to-br from-[#1a1a2e] via-[#12122a] to-[#0a0a1a] rounded-full shadow-lg" style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)", boxShadow: "0 0 20px #d4af3715, inset 0 1px 0 #d4af3720" }}>
+            <span className="text-4xl">🪙</span>
+            <span className="text-xs text-[#d4af37] font-serif uppercase tracking-wider mt-1">Tails</span>
           </motion.div>
         </motion.div>
-        {/* Ground shadow */}
-        <motion.div
-          animate={{ scale: flipping ? [1, 0.5, 1] : 1, opacity: flipping ? [0.5, 0.1, 0.5] : 0.5 }}
-          transition={{ duration: 2.2, ease: [0.15, 0.8, 0.3, 1] }}
-          className="absolute bottom-4 w-20 h-3 bg-[#d4af3710] rounded-full blur-sm"
-        />
+        <motion.div animate={{ scale: flipping ? [1, 0.5, 1] : 1, opacity: flipping ? [0.5, 0.1, 0.5] : 0.5 }} transition={{ duration: 2.2, ease: [0.15, 0.8, 0.3, 1] }} className="absolute bottom-4 w-24 h-3 bg-[#d4af3710] rounded-full blur-sm" />
       </div>
-
-      <AnimatePresence>
-        {result && (
-          <motion.p
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className="text-center text-sm text-[#d4af37] font-serif"
-          >{result}</motion.p>
-        )}
-      </AnimatePresence>
 
       <div className="flex gap-2">
         {COIN_SIDES.map(side => (
           <motion.button
             key={side}
-            onClick={() => !flipping && setPrediction(side)}
+            onClick={() => { if (!flipping) { sfx.tick(); setPrediction(side); } }}
             disabled={flipping}
             whileHover={flipping ? {} : { scale: 1.03 }}
             whileTap={flipping ? {} : { scale: 0.97 }}
-            className={`flex-1 py-2 text-xs font-serif uppercase tracking-wider border rounded-sm transition-colors
+            className={`flex-1 py-3 text-xs font-serif uppercase tracking-wider border rounded-sm transition-colors
               ${prediction === side ? "border-[#d4af3740] bg-[#2a0a0a] text-[#d4af37]" : "border-[#d4af3710] bg-[#1a0606] text-[#6b5e50]"}`}
           >{side}</motion.button>
         ))}
       </div>
-      <motion.button
-        onClick={flip}
-        disabled={flipping || !prediction || balance < bet}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.97 }}
-        className="casino-btn w-full py-2.5"
-      >
+      <motion.button onClick={flip} disabled={flipping || !prediction || balance < bet} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} className="casino-btn w-full py-3.5 text-sm">
         {flipping ? "FLIPPING..." : `FLIP (${bet} pts)`}
       </motion.button>
-      <div className="flex justify-center gap-4 text-xs text-[#6b5e50] font-serif"><span>W: {score.w}</span><span>L: {score.l}</span></div>
+      <ResultBanner result={result} />
+      <div className="flex justify-center gap-4 text-sm text-[#6b5e50] font-serif"><span>W: {score.w}</span><span>L: {score.l}</span></div>
     </div>
   );
 }
@@ -418,6 +412,7 @@ function Roulette({ bet, setBet, balance, setBalance }: { bet: number; setBet: (
 
   const spin = useCallback(() => {
     if (spinning || !prediction || balance < bet) return;
+    sfx.spin();
     setBalance(b => b - bet);
     setSpinning(true);
     setResult(null);
@@ -426,13 +421,10 @@ function Roulette({ bet, setBet, balance, setBalance }: { bet: number; setBet: (
     const idx = ROULETTE_NUMBERS.indexOf(actualNum);
     const target = 360 - idx * segAngle - segAngle / 2;
     setWheelRotation(prev => prev + 5 * 360 + target);
-    // Ball spins opposite direction
     setBallAngle(prev => prev - (6 * 360 + target));
     const isRed = RED_NUMBERS.includes(actualNum);
     const isGreen = actualNum === 0;
     const color = isGreen ? "GREEN" : isRed ? "RED" : "BLACK";
-
-    // Rapid number flash
     const iv = setInterval(() => setDisplay(String(pick(ROULETTE_NUMBERS))), 70);
     setTimeout(() => {
       clearInterval(iv);
@@ -451,14 +443,15 @@ function Roulette({ bet, setBet, balance, setBalance }: { bet: number; setBet: (
         setBalance(b => b + w);
         setResult(`${actualNum} ${color} — +${w} pts`);
         setScore(s => ({ ...s, w: s.w + 1 }));
+        sfx.win();
       } else {
         setResult(`${actualNum} ${color} — -${bet} pts`);
         setScore(s => ({ ...s, l: s.l + 1 }));
+        sfx.lose();
       }
     }, 3500);
   }, [spinning, prediction, bet, balance, setBalance]);
 
-  // SVG wheel segments
   const segments = ROULETTE_NUMBERS.map((num, i) => {
     const a = i * segAngle;
     const isRed = RED_NUMBERS.includes(num);
@@ -475,77 +468,44 @@ function Roulette({ bet, setBet, balance, setBalance }: { bet: number; setBet: (
       <div className="relative flex justify-center py-3">
         <ConfettiBurst active={won} />
         <div className="relative w-48 h-48">
-          {/* Pointer */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 z-20">
             <div className="w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-t-[12px] border-t-[#d4af37]" />
           </div>
-          {/* Wheel */}
-          <motion.div
-            animate={{ rotate: wheelRotation }}
-            transition={{ duration: 3.5, ease: [0.15, 0.85, 0.3, 1] }}
-            className="w-48 h-48 rounded-full border-2 border-[#d4af3725] overflow-hidden bg-[#0a0303] shadow-lg"
-            style={{ boxShadow: "0 0 30px #d4af370a, inset 0 0 20px #00000040" }}
-          >
+          <motion.div animate={{ rotate: wheelRotation }} transition={{ duration: 3.5, ease: [0.15, 0.85, 0.3, 1] }} className="w-48 h-48 rounded-full border-2 border-[#d4af3725] overflow-hidden bg-[#0a0303] shadow-lg" style={{ boxShadow: "0 0 30px #d4af370a, inset 0 0 20px #00000040" }}>
             <svg viewBox="0 0 100 100" className="w-full h-full">{segments}</svg>
           </motion.div>
-          {/* Ball */}
-          <motion.div
-            animate={{ rotate: ballAngle }}
-            transition={{ duration: 3.5, ease: [0.15, 0.85, 0.3, 1] }}
-            className="absolute inset-0 pointer-events-none"
-          >
-            <div
-              className="absolute w-2.5 h-2.5 bg-gradient-to-br from-white to-[#ccc] rounded-full shadow-md"
-              style={{ top: "6px", left: "50%", transform: "translateX(-50%)" }}
-            />
+          <motion.div animate={{ rotate: ballAngle }} transition={{ duration: 3.5, ease: [0.15, 0.85, 0.3, 1] }} className="absolute inset-0 pointer-events-none">
+            <div className="absolute w-2.5 h-2.5 bg-gradient-to-br from-white to-[#ccc] rounded-full shadow-md" style={{ top: "6px", left: "50%", transform: "translateX(-50%)" }} />
           </motion.div>
-          {/* Center hub */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <motion.div
-              animate={won ? { scale: [1, 1.15, 1] } : {}}
-              transition={{ duration: 0.5, repeat: won ? 2 : 0 }}
-              className="w-10 h-10 rounded-full bg-[#120606] border border-[#d4af3725] flex items-center justify-center"
-            >
-              <span className="text-sm font-bold font-serif text-[#d4af37]">{spinning ? "…" : display}</span>
+            <motion.div animate={won ? { scale: [1, 1.15, 1] } : {}} transition={{ duration: 0.5, repeat: won ? 2 : 0 }} className="w-12 h-12 rounded-full bg-[#120606] border border-[#d4af3725] flex items-center justify-center">
+              <span className="text-lg font-bold font-serif text-[#d4af37]">{spinning ? "…" : display}</span>
             </motion.div>
           </div>
         </div>
       </div>
 
-      <div className="flex gap-1.5 flex-wrap justify-center">
+      <div className="flex gap-2 flex-wrap justify-center">
         {betOptions.map(opt => {
-          const colorMap: Record<string, string> = { RED: "text-[#c0392b]", BLACK: "text-[#555]", GREEN: "text-[#27ae60]" };
+          const colorMap: Record<string, string> = { RED: "text-[#c0392b]", BLACK: "text-[#888]", GREEN: "text-[#27ae60]" };
           return (
             <motion.button
               key={opt}
-              onClick={() => !spinning && setPrediction(opt)}
+              onClick={() => { if (!spinning) { sfx.tick(); setPrediction(opt); } }}
               disabled={spinning}
               whileHover={spinning ? {} : { scale: 1.06 }}
               whileTap={spinning ? {} : { scale: 0.95 }}
-              className={`px-3 py-1.5 text-[10px] font-serif uppercase tracking-wider border rounded-sm transition-colors
+              className={`px-3 py-2 text-xs font-serif uppercase tracking-wider border rounded-sm transition-colors
                 ${prediction === opt ? "border-[#d4af3740] bg-[#2a0a0a] text-[#d4af37]" : `border-[#d4af3710] bg-[#1a0606] ${colorMap[opt] || "text-[#6b5e50]"}`}`}
             >{opt}</motion.button>
           );
         })}
       </div>
-      <motion.button
-        onClick={spin}
-        disabled={spinning || !prediction || balance < bet}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.97 }}
-        className="casino-btn w-full py-2.5"
-      >
+      <motion.button onClick={spin} disabled={spinning || !prediction || balance < bet} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} className="casino-btn w-full py-3.5 text-sm">
         {spinning ? "SPINNING..." : `SPIN (${bet} pts)`}
       </motion.button>
-      <AnimatePresence>
-        {result && (
-          <motion.p
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className="text-center text-sm text-[#d4af37] font-serif"
-          >{result}</motion.p>
-        )}
-      </AnimatePresence>
-      <div className="flex justify-center gap-4 text-xs text-[#6b5e50] font-serif"><span>W: {score.w}</span><span>L: {score.l}</span></div>
+      <ResultBanner result={result} />
+      <div className="flex justify-center gap-4 text-sm text-[#6b5e50] font-serif"><span>W: {score.w}</span><span>L: {score.l}</span></div>
     </div>
   );
 }
@@ -567,6 +527,7 @@ function Blackjack({ bet, setBet, balance, setBalance }: { bet: number; setBet: 
     const go = () => {
       if (handValue(dh) < 17) {
         setTimeout(() => {
+          sfx.card();
           dh = [...dh, dd[0]];
           dd = dd.slice(1);
           setDealerHand(dh);
@@ -582,9 +543,11 @@ function Blackjack({ bet, setBet, balance, setBalance }: { bet: number; setBet: 
           setBalance(b => b + w);
           setResult(`Win! ${pv} vs ${dv}. +${w} pts`);
           setScore(s => ({ ...s, w: s.w + 1 }));
+          sfx.win();
         } else if (dv > pv) {
           setResult(`Dealer wins. ${pv} vs ${dv}. -${totalBet} pts`);
           setScore(s => ({ ...s, l: s.l + 1 }));
+          sfx.lose();
         } else {
           setBalance(b => b + totalBet);
           setResult(`Push. ${pv} vs ${dv}`);
@@ -598,6 +561,7 @@ function Blackjack({ bet, setBet, balance, setBalance }: { bet: number; setBet: 
 
   const deal = useCallback(() => {
     if (balance < bet) return;
+    sfx.card();
     setBalance(b => b - bet);
     setWon(false);
     const nd = shuffleDeck(makeDeck());
@@ -611,14 +575,17 @@ function Blackjack({ bet, setBet, balance, setBalance }: { bet: number; setBet: 
       setResult(`BLACKJACK! +${w} pts`);
       setScore(s => ({ ...s, w: s.w + 1 }));
       setPhase("done");
+      sfx.jackpot();
     } else if (isBlackjack(dh)) {
       setResult(`Dealer BJ. -${bet} pts`);
       setScore(s => ({ ...s, l: s.l + 1 }));
       setPhase("done");
+      sfx.lose();
     } else if (isBust(ph)) {
       setResult(`Bust! -${bet} pts`);
       setScore(s => ({ ...s, l: s.l + 1 }));
       setPhase("done");
+      sfx.lose();
     } else {
       setPhase("playing");
     }
@@ -626,11 +593,17 @@ function Blackjack({ bet, setBet, balance, setBalance }: { bet: number; setBet: 
 
   const hit = useCallback(() => {
     if (phase !== "playing") return;
+    sfx.card();
     const card = deck[0], nd = deck.slice(1);
     const nh = [...playerHand, card];
     setDeck(nd); setPlayerHand(nh);
     setLastCardIdx(playerHand.length);
-    if (isBust(nh)) { setResult(`Bust! -${doubled ? bet * 2 : bet} pts`); setScore(s => ({ ...s, l: s.l + 1 })); setPhase("done"); }
+    if (isBust(nh)) {
+      setResult(`Bust! -${doubled ? bet * 2 : bet} pts`);
+      setScore(s => ({ ...s, l: s.l + 1 }));
+      setPhase("done");
+      sfx.lose();
+    }
   }, [phase, deck, playerHand, bet, doubled, setScore]);
 
   const stand = useCallback(() => {
@@ -641,14 +614,22 @@ function Blackjack({ bet, setBet, balance, setBalance }: { bet: number; setBet: 
 
   const doubleDown = useCallback(() => {
     if (phase !== "playing" || playerHand.length !== 2 || balance < bet) return;
+    sfx.card();
     setBalance(b => b - bet);
     setDoubled(true);
     const card = deck[0], nd = deck.slice(1);
     const nh = [...playerHand, card];
     setDeck(nd); setPlayerHand(nh);
     setLastCardIdx(playerHand.length);
-    if (isBust(nh)) { setResult(`Bust! -${bet * 2} pts`); setScore(s => ({ ...s, l: s.l + 1 })); setPhase("done"); }
-    else { setPhase("dealer"); setTimeout(() => dealerResolve(dealerHand, nd, nh, bet * 2), 100); }
+    if (isBust(nh)) {
+      setResult(`Bust! -${bet * 2} pts`);
+      setScore(s => ({ ...s, l: s.l + 1 }));
+      setPhase("done");
+      sfx.lose();
+    } else {
+      setPhase("dealer");
+      setTimeout(() => dealerResolve(dealerHand, nd, nh, bet * 2), 100);
+    }
   }, [phase, playerHand, deck, bet, balance, dealerHand, dealerResolve, setScore]);
 
   const renderCard = (card: Card, idx: number, hidden?: boolean) => {
@@ -661,7 +642,7 @@ function Blackjack({ bet, setBet, balance, setBalance }: { bet: number; setBet: 
         animate={isLast ? { opacity: 1, x: 0, rotateY: 0, scale: 1 } : {}}
         transition={{ duration: 0.4, delay: idx * 0.1, type: "spring", damping: 18 }}
         whileHover={{ y: -4, transition: { duration: 0.15 } }}
-        className={`inline-block w-14 h-[60px] mx-0.5 rounded-md border flex flex-col items-center justify-center font-bold font-serif relative
+        className={`inline-block w-16 h-[72px] mx-1 rounded-md border flex flex-col items-center justify-center font-bold font-serif relative
           ${hidden
             ? "bg-gradient-to-br from-[#3a1515] to-[#1a0808] border-[#d4af3725] cursor-default"
             : "bg-gradient-to-br from-[#faf5eb] to-[#f0e8d8] border-[#d4af3715] text-[#2a1a1a]"
@@ -672,12 +653,8 @@ function Blackjack({ bet, setBet, balance, setBalance }: { bet: number; setBet: 
           <span className="text-lg text-[#d4af3730]">✦</span>
         ) : (
           <>
-            <span className={`text-xs leading-none ${red ? "text-[#8b1a1a]" : "text-[#2a1a1a]"}`}>
-              {card.rank}
-            </span>
-            <span className={`text-sm leading-none ${red ? "text-[#8b1a1a]" : "text-[#2a1a1a]"}`}>
-              {card.suit}
-            </span>
+            <span className={`text-sm leading-none ${red ? "text-[#8b1a1a]" : "text-[#2a1a1a]"}`}>{card.rank}</span>
+            <span className={`text-xl leading-none ${red ? "text-[#8b1a1a]" : "text-[#2a1a1a]"}`}>{card.suit}</span>
           </>
         )}
       </motion.div>
@@ -693,47 +670,37 @@ function Blackjack({ bet, setBet, balance, setBalance }: { bet: number; setBet: 
 
       <div className="relative bg-gradient-to-b from-[#0e0606] to-[#060202] border border-[#d4af3710] rounded-md p-4 space-y-4 overflow-hidden">
         <ConfettiBurst active={won} />
-        {/* Felt texture overlay */}
         <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(ellipse_at_center,#d4af37_0%,transparent_70%)] pointer-events-none" />
 
-        {/* Dealer hand */}
         <div className="relative">
-          <div className="text-[10px] text-[#6b5e50] font-serif uppercase tracking-wider mb-2">Dealer <span className="text-[#d4af37]">({dVal})</span></div>
-          <div className="flex flex-wrap min-h-[60px]">{dealerHand.map((c, i) => renderCard(c, i, phase === "playing" && i === 1))}</div>
+          <div className="text-xs text-[#6b5e50] font-serif uppercase tracking-wider mb-2">Dealer <span className="text-[#d4af37]">({dVal})</span></div>
+          <div className="flex flex-wrap min-h-[72px]">{dealerHand.map((c, i) => renderCard(c, i, phase === "playing" && i === 1))}</div>
         </div>
 
         <div className="border-t border-[#d4af3710] pt-3" />
 
-        {/* Player hand */}
         <div className="relative">
-          <div className="text-[10px] text-[#6b5e50] font-serif uppercase tracking-wider mb-2">You <span className="text-[#d4af37]">({pVal})</span></div>
-          <div className="flex flex-wrap min-h-[60px]">{playerHand.map((c, i) => renderCard(c, i))}</div>
+          <div className="text-xs text-[#6b5e50] font-serif uppercase tracking-wider mb-2">You <span className="text-[#d4af37]">({pVal})</span></div>
+          <div className="flex flex-wrap min-h-[72px]">{playerHand.map((c, i) => renderCard(c, i))}</div>
         </div>
       </div>
 
       {(phase === "idle" || phase === "done") ? (
-        <motion.button onClick={deal} disabled={balance < bet} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} className="casino-btn w-full py-3">
+        <motion.button onClick={deal} disabled={balance < bet} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} className="casino-btn w-full py-3.5 text-sm">
           DEAL ({bet} pts)
         </motion.button>
       ) : phase === "playing" ? (
         <div className="flex gap-2">
-          <motion.button onClick={hit} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="casino-btn flex-1 py-2.5">HIT</motion.button>
-          <motion.button onClick={stand} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="casino-btn flex-1 py-2.5">STAND</motion.button>
+          <motion.button onClick={hit} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="casino-btn flex-1 py-3 text-sm">HIT</motion.button>
+          <motion.button onClick={stand} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="casino-btn flex-1 py-3 text-sm">STAND</motion.button>
           {playerHand.length === 2 && balance >= bet && !doubled && (
-            <motion.button onClick={doubleDown} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="casino-btn flex-1 py-2.5">2×</motion.button>
+            <motion.button onClick={doubleDown} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="casino-btn flex-1 py-3 text-sm">2×</motion.button>
           )}
         </div>
       ) : null}
 
-      <AnimatePresence>
-        {result && (
-          <motion.p
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className="text-center text-sm text-[#d4af37] font-serif"
-          >{result}</motion.p>
-        )}
-      </AnimatePresence>
-      <div className="flex justify-center gap-3 text-xs text-[#6b5e50] font-serif"><span>W: {score.w}</span><span>L: {score.l}</span><span>P: {score.p}</span></div>
+      <ResultBanner result={result} />
+      <div className="flex justify-center gap-3 text-sm text-[#6b5e50] font-serif"><span>W: {score.w}</span><span>L: {score.l}</span><span>P: {score.p}</span></div>
     </div>
   );
 }
@@ -743,7 +710,6 @@ function LoungeParticles() {
   const particles = Array.from({ length: 12 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
-    y: Math.random() * 100,
     size: 1 + Math.random() * 2,
     dur: 4 + Math.random() * 6,
     delay: Math.random() * 4,
@@ -753,17 +719,11 @@ function LoungeParticles() {
       {particles.map(p => (
         <motion.div
           key={p.id}
-          initial={{ opacity: 0, y: p.y * 100, x: 0 }}
-          animate={{ opacity: [0, 0.15, 0], y: p.y * 100 - 200, x: (Math.random() - 0.5) * 60 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.15, 0], y: [-200, -200], x: (Math.random() - 0.5) * 60 }}
           transition={{ duration: p.dur, delay: p.delay, repeat: Infinity, ease: "linear" }}
           className="absolute rounded-full"
-          style={{
-            left: `${p.x}%`,
-            bottom: "-4px",
-            width: p.size,
-            height: p.size,
-            backgroundColor: "#d4af37",
-          }}
+          style={{ left: `${p.x}%`, bottom: "-4px", width: p.size, height: p.size, backgroundColor: "#d4af37" }}
         />
       ))}
     </div>
@@ -776,13 +736,11 @@ export function CasinoGames({ onClose }: { onClose: () => void }) {
   const [balance, setBalance] = useState(loadBalance);
   const [bet, setBet] = useState(10);
 
-  // Earn 1 pt/sec
   useEffect(() => {
     const iv = setInterval(() => setBalance(b => b + POINTS_PER_SECOND), 1000);
     return () => clearInterval(iv);
   }, []);
 
-  // Persist
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ balance, lastVisit: Date.now() }));
   }, [balance]);
@@ -807,16 +765,8 @@ export function CasinoGames({ onClose }: { onClose: () => void }) {
         className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
         onClick={onClose}
       >
-        {/* Backdrop with subtle animation */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.4 }}
-          className="absolute inset-0 bg-black/85 backdrop-blur-sm"
-        />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="absolute inset-0 bg-black/85 backdrop-blur-sm" />
 
-        {/* Modal */}
         <motion.div
           initial={{ scale: 0.85, opacity: 0, y: 40 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -828,9 +778,7 @@ export function CasinoGames({ onClose }: { onClose: () => void }) {
         >
           <LoungeParticles />
 
-          {/* Header */}
           <div className="relative flex items-center justify-between px-6 py-4 border-b border-[#d4af3712] bg-gradient-to-r from-[#0a0303] via-[#120606] to-[#0a0303]">
-            {/* Gold accent line */}
             <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4af3725] to-transparent" />
             <div className="flex items-center gap-2">
               <span className="text-base">🍸</span>
@@ -838,25 +786,19 @@ export function CasinoGames({ onClose }: { onClose: () => void }) {
             </div>
             <div className="flex items-center gap-4">
               <PointsBadge balance={balance} />
-              <motion.button
-                whileHover={{ rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={onClose}
-                className="text-[#6b5e50] hover:text-[#d4af37] transition-colors"
-              >
+              <motion.button whileHover={{ rotate: 90 }} whileTap={{ scale: 0.9 }} onClick={onClose} className="text-[#6b5e50] hover:text-[#d4af37] transition-colors">
                 <X className="h-4 w-4" />
               </motion.button>
             </div>
           </div>
 
-          {/* Tabs */}
           <div className="relative flex border-b border-[#d4af3710] bg-[#080202]">
             {games.map(g => (
               <motion.button
                 key={g.key}
-                onClick={() => setActive(g.key)}
+                onClick={() => { sfx.tick(); setActive(g.key); }}
                 whileHover={{ backgroundColor: "rgba(212,175,55,0.04)" }}
-                className={`flex-1 py-3 text-[10px] font-serif uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5
+                className={`flex-1 py-3 text-xs font-serif uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5
                   ${active === g.key ? "text-[#d4af37] border-b-2 border-[#d4af3740]" : "text-[#6b5e50] hover:text-[#a89a80]"}`}
               >
                 <span className="text-sm">{g.icon}</span>
@@ -865,16 +807,9 @@ export function CasinoGames({ onClose }: { onClose: () => void }) {
             ))}
           </div>
 
-          {/* Game content */}
-          <div className="relative p-6 min-h-[400px]">
+          <div className="relative p-6 min-h-[440px]">
             <AnimatePresence mode="wait">
-              <motion.div
-                key={active}
-                initial={{ opacity: 0, x: 12 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -12 }}
-                transition={{ duration: 0.25 }}
-              >
+              <motion.div key={active} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} transition={{ duration: 0.25 }}>
                 {active === "slots" && <SlotMachine bet={bet} setBet={setBet} balance={balance} setBalance={clampedSetBalance} />}
                 {active === "coinflip" && <CoinFlip bet={bet} setBet={setBet} balance={balance} setBalance={clampedSetBalance} />}
                 {active === "roulette" && <Roulette bet={bet} setBet={setBet} balance={balance} setBalance={clampedSetBalance} />}
