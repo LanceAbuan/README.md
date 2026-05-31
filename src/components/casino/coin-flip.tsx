@@ -36,7 +36,7 @@ export function CoinFlipNav({ href, sectionId, children }: CoinFlipNavProps) {
   const [flipping, setFlipping] = useState(false);
   const [result, setResult] = useState<"heads" | "tails" | null>(null);
   const [showOverlay, setShowOverlay] = useState(false);
-  const overlayTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const overlayTimer = useRef<number | undefined>(undefined);
 
   const triggerFlip = useCallback(
     (e: React.MouseEvent) => {
