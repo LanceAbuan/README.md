@@ -160,7 +160,7 @@ export function CasinoMusic() {
   }, []);
 
   const createPad = useCallback(
-    (ctx: AudioContext, dest: AudioNode, notes: number[], time: number, duration: number, vol = 0.08) => {
+    (ctx: AudioContext, dest: AudioNode, notes: readonly number[], time: number, duration: number, vol = 0.08) => {
       notes.forEach((freq) => {
         // Two detuned oscillators per note for warmth
         [0, 0.0003].forEach((detune) => {
@@ -248,7 +248,7 @@ export function CasinoMusic() {
       });
 
       // Melody — piano
-      const allNotes = [...chord.notes, ...(chord.ext ?? [])];
+      const allNotes = [...chord.notes, ...(chord.ext ?? [])] as number[];
       melody.forEach((noteIdx, i) => {
         if (noteIdx !== null && allNotes[noteIdx]) {
           createPianoNote(ctx, master, allNotes[noteIdx], startTime + i * eighthDur, eighthDur * 1.2, 0.09);
