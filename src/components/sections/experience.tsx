@@ -152,9 +152,9 @@ function ExperienceCard({
         </div>
 
         {/* Horizontal card */}
-        <div className="casino-card flex-1 p-5 space-y-3">
-          {/* Role + period on one line */}
-          <div className="flex items-start justify-between gap-3">
+        <div className="casino-card flex-1 p-5 space-y-3 text-center">
+          {/* Role + period centered */}
+          <div className="flex items-center justify-center gap-3">
             <h3 className="text-lg font-bold font-serif text-white">
               {exp.role}
             </h3>
@@ -163,18 +163,18 @@ function ExperienceCard({
             </span>
           </div>
           {/* Company line */}
-          <div className="flex items-center gap-2 text-sm text-[#c8bfb2] font-serif">
+          <div className="flex items-center justify-center gap-2 text-sm text-[#c8bfb2] font-serif flex-wrap">
             <Building2 className="h-3.5 w-3.5 text-[#8b1a1a] flex-shrink-0" />
             <span>{exp.company}</span>
             <span>&#8226;</span>
             <span>{exp.location}</span>
           </div>
           {/* Description */}
-          <p className="text-sm text-[#c8bfb2] font-serif leading-relaxed">
+          <p className="text-sm text-[#c8bfb2] font-serif leading-relaxed text-center">
             {exp.description}
           </p>
           {/* Skills as chips */}
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap justify-center gap-1.5">
             {exp.skills.map((skill, j) => (
               <span key={j} className="casino-chip text-[10px] px-2 py-0.5 rounded-full font-serif">
                 {skill}
