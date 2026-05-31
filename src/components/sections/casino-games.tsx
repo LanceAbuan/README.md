@@ -923,7 +923,8 @@ function Blackjack({ bet, setBet, balance, setBalance }: { bet: number; setBet: 
     }
   }, [phase, playerHand, deck, bet, balance, dealerHand, dealerResolve, setScore]);
 
-  const renderCard = (card: Card, idx: number, hidden?: boolean) => {
+  const renderCard = (card: Card | undefined, idx: number, hidden?: boolean) => {
+    if (!card) return <div key={idx} className="inline-block w-16 h-[72px] mx-1 rounded-md border border-[#d4af3710] bg-[#080302]" />;
     const red = card.suit === "♥" || card.suit === "♦";
     const isLast = idx === lastCardIdx && !hidden;
     return (
@@ -953,7 +954,7 @@ function Blackjack({ bet, setBet, balance, setBalance }: { bet: number; setBet: 
   };
 
   const pVal = playerHand.length > 0 ? handValue(playerHand) : 0;
-  const dVal = dealerHand.length > 0 ? (phase === "playing" ? dealerHand[0].value : handValue(dealerHand)) : 0;
+  const dVal = dealerHand.length > 0 && dealerHand[0] ? (phase === "playing" ? dealerHand[0].value : handValue(dealerHand)) : 0;
 
   return (
     <div className="space-y-4">
@@ -1118,7 +1119,8 @@ function VideoPoker({ bet, setBet, balance, setBalance }: { bet: number; setBet:
     });
   };
 
-  const renderCard = (card: Card, idx: number) => {
+  const renderCard = (card: Card | undefined, idx: number) => {
+    if (!card) return <div key={idx} className="w-[72px] h-[100px] mx-1 rounded-md border border-[#d4af3710] bg-[#080302]" />;
     const red = card.suit === "♥" || card.suit === "♦";
     const isHeld = held[idx] && phase === "select";
     const justFlipped = flippedCards.includes(idx) && flippedCards[flippedCards.length - 1] === idx;
