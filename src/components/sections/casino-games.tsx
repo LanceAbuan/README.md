@@ -1075,7 +1075,7 @@ function VideoPoker({ bet, setBet, balance, setBalance }: { bet: number; setBet:
         {(phase === "idle" || phase === "done") ? (
           <motion.button
             onClick={dealCards}
-            disabled={balance < bet || phase === "dealing"}
+            disabled={balance < bet}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
             className="casino-btn flex-1 py-3.5 text-sm"
