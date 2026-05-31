@@ -83,17 +83,27 @@ function PointsBadge({ balance }: { balance: number }) {
   const prev = useRef(balance);
   const [pulse, setPulse] = useState(false);
   useEffect(() => {
-    if (balance > prev.current) { setPulse(true); prev.current = balance; const t = setTimeout(() => setPulse(false), 300); return () => clearTimeout(t); }
+    if (balance > prev.current) { setPulse(true); prev.current = balance; const t = setTimeout(() => setPulse(false), 400); return () => clearTimeout(t); }
     prev.current = balance;
   }, [balance]);
 
   return (
-    <div className="flex items-center gap-2 text-xs text-[#d4af37] font-serif">
-      <Trophy className="h-3.5 w-3.5" />
-      <motion.span className="tabular-nums" animate={pulse ? { scale: [1, 1.2, 1] } : {}} transition={{ duration: 0.3 }}>
-        {balance} pts
+    <motion.div
+      animate={pulse ? { scale: [1, 1.1, 1] } : {}}
+      transition={{ duration: 0.4 }}
+      className="flex items-center gap-2 bg-[#1a0808] border border-[#d4af3725] px-3 py-1.5 rounded-md"
+      style={{ boxShadow: "0 0 12px #d4af3710" }}
+    >
+      <Trophy className="h-4 w-4 text-[#d4af37]" />
+      <motion.span
+        className="text-base font-bold font-serif text-[#d4af37] tabular-nums"
+        animate={pulse ? { scale: [1, 1.3, 1] } : {}}
+        transition={{ duration: 0.4 }}
+      >
+        {balance}
       </motion.span>
-    </div>
+      <span className="text-[10px] text-[#6b5e50] font-serif uppercase tracking-wider">pts</span>
+    </motion.div>
   );
 }
 
@@ -120,15 +130,28 @@ function BetControl({ bet, setBet, balance, disabled }: { bet: number; setBet: (
   );
 }
 
-/* ─── Slot Machine ─── */
+/* ─── Slot Machine (3×3) ─── */
 function SlotMachine({ bet, setBet, balance, setBalance }: { bet: number; setBet: (v: number) => void; balance: number; setBalance: (fn: (b: number) => number) => void }) {
-  const [reels, setReels] = useState(["♠", "♥", "♦"]);
+  type Grid = string[][];
+  const blankGrid = (): Grid => Array.from({ length: 3 }, () => ["", "", ""]);
+  const [grid, setGrid] = useState<Grid>(blankGrid);
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [score, setScore] = useState({ w: 0, l: 0 });
   const [won, setWon] = useState(false);
-  const finalsRef = useRef<string[]>([]);
+  const [winningCells, setWinningCells] = useState<Set<string>>(new Set());
+  const finalsRef = useRef<Grid>(blankGrid());
   const tickRef = useRef(0);
+
+  // Win lines: all possible 3-in-a-row on 3×3
+  const WIN_LINES: [number, number][][] = [
+    // Rows
+    [[0,0],[0,1],[0,2]], [[1,0],[1,1],[1,2]], [[2,0],[2,1],[2,2]],
+    // Columns
+    [[0,0],[1,0],[2,0]], [[0,1],[1,1],[2,1]], [[0,2],[1,2],[2,2]],
+    // Diagonals
+    [[0,0],[1,1],[2,2]], [[0,2],[1,1],[2,0]],
+  ];
 
   const spin = useCallback(() => {
     if (spinning || balance < bet) return;
@@ -136,77 +159,113 @@ function SlotMachine({ bet, setBet, balance, setBalance }: { bet: number; setBet
     setSpinning(true);
     setResult(null);
     setWon(false);
+    setWinningCells(new Set());
     tickRef.current = 0;
-    finalsRef.current = [pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS)];
+    // Generate final 3×3 grid
+    const fg: Grid = Array.from({ length: 3 }, () => [
+      pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS),
+    ]);
+    finalsRef.current = fg;
 
     const iv = setInterval(() => {
       tickRef.current++;
       const t = tickRef.current;
-      setReels(prev => {
-        const next = [...prev];
-        for (let r = 0; r < 3; r++) {
-          next[r] = t < 15 + r * 10 ? pick(SLOT_SYMBOLS) : finalsRef.current[r];
+      setGrid(prev => {
+        const next = prev.map(row => [...row]);
+        for (let col = 0; col < 3; col++) {
+          for (let row = 0; row < 3; row++) {
+            const stopTick = 10 + col * 8 + row * 3;
+            next[row][col] = t < stopTick ? pick(SLOT_SYMBOLS) : finalsRef.current[row][col];
+          }
         }
         return next;
       });
-      if (t >= 35) {
+      if (t >= 40) {
         clearInterval(iv);
+        setGrid(finalsRef.current);
         setSpinning(false);
-        const f = finalsRef.current;
-        const all3 = f[0] === f[1] && f[1] === f[2];
-        const all2 = f[0] === f[1] || f[1] === f[2] || f[0] === f[2];
-        if (all3) { const w = bet * 5; setBalance(b => b + w); setResult(`JACKPOT! +${w} pts`); setWon(true); setScore(s => ({ ...s, w: s.w + 1 })); }
-        else if (all2) { const w = bet * 2; setBalance(b => b + w); setResult(`Two match! +${w} pts`); setWon(true); setScore(s => ({ ...s, w: s.w + 1 })); }
-        else { setResult(`No luck. -${bet} pts`); setScore(s => ({ ...s, l: s.l + 1 })); }
+        // Check win lines
+        const wins: Set<string> = new Set();
+        let jackpot = false;
+        for (const line of WIN_LINES) {
+          const [a, b, c] = line;
+          const sa = finalsRef.current[a[0]][a[1]]; const sb = finalsRef.current[b[0]][b[1]]; const sc = finalsRef.current[c[0]][c[1]];
+          if (sa && sa === sb && sb === sc) {
+            line.forEach(([r, col]) => wins.add(`${r}-${col}`));
+            if (line === WIN_LINES[6] || line === WIN_LINES[7]) jackpot = true;
+          }
+        }
+        if (wins.size > 0) {
+          setWinningCells(wins);
+          const mult = jackpot ? 10 : wins.size >= 2 ? 7 : 3;
+          const w = bet * mult;
+          setBalance(b => b + w);
+          setResult(`${jackpot ? "JACKPOT" : "WIN"}! +${w} pts`);
+          setWon(true);
+          setScore(s => ({ ...s, w: s.w + 1 }));
+        } else {
+          setResult(`No luck. -${bet} pts`);
+          setScore(s => ({ ...s, l: s.l + 1 }));
+        }
       }
-    }, 55);
+    }, 50);
   }, [spinning, bet, balance, setBalance]);
 
-  useEffect(() => { setWon(false); }, [result]);
+  // Init grid
+  useEffect(() => {
+    if (grid[0][0] === "") {
+      setGrid(Array.from({ length: 3 }, () => [pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS)]));
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  const cellSize = "w-[72px] h-[72px]";
 
   return (
     <div className="space-y-4">
       <BetControl bet={bet} setBet={setBet} balance={balance} disabled={spinning} />
 
       {/* Machine frame */}
-      <div className="relative bg-gradient-to-b from-[#1a0808] to-[#0a0303] border border-[#d4af3715] rounded-md p-5 overflow-hidden">
+      <div className="relative bg-gradient-to-b from-[#1a0808] to-[#0a0303] border border-[#d4af3715] rounded-lg p-6 overflow-hidden">
         <ConfettiBurst active={won} />
-        {/* Gold accent lines */}
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4af3730] to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4af3730] to-transparent" />
 
-        <div className="flex justify-center gap-3">
-          {reels.map((sym, i) => {
-            const reelDelay = [0, 200, 400];
-            const isStopping = spinning && (i === 0 && tickRef.current >= 15) || (i === 1 && tickRef.current >= 25) || (i === 2 && tickRef.current >= 35);
-            return (
-              <motion.div
-                key={i}
-                animate={
-                  !spinning
-                    ? won ? { scale: [1, 1.1, 1], transition: { duration: 0.3, repeat: 2, repeatDelay: 0.1 } } : {}
-                    : { y: [0, -4, 4, 0] }
-                }
-                transition={!spinning ? {} : { duration: 0.055, repeat: Infinity, delay: reelDelay[i] / 1000 }}
-                className="w-[76px] h-[80px] flex items-center justify-center text-5xl border border-[#d4af3715] bg-[#060202] rounded-sm relative overflow-hidden"
-              >
-                {/* Blur overlay during spin for motion effect */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-b from-[#0a0303]/50 via-transparent to-[#0a0303]/50"
-                  animate={{ opacity: spinning ? 0.6 : 0 }}
-                />
-                <motion.span
-                  key={`${sym}-${i}`}
-                  initial={{ y: -20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.15 }}
-                  className="relative z-10"
-                >
-                  {sym}
-                </motion.span>
-              </motion.div>
-            );
-          })}
+        <div className="flex flex-col items-center gap-2">
+          {grid.map((row, ri) => (
+            <div key={ri} className="flex gap-2">
+              {row.map((sym, ci) => {
+                const cellKey = `${ri}-${ci}`;
+                const isWinning = winningCells.has(cellKey);
+                return (
+                  <motion.div
+                    key={cellKey}
+                    animate={
+                      !spinning
+                        ? isWinning ? { scale: [1, 1.15, 1], transition: { duration: 0.3, repeat: 3 } } : (won ? { scale: [1, 1.02, 1] } : {})
+                        : { y: [0, -3, 3, 0] }
+                    }
+                    transition={!spinning ? {} : { duration: 0.05, repeat: Infinity }}
+                    className={`${cellSize} flex items-center justify-center text-4xl border rounded-md relative overflow-hidden
+                      ${isWinning ? "border-[#d4af3760] bg-[#2a1010]" : "border-[#d4af3710] bg-[#060202]"}`}
+                  >
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-b from-[#0a0303]/40 via-transparent to-[#0a0303]/40"
+                      animate={{ opacity: spinning ? 0.5 : 0 }}
+                    />
+                    <motion.span
+                      initial={{ y: -12, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ duration: 0.12 }}
+                      className="relative z-10"
+                    >
+                      {sym}
+                    </motion.span>
+                  </motion.div>
+                );
+              })}
+            </div>
+          ))}
         </div>
       </div>
 
@@ -764,7 +823,7 @@ export function CasinoGames({ onClose }: { onClose: () => void }) {
           exit={{ scale: 0.9, opacity: 0, y: 30 }}
           transition={{ type: "spring", damping: 22, stiffness: 280, mass: 0.8 }}
           onClick={e => e.stopPropagation()}
-          className="relative w-full max-w-2xl bg-[#0e0404] border border-[#d4af3718] rounded-lg overflow-hidden"
+          className="relative w-full max-w-3xl bg-[#0e0404] border border-[#d4af3718] rounded-lg overflow-hidden"
           style={{ boxShadow: "0 25px 80px #00000080, 0 0 60px #d4af3708, inset 0 1px 0 #d4af3710" }}
         >
           <LoungeParticles />
