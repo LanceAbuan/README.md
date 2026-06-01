@@ -1,220 +1,217 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { CasinoGames, CollectibleChips } from "@/components/sections/casino-games";
-import { Gamepad2 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ThemeSelector } from "@/components/theme-selector";
-import { Button } from "@/components/ui/button";
-import { Menu, Download } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
-import { motion } from "framer-motion";
-import { useActiveSection } from "@/hooks/use-active-section";
 import { useTheme } from "next-themes";
-import { useThemeConfig } from "@/hooks/use-theme-config";
-import { CoinFlipNav } from "@/components/casino/coin-flip";
 import { cn } from "@/lib/utils";
-
-const NAV_LINKS = [
-  { href: "#about", label: "About" },
-  { href: "#experience", label: "Experience" },
-  { href: "#projects", label: "Projects" },
-  { href: "#skills", label: "Skills" },
-  { href: "/blogs", label: "Blog" },
-  { href: "#contact", label: "Contact" },
-];
+import { buttonVariants } from "@/components/ui/button";
+import ThemeSelector from "@/components/theme-selector";
+import { siteConfig } from "@/data/site";
+import {
+  NAVBAR_SCROLL_THRESHOLD,
+  NAVBAR_HIDE_DELAY_MS,
+  MOBILE_MENU_MAX_HEIGHT,
+  MOBILE_MENU_BACKDROP_DELAY,
+} from "@/config/animations";
+import {
+  MOBILE_MENU_LABEL,
+  MOBILE_MENU_CLOSE_LABEL,
+} from "@/config/accessibility";
 
 export function Navbar() {
-  const [open, setOpen] = useState(false);
-  const pathname = usePathname();
-  const activeSection = useActiveSection();
-  const { theme } = useTheme();
-  const config = useThemeConfig();
+  const { theme, resolvedTheme } = useTheme();
+  const isTerminal = theme === "terminal";
+  const isNewspaper = theme === "newspaper";
+  const isCasino = theme === "casino";
+  const isDark = resolvedTheme === "dark" || isTerminal || isCasino;
 
-  const isCoinFlip = config.features.coinFlip;
-  const [gamesOpen, setGamesOpen] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const resolveHref = (href: string) => {
-    if (href.startsWith("#")) {
-      return pathname === "/" ? href : `/${href}`;
-    }
-    return href;
-  };
+  const scrollRef = useRef<number | null>(null);
+  const prevScrollY = useRef(0);
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const isActive = (href: string) => {
-    const id = href.replace("#", "");
-    return id && activeSection === id;
-  };
+  useEffect(() => {
+    const onScroll = () => {
+      const currentScrollY = window.scrollY;
+      const isScrollingDown = currentScrollY > prevScrollY.current;
+      const shouldHide =
+        isScrollingDown && currentScrollY > NAVBAR_SCROLL_THRESHOLD;
 
-  // Nav link button class from theme config
-  const linkButtonClass = useCallback(
-    (href: string) => {
-      const active = isActive(href);
-      return cn(
-        active ? config.nav.linkActiveClass : config.nav.linkClass,
-      );
-    },
-    [isActive, config],
-  );
-
-  // Divider color from theme
-  const dividerStyle = config.nav.dividerColor
-    ? { backgroundColor: config.nav.dividerColor }
-    : undefined;
-
-  const NavLinkWrapper = isCoinFlip ? CoinFlipNav : "div";
-
-  const navLinkProps = isCoinFlip
-    ? {
-        sectionId: (href: string) => ({ sectionId: href.replace("#", "") }),
+      if (hideTimerRef.current) {
+        clearTimeout(hideTimerRef.current);
       }
-    : {};
+
+      if (scrollRef.current) {
+        clearTimeout(scrollRef.current);
+      }
+
+      scrollRef.current = setTimeout(() => {
+        if (shouldHide) {
+          hideTimerRef.current = setTimeout(() => {
+            setVisible(false);
+          }, NAVBAR_HIDE_DELAY_MS);
+        } else {
+          setVisible(true);
+        }
+        setScrolled(currentScrollY > 10);
+        prevScrollY.current = currentScrollY;
+      }, 0);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (scrollRef.current) clearTimeout(scrollRef.current);
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    };
+  }, []);
+
+  const navItems = siteConfig.navItems.map((item) => (
+    <Link
+      key={item.href}
+      href={item.href}
+      className={cn(
+        "text-sm font-medium transition-colors hover:text-foreground",
+        isTerminal && "font-mono text-[#00aa30] hover:text-[#00ff41]",
+        isNewspaper && "font-serif text-[#5c2e0e] hover:text-[#1a1208]",
+        isCasino && "font-serif text-[#d4af37] hover:text-white",
+        !isTerminal && !isNewspaper && !isCasino && "text-neutral-600 dark:text-neutral-400",
+      )}
+    >
+      {item.label}
+    </Link>
+  ));
 
   return (
-    <>
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-2xl"
+    <nav
+      className={cn(
+        "fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-2xl transition-all duration-300",
+        visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none",
+      )}
     >
-      <div className={config.nav.containerClass}>
-        <div className="flex items-center justify-between px-4 py-2">
-          <Link href="/" className={config.nav.logoClass}>
-            lance
-          </Link>
+      <div
+        className={cn(
+          "rounded-full px-6 py-3 flex items-center justify-between backdrop-blur-xl border transition-all",
+          isTerminal
+            ? "border-[#00ff4130] bg-black/80"
+            : isNewspaper
+              ? "border-[#c4b59e] bg-[#efe8da]/90 rounded-none"
+              : isCasino
+                ? "border-[#d4af37]/15 bg-[#1c0c0c]/90 rounded-lg"
+                : scrolled
+                  ? "bg-white/80 dark:bg-neutral-900/80 border-neutral-200/50 dark:border-neutral-700/50 shadow-lg shadow-neutral-200/20 dark:shadow-neutral-800/20"
+                  : "bg-white/50 dark:bg-neutral-900/50 border-neutral-200/50 dark:border-neutral-700/50",
+        )}
+      >
+        <Link
+          href="/"
+          className={cn(
+            "text-lg font-bold tracking-tight",
+            isTerminal && "font-mono text-[#00ff41] terminal-glow",
+            isNewspaper && "font-serif text-[#1a1208]",
+            isCasino && "font-serif text-[#d4af37]",
+          )}
+        >
+          {siteConfig.name}
+        </Link>
 
-          {/* Desktop */}
-          <div className="hidden md:flex items-center gap-1">
-            {NAV_LINKS.map((link) => {
-              const href = resolveHref(link.href);
-              const sectionId = link.href.replace("#", "");
-
-              return (
-                <NavLinkWrapper
-                  key={link.href}
-                  {...(isCoinFlip ? { sectionId } : {})}
-                >
-                  <Link href={href} className="block">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={linkButtonClass(link.href)}
-                    >
-                      {link.label}
-                    </Button>
-                  </Link>
-                </NavLinkWrapper>
-              );
-            })}
-            <div className="w-px h-4 mx-1" style={dividerStyle}>
-              {!config.nav.dividerColor && (
-                <div className="w-full h-full bg-neutral-200 dark:bg-neutral-700" />
-              )}
-            </div>
-            <a
-              href="/resume.pdf"
-              download
-              className={cn(
-                "inline-flex items-center justify-center h-8 w-8 rounded-lg text-sm font-medium transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800",
-                theme === "terminal" && "rounded-none text-[#00ff41] hover:bg-[#0d1a0d]",
-                theme === "newspaper" && "rounded-none text-[#5c2e0e] hover:bg-[#ddd2be]",
-                theme === "synthwave" && "rounded-lg text-[#00ffff] hover:bg-[#ff00ff20]",
-                theme === "casino" && "rounded-lg text-[#d4af37] hover:bg-[#2a0a0a] border border-[#d4af3715]",
-              )}
-              aria-label="Download resume"
-            >
-              <Download className="h-3.5 w-3.5" />
-            </a>
-            <ThemeSelector />
-            {theme === "casino" && (
-              <button
-                onClick={() => setGamesOpen(true)}
-                className={cn(
-                  "inline-flex items-center justify-center h-8 w-8 rounded-lg text-sm font-medium transition-colors hover:bg-[#2a0a0a]",
-                  "text-[#d4af37] border border-[#d4af3715]",
-                )}
-                aria-label="Open games"
-              >
-                <Gamepad2 className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
-
-          {/* Mobile */}
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    "h-8 w-8 md:hidden",
-                    theme === "terminal" && "text-[#00ff41]",
-                    theme === "newspaper" && "text-[#5c2e0e]",
-                    theme === "synthwave" && "text-[#00ffff]",
-                    theme === "casino" && "text-[#d4a843]",
-                  )}
-                >
-                  <Menu className="h-4 w-4" />
-                </Button>
-              }
-            />
-            <SheetContent
-              side="top"
-              className={config.nav.sheetContentClass}
-            >
-              <div className="flex flex-col gap-2">
-                {NAV_LINKS.map((link) => {
-                  const href = resolveHref(link.href);
-                  return (
-                    <SheetClose
-                      key={link.href}
-                      render={
-                        <Link
-                          href={href}
-                          className={config.nav.mobileLinkClass}
-                        >
-                          {link.label}
-                        </Link>
-                      }
-                    />
-                  );
-                })}
-                <div className="flex items-center justify-between pt-2">
-                  <ThemeSelector />
-                  {theme === "casino" && (
-                    <>
-                      <button
-                        onClick={() => setGamesOpen(true)}
-                        className="h-8 w-8 flex items-center justify-center rounded-lg text-[#d4af37] hover:bg-[#2a0a0a] border border-[#d4af3715] transition-colors"
-                        aria-label="Open games"
-                      >
-                        <Gamepad2 className="h-3.5 w-3.5" />
-                      </button>
-                    </>
-                  )}
-                  <a
-                    href="/resume.pdf"
-                    download
-                    className={cn(
-                      "inline-flex items-center justify-center h-8 w-8 rounded-lg text-sm font-medium transition-colors",
-                      config.nav.mobileLinkClass,
-                    )}
-                    aria-label="Download resume"
-                  >
-                    <Download className="h-3.5 w-3.5" />
-                  </a>
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+        {/* Desktop nav */}
+        <div className="hidden md:flex items-center gap-6">
+          {navItems}
+          <ThemeSelector />
         </div>
+
+        {/* Mobile menu button */}
+        <button
+          className={cn(
+            "md:hidden p-2 rounded-full transition-colors",
+            isTerminal
+              ? "text-[#00ff41] hover:bg-[#0d1a0d]"
+              : isCasino
+                ? "text-[#d4af37] hover:bg-[#2a1a10]"
+                : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800",
+          )}
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label={mobileOpen ? MOBILE_MENU_CLOSE_LABEL : MOBILE_MENU_LABEL}
+          aria-expanded={mobileOpen}
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            {mobileOpen ? (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            ) : (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            )}
+          </svg>
+        </button>
       </div>
-    </motion.nav>
-    {theme === "casino" && gamesOpen && <CasinoGames onClose={() => setGamesOpen(false)} />}
-    {theme === "casino" && <CollectibleChips />}
-    </>
+
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div
+          className={cn(
+            "mt-2 rounded-2xl backdrop-blur-xl border overflow-hidden",
+            isTerminal
+              ? "border-[#00ff4130] bg-black/90 rounded-none"
+              : isNewspaper
+                ? "border-[#c4b59e] bg-[#efe8da]/95 rounded-none"
+                : isCasino
+                  ? "border-[#d4af37]/15 bg-[#1c0c0c]/95 rounded-lg"
+                  : "bg-white/90 dark:bg-neutral-900/90 border-neutral-200/50 dark:border-neutral-700/50",
+          )}
+          style={{ maxHeight: `${MOBILE_MENU_MAX_HEIGHT}px` }}
+        >
+          <div className="px-6 py-4 space-y-4">
+            {siteConfig.navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "block text-sm font-medium transition-colors",
+                  isTerminal && "font-mono text-[#00aa30] hover:text-[#00ff41]",
+                  isNewspaper && "font-serif text-[#5c2e0e] hover:text-[#1a1208]",
+                  isCasino && "font-serif text-[#d4af37] hover:text-white",
+                  !isTerminal && !isNewspaper && !isCasino && "text-neutral-600 dark:text-neutral-400 hover:text-foreground",
+                )}
+                onClick={() => setMobileOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <div className="pt-2 border-t border-neutral-200/50 dark:border-neutral-700/50">
+              <ThemeSelector />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 -z-10 bg-black/20 backdrop-blur-sm md:hidden"
+          onClick={() => setMobileOpen(false)}
+          style={{ transition: `opacity ${MOBILE_MENU_BACKDROP_DELAY}s` }}
+          aria-hidden="true"
+        />
+      )}
+    </nav>
   );
 }

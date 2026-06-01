@@ -1,115 +1,62 @@
 import type { Metadata, Viewport } from "next";
-import {
-  Inter,
-  JetBrains_Mono,
-  Orbitron,
-  Playfair_Display,
-  Source_Serif_4,
-} from "next/font/google";
-import Script from "next/script";
-import "./globals.css";
-import { Providers } from "@/components/layout/providers";
+import { Providers } from "./providers";
+import { Navbar } from "@/components/layout/navbar";
 import { siteConfig } from "@/data/site";
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-
-// Terminal theme: monospace everywhere
-const jetBrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-terminal",
-});
-
-// Newspaper theme: serif headlines + serif body
-const playfairDisplay = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-newspaper-heading",
-});
-
-// Synthwave theme: retro-futuristic heading font
-const orbitron = Orbitron({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-orbitron",
-});
-
-const sourceSerif4 = Source_Serif_4({
-  subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700"],
-  variable: "--font-newspaper-body",
-});
+import { DEFAULT_DESCRIPTION, AUTHOR, personSchema, websiteSchema } from "@/config/seo";
+import "@/styles/globals.css";
 
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
   ],
+  width: "device-width",
+  initialScale: 1,
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
+  metadataBase: new URL("https://lanceabuan.com"),
   title: {
-    default: siteConfig.title,
-    template: `%s — ${siteConfig.name}`,
+    default: `${siteConfig.name} — ${siteConfig.role}`,
+    template: `%s | ${siteConfig.name}`,
   },
-  description: siteConfig.description,
-  keywords: siteConfig.keywords,
-  authors: [{ name: siteConfig.author.name }],
+  description: DEFAULT_DESCRIPTION,
+  authors: [{ name: AUTHOR }],
+  creator: AUTHOR,
+  keywords: [
+    "software developer",
+    "AI",
+    "agentic workflows",
+    "machine learning",
+    "web development",
+    "portfolio",
+  ],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   openGraph: {
     type: "website",
-    locale: siteConfig.locale,
-    url: siteConfig.url,
-    title: siteConfig.title,
-    description: siteConfig.description,
+    locale: "en_US",
+    url: "https://lanceabuan.com",
+    title: `${siteConfig.name} — ${siteConfig.role}`,
+    description: DEFAULT_DESCRIPTION,
     siteName: siteConfig.name,
-    images: [{ url: siteConfig.ogImage, width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: siteConfig.title,
-    description: siteConfig.description,
-    images: [siteConfig.ogImage],
+    title: `${siteConfig.name} — ${siteConfig.role}`,
+    description: DEFAULT_DESCRIPTION,
+    creator: "@lanceabuan",
   },
-};
-
-const personJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: siteConfig.author.name,
-  jobTitle: siteConfig.author.jobTitle,
-  url: siteConfig.url,
-  sameAs: siteConfig.author.sameAs,
-  knowsAbout: [
-    "AI",
-    "Agentic Workflows",
-    "Full-Stack Development",
-    "LLM Integration",
-    "React",
-    "TypeScript",
-    "Python",
-  ],
-};
-
-const websiteJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: siteConfig.title,
-  url: siteConfig.url,
-  author: {
-    "@type": "Person",
-    name: siteConfig.author.name,
-  },
-  navigation: {
-    "@type": "SiteNavigationElement",
-    navigationElement: [
-      { "@id": `${siteConfig.url}/#about` },
-      { "@id": `${siteConfig.url}/#experience` },
-      { "@id": `${siteConfig.url}/#projects` },
-      { "@id": `${siteConfig.url}/#skills` },
-      { "@id": `${siteConfig.url}/blogs` },
-      { "@id": `${siteConfig.url}/#contact` },
-    ],
+  alternates: {
+    canonical: "https://lanceabuan.com",
   },
 };
 
@@ -121,27 +68,31 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="Lance Abuan" />
-        <meta name="theme-color" content="#ffffff" />
+        {/* JSON-LD structured data for SEO */}
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
       </head>
-      <body
-        className={`${inter.variable} ${jetBrainsMono.variable} ${orbitron.variable} ${playfairDisplay.variable} ${sourceSerif4.variable} font-sans antialiased`}
-      >
-        <Providers>{children}</Providers>
-        <Script
-          id="json-ld-person"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
-        />
-        <Script
-          id="json-ld-website"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-        />
+      <body>
+        <Providers>
+          <a
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:dark:bg-neutral-800 focus:text-foreground focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg"
+            href="#main-content"
+          >
+            Skip to main content
+          </a>
+          <Navbar />
+          <main id="main-content" role="main">
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );

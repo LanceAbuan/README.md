@@ -2,11 +2,18 @@
 
 import { motion, useInView, Variants } from "framer-motion";
 import { useRef, type ReactNode } from "react";
+import {
+  REVEAL_DURATION,
+  REVEAL_Y_OFFSET,
+  SCROLL_ARROW_DURATION,
+  SCROLL_ARROW_DELAY,
+} from "@/config/animations";
+import { SCROLL_ARROW_LABEL } from "@/config/accessibility";
 
 /** Default animation transition config shared across all reveal animations. */
-const DEFAULT_TRANSITION = { duration: 0.6 };
+const DEFAULT_TRANSITION = { duration: REVEAL_DURATION };
 /** Default initial state (invisible, pushed down). */
-const DEFAULT_INITIAL: Record<string, number> = { opacity: 0, y: 30 };
+const DEFAULT_INITIAL: Record<string, number> = { opacity: 0, y: REVEAL_Y_OFFSET };
 /** Default animate state (visible, at rest). */
 const DEFAULT_ANIMATE: Record<string, number> = { opacity: 1, y: 0 };
 
@@ -48,7 +55,7 @@ export function SectionReveal({
   variants,
   className,
   once = true,
-  margin = "-100px",
+  margin,
 }: SectionRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -96,7 +103,7 @@ export function useSectionReveal(options?: {
   margin?: string;
 }) {
   const ref = useRef<HTMLElement>(null);
-  const { once = true, margin = "-100px" } = options ?? {};
+  const { once = true, margin } = options ?? {};
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isInView = useInView(ref as any, { once, margin: margin as any });
   return { ref, isInView };
@@ -118,7 +125,16 @@ export function SectionScrollArrow({
       className="flex justify-center mt-12 cursor-pointer animate-bounce"
       initial={{ opacity: 0 }}
       animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-      transition={{ duration: 0.4, delay: 0.5 }}
+      transition={{ duration: SCROLL_ARROW_DURATION, delay: SCROLL_ARROW_DELAY }}
+      role="button"
+      tabIndex={0}
+      aria-label={SCROLL_ARROW_LABEL}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+        }
+      }}
       onClick={() => {
         document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
       }}
@@ -128,6 +144,7 @@ export function SectionScrollArrow({
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
+        aria-hidden="true"
       >
         <path
           strokeLinecap="round"
