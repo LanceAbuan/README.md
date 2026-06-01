@@ -214,7 +214,7 @@ export function Navbar() {
       </div>
     </motion.nav>
     {theme === "casino" && gamesOpen && <CasinoGames onClose={() => setGamesOpen(false)} />}
-    {theme === "casino" && <CollectibleChips />}
+    {false && theme === "casino" && <CollectibleChips />}
     </>
   );
 }

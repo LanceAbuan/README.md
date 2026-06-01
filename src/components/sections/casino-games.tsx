@@ -1610,10 +1610,11 @@ export function CasinoGames({ onClose }: { onClose: () => void }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+        className="fixed inset-0 z-[9999] flex items-center justify-center p-4 pointer-events-none"
         onClick={onClose}
       >
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="absolute inset-0 bg-black/85 backdrop-blur-sm" />
+        <CollectibleChips />
 
         <motion.div
           initial={{ scale: 0.85, opacity: 0, y: 40 }}
