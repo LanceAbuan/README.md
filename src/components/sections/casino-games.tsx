@@ -154,27 +154,25 @@ function ConfettiBurst({ active, intensity = 1 }: { active: boolean; intensity?:
 }
 
 /* ─── Collectible Poker Chips ─── */
-function CollectibleChips({ onCollect }: { onCollect: (amount: number) => void }) {
+export function CollectibleChips() {
   const [chips, setChips] = useState<Array<{ id: number; x: number; y: number; value: number; color: string }>>([]);
   const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
   useEffect(() => {
-    // Spawn a chip every 4-8 seconds
     const spawn = () => {
       const values = [5, 10, 25, 50];
       const colors: Record<number, string> = { 5: "#ef4444", 10: "#3b82f6", 25: "#22c55e", 50: "#d4af37" };
       const value = values[Math.floor(Math.random() * values.length)];
       setChips(prev => [...prev, {
         id: Date.now() + Math.random(),
-        x: 8 + Math.random() * 84,
-        y: 8 + Math.random() * 84,
+        x: 4 + Math.random() * 92,
+        y: 4 + Math.random() * 92,
         value,
         color: colors[value],
       }]);
     };
-    // Spawn first one after 3-6 seconds
     const firstTimeout = setTimeout(spawn, 3000 + Math.random() * 3000);
-    intervalRef.current = setInterval(spawn, 4000 + Math.random() * 4000);
+    intervalRef.current = setInterval(spawn, 5000 + Math.random() * 4000);
     return () => {
       clearTimeout(firstTimeout);
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -182,17 +180,24 @@ function CollectibleChips({ onCollect }: { onCollect: (amount: number) => void }
   }, []);
 
   const collect = (id: number, value: number) => {
-    onCollect(value);
+    // Update localStorage balance directly
+    try {
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      const newBal = (stored.balance || 0) + value;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ balance: newBal, lastVisit: Date.now() }));
+      // Notify any listeners
+      window.dispatchEvent(new CustomEvent("casinoChipCollected", { detail: value }));
+    } catch {}
     setChips(prev => prev.filter(c => c.id !== id));
   };
 
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-[9000]">
       {chips.map(chip => (
         <motion.div
           key={chip.id}
           initial={{ opacity: 0, scale: 0, rotate: -180 }}
-          animate={{ opacity: 0.9, scale: 1, rotate: 0 }}
+          animate={{ opacity: 0.85, scale: 1, rotate: 0 }}
           exit={{ opacity: 0, scale: 0 }}
           transition={{ duration: 0.5, type: "spring", damping: 12 }}
           onClick={() => collect(chip.id, chip.value)}
@@ -205,7 +210,7 @@ function CollectibleChips({ onCollect }: { onCollect: (amount: number) => void }
             className="w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-lg border-2 border-white/30"
             style={{
               backgroundColor: chip.color,
-              boxShadow: `0 2px 8px ${chip.color + "88"}, 0 0 12px ${chip.color + "40"}`,
+              boxShadow: "0 2px 8px " + chip.color + "60, 0 0 12px " + chip.color + "30",
             }}
           >
             {chip.value}
@@ -214,6 +219,18 @@ function CollectibleChips({ onCollect }: { onCollect: (amount: number) => void }
       ))}
     </div>
   );
+}
+
+// Inside the modal, listen for chip collections to sync balance
+function useChipSync(setBalance: (fn: (b: number) => number) => void) {
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const value = (e as CustomEvent).detail;
+      setBalance(b => b + value);
+    };
+    window.addEventListener("casinoChipCollected", handler);
+    return () => window.removeEventListener("casinoChipCollected", handler);
+  }, [setBalance]);
 }
 
 /* ─── Screen Shake Wrapper ─── */
@@ -1019,7 +1036,7 @@ function VideoPoker({ bet, setBet, balance, setBalance }: { bet: number; setBet:
   const shakeTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const dealCards = useCallback(() => {
-    if (balance < bet || phase !== "idle" && phase !== "done") return;
+    if (balance < bet || animating || (phase !== "idle" && phase !== "done")) return;
     sfx.card();
     setBalance(b => b - bet);
     setWon(false);
@@ -1055,7 +1072,7 @@ function VideoPoker({ bet, setBet, balance, setBalance }: { bet: number; setBet:
       }, 200);
     };
     dealNext();
-  }, [bet, balance, phase, setBalance]);
+  }, [bet, balance, phase, animating, setBalance]);
 
   const draw = useCallback(() => {
     if (phase !== "select" || animating) return;
@@ -1564,6 +1581,8 @@ export function CasinoGames({ onClose }: { onClose: () => void }) {
     setBalance(prev => { const next = fn(prev); return next < 0 ? 0 : next; });
   }, []);
 
+  useChipSync(clampedSetBalance);
+
   const games: { key: Game; label: string; icon: string }[] = [
     { key: "slots", label: "SLOTS", icon: "🎰" },
     { key: "coinflip", label: "COIN", icon: "🪙" },
@@ -1602,7 +1621,6 @@ export function CasinoGames({ onClose }: { onClose: () => void }) {
           style={{ boxShadow: "0 25px 80px #00000080, 0 0 60px #d4af3708, inset 0 1px 0 #d4af3710" }}
         >
           <LoungeParticles />
-          <CollectibleChips onCollect={(amount) => setBalance(b => b + amount)} />
 
           <div className="relative flex items-center justify-between px-6 py-4 border-b border-[#d4af3712] bg-gradient-to-r from-[#0a0303] via-[#120606] to-[#0a0303]">
             <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4af3725] to-transparent" />
