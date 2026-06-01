@@ -1057,25 +1057,22 @@ function VideoPoker({ bet, setBet, balance, setBalance }: { bet: number; setBet:
     setHand([]);
     setHeld([false, false, false, false, false]);
 
-    let dealt = 0;
-    const dealNext = () => {
-      if (dealt >= 5) {
-        setPhase("select");
-        setAnimating(false);
-        animatingRef.current = false;
-        return;
-      }
-      if (dealTimeoutRef.current) clearTimeout(dealTimeoutRef.current);
-      dealTimeoutRef.current = setTimeout(() => {
-        setHand(prev => [...prev, newHand[dealt]]);
-        setFlippedCards(prev => [...prev, dealt]);
+    for (let i = 0; i < 5; i++) {
+      const idx = i;
+      setTimeout(() => {
+        setHand(prev => [...prev, newHand[idx]]);
+        setFlippedCards(prev => [...prev, idx]);
         sfx.flip();
-        dealt++;
-        dealNext();
-      }, 200);
-    };
-    dealNext();
+        if (idx === 4) {
+          setPhase("select");
+          setAnimating(false);
+          animatingRef.current = false;
+        }
+      }, 200 * (idx + 1));
+    }
   }, [bet, balance, phase, animating, setBalance]);
+
+  const drawTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const draw = useCallback(() => {
     if (phase !== "select" || animatingRef.current) return;
@@ -1083,53 +1080,55 @@ function VideoPoker({ bet, setBet, balance, setBalance }: { bet: number; setBet:
     animatingRef.current = true;
     const deck = [...deckRef.current];
     let currentHand = [...hand];
-    let idx = 0;
 
-    const drawNext = () => {
-      // Find next non-held card
-      while (idx < 5 && held[idx]) idx++;
-      if (idx >= 5) {
-        // All replacements done
-        const evalResult = evaluateHand(currentHand);
-        setHandRank(evalResult.rank);
-        if (evalResult.mult > 0) {
-          setWon(true);
-          setShaking(true);
-          const w = bet * evalResult.mult;
-          setBalance(b => b + w);
-          setResult(`${evalResult.rank}! +${w} pts`);
-          setScore(s => ({ ...s, w: s.w + 1 }));
-          evalResult.mult >= 25 ? sfx.jackpot() : sfx.win();
-          if (shakeTimeoutRef.current) clearTimeout(shakeTimeoutRef.current);
-          shakeTimeoutRef.current = setTimeout(() => setShaking(false), 600);
-        } else {
-          setResult(`${evalResult.rank} — no win. -${bet} pts`);
-          setScore(s => ({ ...s, l: s.l + 1 }));
-          sfx.lose();
-        }
-        setPhase("done");
-        setAnimating(false);
-        animatingRef.current = false;
-        return;
-      }
+    // Pre-compute which indices need replacement
+    const toReplace = held.reduce<number[]>((acc, h, i) => {
+      if (!h) acc.push(i);
+      return acc;
+    }, []);
 
-      // Flip animation for this card
-      setFlippedCards(prev => [...prev, idx]);
+    // Replace all un-held cards immediately (no race)
+    for (const i of toReplace) {
       if (deck.length > 0) {
-        const newCard = deck.pop()!;
-        currentHand[idx] = newCard;
+        currentHand[i] = deck.pop()!;
       }
-      sfx.flip();
-      setHand([...currentHand]);
+    }
 
-      idx++;
-      if (drawTimeoutRef.current) clearTimeout(drawTimeoutRef.current);
-      drawTimeoutRef.current = setTimeout(drawNext, 250);
-    };
-    drawNext();
+    // Animate flips one by one
+    for (let k = 0; k < toReplace.length; k++) {
+      const idx = toReplace[k];
+      setTimeout(() => {
+        setFlippedCards(prev => [...prev, idx]);
+        setHand([...currentHand]);
+        sfx.flip();
+      }, 250 * (k + 1));
+    }
+
+    // Finalize after all flips
+    const totalFlipTime = toReplace.length > 0 ? 250 * toReplace.length + 100 : 100;
+    setTimeout(() => {
+      const evalResult = evaluateHand(currentHand);
+      setHandRank(evalResult.rank);
+      if (evalResult.mult > 0) {
+        setWon(true);
+        setShaking(true);
+        const w = bet * evalResult.mult;
+        setBalance(b => b + w);
+        setResult(`${evalResult.rank}! +${w} pts`);
+        setScore(s => ({ ...s, w: s.w + 1 }));
+        evalResult.mult >= 25 ? sfx.jackpot() : sfx.win();
+        if (shakeTimeoutRef.current) clearTimeout(shakeTimeoutRef.current);
+        shakeTimeoutRef.current = setTimeout(() => setShaking(false), 600);
+      } else {
+        setResult(`${evalResult.rank} — no win. -${bet} pts`);
+        setScore(s => ({ ...s, l: s.l + 1 }));
+        sfx.lose();
+      }
+      setPhase("done");
+      setAnimating(false);
+      animatingRef.current = false;
+    }, totalFlipTime);
   }, [phase, animating, hand, held, bet, setBalance, setScore]);
-
-  const drawTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const toggleHold = (idx: number) => {
     if (phase !== "select") return;
