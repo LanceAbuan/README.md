@@ -12,13 +12,24 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Check, Palette, Sun, Moon } from "lucide-react";
+import { Check, Palette, Sun, Moon, Monitor, Terminal, Newspaper, Sparkles, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { themes } from "@/config/theme-palette";
 import {
   THEME_SELECTOR_LABEL,
   THEME_OPTION_LABEL,
 } from "@/config/accessibility";
+
+const THEME_ICONS: Record<string, React.ReactNode> = {
+  light: <Sun className="h-4 w-4" />,
+  dark: <Moon className="h-4 w-4" />,
+  system: <Monitor className="h-4 w-4" />,
+  terminal: <Terminal className="h-4 w-4" />,
+  newspaper: <Newspaper className="h-4 w-4" />,
+  synthwave: <Sparkles className="h-4 w-4" />,
+  casino: <Trophy className="h-4 w-4" />,
+  custom: <Palette className="h-4 w-4" />,
+};
 
 export function ThemeSelector() {
   const { theme, setTheme } = useTheme();
@@ -47,7 +58,7 @@ export function ThemeSelector() {
                   aria-label={THEME_OPTION_LABEL(t.label)}
                 >
                   <div className="flex items-center gap-2">
-                    <Palette className="h-4 w-4" />
+                    {THEME_ICONS[t.value] || <Palette className="h-4 w-4" />}
                     <span>{t.label}</span>
                   </div>
                   {theme === t.value && (

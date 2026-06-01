@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { ThemeSelector } from "@/components/theme-selector";
+import { CoinFlipNav } from "@/components/casino/coin-flip";
 import {
   NAVBAR_SCROLL_THRESHOLD,
   NAVBAR_HIDE_DELAY_MS,
@@ -17,12 +18,12 @@ import {
 } from "@/config/accessibility";
 
 const NAV_LINKS = [
-  { href: "#about", label: "About" },
-  { href: "#experience", label: "Experience" },
-  { href: "#projects", label: "Projects" },
-  { href: "#skills", label: "Skills" },
-  { href: "/blogs", label: "Blog" },
-  { href: "#contact", label: "Contact" },
+  { href: "#about", label: "About", section: "about" },
+  { href: "#experience", label: "Experience", section: "experience" },
+  { href: "#projects", label: "Projects", section: "projects" },
+  { href: "#skills", label: "Skills", section: "skills" },
+  { href: "/blogs", label: "Blog", section: undefined },
+  { href: "#contact", label: "Contact", section: "contact" },
 ];
 
 export function Navbar() {
@@ -76,9 +77,8 @@ export function Navbar() {
     };
   }, []);
 
-  const navItems = NAV_LINKS.map((item) => (
+  const NavLinkContent = ({ item, onClick }: { item: { href: string; label: string; section?: string }; onClick?: () => void }) => (
     <Link
-      key={item.href}
       href={item.href}
       className={cn(
         "text-sm font-medium transition-colors hover:text-foreground",
@@ -87,10 +87,23 @@ export function Navbar() {
         isCasino && "font-serif text-[#d4af37] hover:text-white",
         !isTerminal && !isNewspaper && !isCasino && "text-neutral-600 dark:text-neutral-400",
       )}
+      onClick={onClick}
     >
       {item.label}
     </Link>
-  ));
+  );
+
+  const navItems = NAV_LINKS.map((item) => {
+    const linkContent = <NavLinkContent key={item.href} item={item} />;
+    if (isCasino && item.section) {
+      return (
+        <CoinFlipNav key={item.href} sectionId={item.section}>
+          {linkContent}
+        </CoinFlipNav>
+      );
+    }
+    return linkContent;
+  });
 
   return (
     <nav
@@ -187,22 +200,32 @@ export function Navbar() {
           style={{ maxHeight: `${MOBILE_MENU_MAX_HEIGHT}px` }}
         >
           <div className="px-6 py-4 space-y-4">
-            {NAV_LINKS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "block text-sm font-medium transition-colors",
-                  isTerminal && "font-mono text-[#00aa30] hover:text-[#00ff41]",
-                  isNewspaper && "font-serif text-[#5c2e0e] hover:text-[#1a1208]",
-                  isCasino && "font-serif text-[#d4af37] hover:text-white",
-                  !isTerminal && !isNewspaper && !isCasino && "text-neutral-600 dark:text-neutral-400 hover:text-foreground",
-                )}
-                onClick={() => setMobileOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((item) => {
+              const mobileLink = (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "block text-sm font-medium transition-colors",
+                    isTerminal && "font-mono text-[#00aa30] hover:text-[#00ff41]",
+                    isNewspaper && "font-serif text-[#5c2e0e] hover:text-[#1a1208]",
+                    isCasino && "font-serif text-[#d4af37] hover:text-white",
+                    !isTerminal && !isNewspaper && !isCasino && "text-neutral-600 dark:text-neutral-400 hover:text-foreground",
+                  )}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              );
+              if (isCasino && item.section) {
+                return (
+                  <CoinFlipNav key={item.href} sectionId={item.section}>
+                    {mobileLink}
+                  </CoinFlipNav>
+                );
+              }
+              return mobileLink;
+            })}
             <div className="pt-2 border-t border-neutral-200/50 dark:border-neutral-700/50">
               <ThemeSelector />
             </div>

@@ -968,6 +968,29 @@
   color: #ede5ff !important;
 }
 
+/* Also cover dark: variants — synthwave enables dark mode so these are the active classes */
+.dark.synthwave .dark\:text-neutral-300,
+.dark.synthwave .dark\:text-neutral-400,
+.dark.synthwave .dark\:text-neutral-500,
+.dark.synthwave .dark\:text-neutral-600 {
+  color: #dcd0f7 !important;
+}
+
+.dark.synthwave .dark\:text-neutral-700 {
+  color: #ede5ff !important;
+}
+
+/* Background overrides for dark: variants too */
+.dark.synthwave .dark\:bg-neutral-800,
+.dark.synthwave .dark\:bg-neutral-900 {
+  background-color: rgba(139, 92, 246, 0.15) !important;
+}
+
+.dark.synthwave .dark\:border-neutral-700,
+.dark.synthwave .dark\:border-neutral-800 {
+  border-color: #ff00ff30 !important;
+}
+
 /* Hover states that switch to foreground */
 .synthwave .group:hover .group-hover\:text-foreground {
   color: #ede5ff !important;
