@@ -163,23 +163,27 @@ export function CollectibleChips() {
       const values = [5, 10, 25, 50];
       const colors: Record<number, string> = { 5: "#ef4444", 10: "#3b82f6", 25: "#22c55e", 50: "#d4af37" };
       const value = values[Math.floor(Math.random() * values.length)];
-      setChips(prev => [...prev, {
-        id: Date.now() + Math.random(),
-        x: 4 + Math.random() * 92,
-        y: 4 + Math.random() * 92,
-        value,
-        color: colors[value],
-      }]);
+      setChips(prev => {
+        if (prev.length >= 5) return prev;
+        return [...prev, {
+          id: Date.now() + Math.random(),
+          x: 5 + Math.random() * 90,
+          y: 5 + Math.random() * 90,
+          value,
+          color: colors[value],
+        }];
+      });
     };
-    const firstTimeout = setTimeout(spawn, 3000 + Math.random() * 3000);
-    intervalRef.current = setInterval(spawn, 5000 + Math.random() * 4000);
+    const firstTimeout = setTimeout(spawn, 5000 + Math.random() * 3000);
+    intervalRef.current = setInterval(spawn, 8000 + Math.random() * 6000);
     return () => {
       clearTimeout(firstTimeout);
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, []);
 
-  const collect = (id: number, value: number) => {
+  const collect = (e: React.MouseEvent, id: number, value: number) => {
+    e.stopPropagation();
     // Update localStorage balance directly
     try {
       const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
@@ -200,20 +204,21 @@ export function CollectibleChips() {
           animate={{ opacity: 0.85, scale: 1, rotate: 0 }}
           exit={{ opacity: 0, scale: 0 }}
           transition={{ duration: 0.5, type: "spring", damping: 12 }}
-          onClick={() => collect(chip.id, chip.value)}
-          whileHover={{ scale: 1.2, rotate: [0, -10, 10, 0] }}
-          whileTap={{ scale: 0.85 }}
+          onClick={(e) => collect(e, chip.id, chip.value)}
+          whileHover={{ scale: 1.15, rotate: [0, -8, 8, 0] }}
+          whileTap={{ scale: 0.9 }}
           className="absolute cursor-pointer pointer-events-auto"
           style={{ left: `${chip.x}%`, top: `${chip.y}%` }}
         >
           <div
-            className="w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-lg border-2 border-white/30"
+            className="relative w-14 h-14 rounded-full flex items-center justify-center text-sm font-extrabold text-white select-none"
             style={{
-              backgroundColor: chip.color,
-              boxShadow: "0 2px 8px " + chip.color + "60, 0 0 12px " + chip.color + "30",
+              background: `radial-gradient(circle, ${chip.color}ee 0%, ${chip.color} 60%, ${chip.color}cc 100%)`,
+              boxShadow: "0 2px 6px #00000099, 0 0 0 2px #ffffff40, 0 0 0 4px " + chip.color + "60, 0 0 16px " + chip.color + "40",
             }}
           >
-            {chip.value}
+            <div className="absolute inset-[3px] rounded-full border-2 border-dashed border-white/30" />
+            <span className="relative drop-shadow-md">${chip.value}</span>
           </div>
         </motion.div>
       ))}
@@ -1610,10 +1615,10 @@ export function CasinoGames({ onClose }: { onClose: () => void }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[9999] flex items-center justify-center p-4 pointer-events-none"
+        className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
         onClick={onClose}
       >
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="absolute inset-0 bg-black/85 backdrop-blur-sm" />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="absolute inset-0 bg-black/85 backdrop-blur-sm pointer-events-auto" />
         <CollectibleChips />
 
         <motion.div
