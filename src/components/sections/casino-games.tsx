@@ -1030,13 +1030,15 @@ function VideoPoker({ bet, setBet, balance, setBalance }: { bet: number; setBet:
   const [shaking, setShaking] = useState(false);
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
   const [animating, setAnimating] = useState(false);
+  const animatingRef = useRef(false);
   const [handRank, setHandRank] = useState<string>("");
   const deckRef = useRef<Card[]>([]);
   const dealTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const shakeTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const dealCards = useCallback(() => {
-    if (balance < bet || animating || (phase !== "idle" && phase !== "done")) return;
+    if (balance < bet || animatingRef.current || (phase !== "idle" && phase !== "done")) return;
+    animatingRef.current = true;
     sfx.card();
     setBalance(b => b - bet);
     setWon(false);
@@ -1060,6 +1062,7 @@ function VideoPoker({ bet, setBet, balance, setBalance }: { bet: number; setBet:
       if (dealt >= 5) {
         setPhase("select");
         setAnimating(false);
+        animatingRef.current = false;
         return;
       }
       if (dealTimeoutRef.current) clearTimeout(dealTimeoutRef.current);
@@ -1075,8 +1078,9 @@ function VideoPoker({ bet, setBet, balance, setBalance }: { bet: number; setBet:
   }, [bet, balance, phase, animating, setBalance]);
 
   const draw = useCallback(() => {
-    if (phase !== "select" || animating) return;
+    if (phase !== "select" || animatingRef.current) return;
     setAnimating(true);
+    animatingRef.current = true;
     const deck = [...deckRef.current];
     let currentHand = [...hand];
     let idx = 0;
@@ -1105,6 +1109,7 @@ function VideoPoker({ bet, setBet, balance, setBalance }: { bet: number; setBet:
         }
         setPhase("done");
         setAnimating(false);
+        animatingRef.current = false;
         return;
       }
 
