@@ -196,7 +196,7 @@ export function CollectibleChips() {
   };
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-[9998]">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-[10000]">
       {chips.map(chip => (
         <motion.div
           key={chip.id}
@@ -1619,7 +1619,6 @@ export function CasinoGames({ onClose }: { onClose: () => void }) {
         onClick={onClose}
       >
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="absolute inset-0 bg-black/85 backdrop-blur-sm pointer-events-auto" />
-        <CollectibleChips />
 
         <motion.div
           initial={{ scale: 0.85, opacity: 0, y: 40 }}
