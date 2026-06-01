@@ -192,7 +192,7 @@ export function CollectibleChips() {
   };
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-[9000]">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-[9998]">
       {chips.map(chip => (
         <motion.div
           key={chip.id}
@@ -1406,8 +1406,8 @@ function DiceGame({ bet, setBet, balance, setBalance }: { bet: number; setBet: (
                 style={{
                   width: value === 1 ? "24%" : "18%",
                   height: value === 1 ? "24%" : "18%",
-                  top: pos.top ? `calc(${pos.top} - 9%)` : "auto",
-                  left: pos.left ? `calc(${pos.left} - 9%)` : "auto",
+                  top: pos.top,
+                  left: pos.left,
                   bottom: pos.bottom || "auto",
                   right: pos.right || "auto",
                   transform: "translate(-50%, -50%)",
