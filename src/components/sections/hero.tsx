@@ -162,10 +162,10 @@ function HeroTerminal() {
               color: terminalPalette.primary,
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = terminalPalette.primary;
+              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = terminalPalette.primary;
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
+              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "transparent";
             }}
           >
             ./view_projects

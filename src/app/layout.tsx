@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Providers } from "./providers";
+import { Providers } from "@/components/layout/providers";
 import { Navbar } from "@/components/layout/navbar";
 import { siteConfig } from "@/data/site";
 import { DEFAULT_DESCRIPTION, AUTHOR, personSchema, websiteSchema } from "@/config/seo";
-import "@/styles/globals.css";
+import "./globals.css";
 
 export const viewport: Viewport = {
   themeColor: [
@@ -15,44 +15,25 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://lanceabuan.com"),
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.name} — ${siteConfig.role}`,
-    template: `%s | ${siteConfig.name}`,
+    default: siteConfig.title,
+    template: `%s — ${siteConfig.name}`,
   },
-  description: DEFAULT_DESCRIPTION,
-  authors: [{ name: AUTHOR }],
-  creator: AUTHOR,
-  keywords: [
-    "software developer",
-    "AI",
-    "agentic workflows",
-    "machine learning",
-    "web development",
-    "portfolio",
-  ],
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
+  description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  authors: [{ name: siteConfig.author.name }],
   openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "https://lanceabuan.com",
-    title: `${siteConfig.name} — ${siteConfig.role}`,
-    description: DEFAULT_DESCRIPTION,
+    locale: siteConfig.locale,
+    url: siteConfig.url,
+    title: siteConfig.title,
+    description: siteConfig.description,
     siteName: siteConfig.name,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.name} — ${siteConfig.role}`,
-    description: DEFAULT_DESCRIPTION,
+    title: siteConfig.title,
+    description: siteConfig.description,
     creator: "@lanceabuan",
   },
   alternates: {

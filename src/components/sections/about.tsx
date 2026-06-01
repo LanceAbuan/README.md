@@ -106,7 +106,7 @@ export function About() {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY + i * STAGGER_DELAY }}
             >
-              {paragraph}
+              {paragraph.text}
             </motion.p>
           ))}
         </div>

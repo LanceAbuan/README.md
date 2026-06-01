@@ -4,9 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
-import ThemeSelector from "@/components/theme-selector";
-import { siteConfig } from "@/data/site";
+import { ThemeSelector } from "@/components/theme-selector";
 import {
   NAVBAR_SCROLL_THRESHOLD,
   NAVBAR_HIDE_DELAY_MS,
@@ -17,6 +15,15 @@ import {
   MOBILE_MENU_LABEL,
   MOBILE_MENU_CLOSE_LABEL,
 } from "@/config/accessibility";
+
+const NAV_LINKS = [
+  { href: "#about", label: "About" },
+  { href: "#experience", label: "Experience" },
+  { href: "#projects", label: "Projects" },
+  { href: "#skills", label: "Skills" },
+  { href: "/blogs", label: "Blog" },
+  { href: "#contact", label: "Contact" },
+];
 
 export function Navbar() {
   const { theme, resolvedTheme } = useTheme();
@@ -29,7 +36,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const scrollRef = useRef<number | null>(null);
+  const scrollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevScrollY = useRef(0);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -69,7 +76,7 @@ export function Navbar() {
     };
   }, []);
 
-  const navItems = siteConfig.navItems.map((item) => (
+  const navItems = NAV_LINKS.map((item) => (
     <Link
       key={item.href}
       href={item.href}
@@ -115,7 +122,7 @@ export function Navbar() {
             isCasino && "font-serif text-[#d4af37]",
           )}
         >
-          {siteConfig.name}
+          Lance Abuan
         </Link>
 
         {/* Desktop nav */}
@@ -180,7 +187,7 @@ export function Navbar() {
           style={{ maxHeight: `${MOBILE_MENU_MAX_HEIGHT}px` }}
         >
           <div className="px-6 py-4 space-y-4">
-            {siteConfig.navItems.map((item) => (
+            {NAV_LINKS.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
