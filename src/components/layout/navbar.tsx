@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { CasinoGames } from "@/components/sections/casino-games";
+import { CasinoGames, CollectibleChips } from "@/components/sections/casino-games";
 import { Gamepad2 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -214,6 +214,7 @@ export function Navbar() {
       </div>
     </motion.nav>
     {theme === "casino" && gamesOpen && <CasinoGames onClose={() => setGamesOpen(false)} />}
+    {theme === "casino" && <CollectibleChips />}
     </>
   );
 }
