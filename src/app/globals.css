@@ -979,8 +979,12 @@
   background-color: rgba(139, 92, 246, 0.15) !important;
 }
 
-/* ── Background: deep night sky gradient ── */
-.synthwave body,
+/* ── Background: deep night sky gradient on html ── */
+/* Synthwave elements live inside body with z-index: -1.
+   Body must be transparent so they show through. Apply gradient to html instead. */
+.synthwave body {
+  background: transparent !important;
+}
 .synthwave {
   background: linear-gradient(180deg, #05021a 0%, #0a0520 30%, #1a0a3e 60%, #2d1b69 85%, #1a0a3e 100%) !important;
 }
@@ -1028,26 +1032,22 @@
   97% { opacity: 1; }
 }
 
-.synthwave > main,
-.synthwave > * {
+.synthwave main,
+.synthwave footer,
+.synthwave nav {
   animation: synthwave-flicker 4s infinite;
 }
 
 /* Ensure page content renders above fixed background elements */
-/* The synthwave class is on <body>, so use descendant selectors, not direct-child */
+/* The synthwave class is on <html>. Body is transparent.
+   Content inside body stacks normally above z-index: -1 backgrounds. */
 .synthwave body {
   position: relative;
-  z-index: 1;
 }
 
 .synthwave main {
   position: relative;
-  z-index: 2;
-}
-
-.synthwave main > * {
-  position: relative;
-  z-index: 2;
+  z-index: 1;
 }
 
 /* ── RGB chromatic aberration on headings ── */

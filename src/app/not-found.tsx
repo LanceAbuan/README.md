@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
 import { AnimatedBackground } from "@/components/layout/background";
 import { buttonVariants } from "@/components/ui/button";
 
@@ -15,8 +13,7 @@ export default function NotFound() {
   return (
     <>
       <AnimatedBackground />
-      <Navbar />
-      <main className="min-h-screen flex items-center justify-center px-6">
+      <div className="min-h-screen flex items-center justify-center px-6">
         <div className="text-center max-w-md">
           <p className="text-8xl font-bold text-neutral-200 dark:text-neutral-800">404</p>
           <h1 className="text-2xl font-bold tracking-tight mt-4 mb-2">Page not found</h1>
@@ -27,8 +24,7 @@ export default function NotFound() {
             Back Home
           </Link>
         </div>
-      </main>
-      <Footer />
+      </div>
     </>
   );
 }
