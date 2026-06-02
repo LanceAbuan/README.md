@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView, Variants } from "framer-motion";
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 /** Framer-motion uses this type for the `margin` option but does not export it. */
 type MarginType = `${number}${"px" | "%"}` | `${number}${"px" | "%"} ${number}${"px" | "%"}` | `${number}${"px" | "%"} ${number}${"px" | "%"} ${number}${"px" | "%"}` | `${number}${"px" | "%"} ${number}${"px" | "%"} ${number}${"px" | "%"} ${number}${"px" | "%"}`;
@@ -42,6 +42,24 @@ export interface SectionRevealProps {
 const DEFAULT_MARGIN = "-100px" as MarginType;
 
 /**
+ * Hook to detect the user's `prefers-reduced-motion` preference.
+ * Returns `true` when reduced motion is preferred.
+ */
+function useReducedMotion() {
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  return reducedMotion;
+}
+
+/**
  * Reusable reveal-on-scroll wrapper component.
  *
  * Handles the `useRef` + `useInView` boilerplate so each section
@@ -63,6 +81,7 @@ export function SectionReveal({
   once = true,
   margin,
 }: SectionRevealProps) {
+  const reducedMotion = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once, margin: margin ?? DEFAULT_MARGIN });
 
@@ -73,6 +92,10 @@ export function SectionReveal({
       transition: { ...DEFAULT_TRANSITION, delay },
     },
   };
+
+  if (reducedMotion) {
+    return <div ref={ref} className={className}>{children}</div>;
+  }
 
   return (
     <motion.div
@@ -107,10 +130,11 @@ export function useSectionReveal(options?: {
   /** Intersection observer margin offset. @default "-100px" */
   margin?: MarginType;
 }) {
+  const reducedMotion = useReducedMotion();
   const ref = useRef<HTMLElement>(null);
   const { once = true, margin } = options ?? {};
   const isInView = useInView(ref, { once, margin: margin ?? DEFAULT_MARGIN });
-  return { ref, isInView };
+  return { ref, isInView: reducedMotion ? true : isInView };
 }
 
 /**
@@ -124,6 +148,45 @@ export function SectionScrollArrow({
   targetId: string;
   isInView: boolean;
 }) {
+  const reducedMotion = useReducedMotion();
+
+  const handleNavigate = () => {
+    document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  if (reducedMotion) {
+    return (
+      <div
+        className="flex justify-center mt-12 cursor-pointer"
+        role="button"
+        tabIndex={0}
+        aria-label={SCROLL_ARROW_LABEL}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleNavigate();
+          }
+        }}
+        onClick={handleNavigate}
+      >
+        <svg
+          className="w-5 h-5 text-[#7a6b5a]"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M19 14l-7 7m0 0l-7-7m7 7V3"
+          />
+        </svg>
+      </div>
+    );
+  }
+
   return (
     <motion.div
       className="flex justify-center mt-12 cursor-pointer animate-bounce"
@@ -136,12 +199,10 @@ export function SectionScrollArrow({
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+          handleNavigate();
         }
       }}
-      onClick={() => {
-        document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
-      }}
+      onClick={handleNavigate}
     >
       <svg
         className="w-5 h-5 text-[#7a6b5a]"

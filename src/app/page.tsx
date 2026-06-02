@@ -7,6 +7,9 @@ import { Projects } from "@/components/sections/projects";
 import { Skills } from "@/components/sections/skills";
 import { Contact } from "@/components/sections/contact";
 
+// Force static generation — this page has no dynamic data
+export const dynamic = "force-static";
+export const revalidate = 86400; // Revalidate daily
 
 /**
  * FAQ structured data for the home page.

@@ -1,17 +1,28 @@
 "use client";
 
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 /**
  * Pure-CSS synthwave background elements.
  * Renders retro sun, animated grid road, horizon glow,
  * twinkling stars, and distant cityscape silhouette.
  * Only visible when theme === "synthwave".
+ * Skipped entirely when user prefers reduced motion.
  */
 export function SynthwaveBackground() {
   const { theme } = useTheme();
+  const [reducedMotion, setReducedMotion] = useState(false);
 
-  if (theme !== "synthwave") return null;
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  if (theme !== "synthwave" || reducedMotion) return null;
 
   return (
     <>
