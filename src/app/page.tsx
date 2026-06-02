@@ -1,11 +1,24 @@
+import NextDynamic from "next/dynamic";
 import Script from "next/script";
 import { AnimatedBackground } from "@/components/layout/background";
 import { Hero } from "@/components/sections/hero";
-import { About } from "@/components/sections/about";
-import { Experience } from "@/components/sections/experience";
-import { Projects } from "@/components/sections/projects";
-import { Skills } from "@/components/sections/skills";
-import { Contact } from "@/components/sections/contact";
+
+// Code-split below-fold sections to reduce initial bundle
+const About = NextDynamic(() => import("@/components/sections/about").then(m => ({ default: m.About })), {
+  loading: () => <div id="about" className="py-24 px-6 min-h-[200px]" />,
+});
+const Experience = NextDynamic(() => import("@/components/sections/experience").then(m => ({ default: m.Experience })), {
+  loading: () => <div id="experience" className="py-24 px-6 min-h-[200px]" />,
+});
+const Projects = NextDynamic(() => import("@/components/sections/projects").then(m => ({ default: m.Projects })), {
+  loading: () => <div id="projects" className="py-24 px-6 min-h-[200px]" />,
+});
+const Skills = NextDynamic(() => import("@/components/sections/skills").then(m => ({ default: m.Skills })), {
+  loading: () => <div id="skills" className="py-24 px-6 min-h-[200px]" />,
+});
+const Contact = NextDynamic(() => import("@/components/sections/contact").then(m => ({ default: m.Contact })), {
+  loading: () => <div id="contact" className="py-24 px-6 min-h-[200px]" />,
+});
 
 // Force static generation — this page has no dynamic data
 export const dynamic = "force-static";
@@ -62,7 +75,6 @@ export default function Home() {
       <Projects />
       <Skills />
       <Contact />
-
     </>
   );
 }
