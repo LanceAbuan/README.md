@@ -18,12 +18,12 @@ import {
 } from "@/config/accessibility";
 
 const NAV_LINKS = [
-  { href: "#about", label: "About", section: "about" },
-  { href: "#experience", label: "Experience", section: "experience" },
-  { href: "#projects", label: "Projects", section: "projects" },
-  { href: "#skills", label: "Skills", section: "skills" },
+  { href: "/#about", label: "About", section: "about" },
+  { href: "/#experience", label: "Experience", section: "experience" },
+  { href: "/#projects", label: "Projects", section: "projects" },
+  { href: "/#skills", label: "Skills", section: "skills" },
   { href: "/blogs", label: "Blog", section: undefined },
-  { href: "#contact", label: "Contact", section: "contact" },
+  { href: "/#contact", label: "Contact", section: "contact" },
 ];
 
 export function Navbar() {
