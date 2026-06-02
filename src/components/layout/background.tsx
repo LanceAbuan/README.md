@@ -50,12 +50,15 @@ const THEME_CHARS: Record<string, string[]> = {
  * Adaptive particle count based on screen width and DPR.
  */
 function getParticleCount(): number {
-  if (typeof window === "undefined") return 120;
+  if (typeof window === "undefined") return 60;
   const width = window.innerWidth;
   const dpr = window.devicePixelRatio || 1;
-  if (width < 640 || dpr < 2) return 50;
-  if (width < 1024) return 85;
-  return 120;
+  // Very low-end or mobile
+  if (width < 640 || dpr < 2) return 25;
+  // Tablet
+  if (width < 1024) return 50;
+  // Desktop
+  return 80;
 }
 
 /** Check if the user prefers reduced motion. */
@@ -95,42 +98,42 @@ const THEME_COLORS: Record<
     particleGlow: "160,255,160",
     connection: "80,255,80",
     connectionAlpha: 0.2,
-    glowRadius: 12,
+    glowRadius: 6,
   },
   newspaper: {
     particleColor: "122,107,90",
     particleGlow: "92,46,14",
     connection: "122,107,90",
     connectionAlpha: 0.06,
-    glowRadius: 10,
+    glowRadius: 5,
   },
   synthwave: {
     particleColor: "255,0,255",
     particleGlow: "0,255,255",
     connection: "0,255,255",
     connectionAlpha: 0.2,
-    glowRadius: 20,
+    glowRadius: 10,
   },
   casino: {
     particleColor: "255,215,0",
     particleGlow: "212,168,67",
     connection: "196,30,30",
     connectionAlpha: 0.15,
-    glowRadius: 16,
+    glowRadius: 8,
   },
   dark: {
     particleColor: "120,120,130",
     particleGlow: "180,180,200",
     connection: "120,120,130",
     connectionAlpha: 0.18,
-    glowRadius: 5,
+    glowRadius: 3,
   },
   light: {
     particleColor: "60,60,70",
     particleGlow: "40,40,60",
     connection: "60,60,70",
     connectionAlpha: 0.1,
-    glowRadius: 4,
+    glowRadius: 2,
   },
 };
 
@@ -174,25 +177,10 @@ function drawCircleParticle(
   ctx: CanvasRenderingContext2D,
   p: Particle,
   colorRGB: string,
-  glowRGB: string,
-  glowRadius: number,
+  _glowRGB: string,
+  _glowRadius: number,
 ) {
   const pulseAlpha = p.alpha + Math.sin(p.pulse) * 0.12;
-
-  // Glow halo
-  const grad = ctx.createRadialGradient(
-    p.x, p.y, 0,
-    p.x, p.y, glowRadius,
-  );
-  grad.addColorStop(0, `rgba(${glowRGB},${pulseAlpha})`);
-  grad.addColorStop(0.4, `rgba(${glowRGB},${pulseAlpha * 0.4})`);
-  grad.addColorStop(1, `rgba(${glowRGB},0)`);
-  ctx.beginPath();
-  ctx.arc(p.x, p.y, glowRadius, 0, Math.PI * 2);
-  ctx.fillStyle = grad;
-  ctx.fill();
-
-  // Solid core
   ctx.beginPath();
   ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
   ctx.fillStyle = `rgba(${colorRGB},${pulseAlpha * 0.8})`;
@@ -550,8 +538,12 @@ export function AnimatedBackground() {
     resize();
     window.addEventListener("resize", resize);
 
+    let mouseRaf: number;
     function onMove(e: MouseEvent) {
-      mouseRef.current = { x: e.clientX, y: e.clientY };
+      if (mouseRaf) cancelAnimationFrame(mouseRaf);
+      mouseRaf = requestAnimationFrame(() => {
+        mouseRef.current = { x: e.clientX, y: e.clientY };
+      });
     }
     window.addEventListener("mousemove", onMove);
 

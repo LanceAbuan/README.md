@@ -212,7 +212,12 @@
   opacity: 0.06;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   background-size: 128px 128px;
-  animation: crt-grain 0.5s steps(4) infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .terminal::before {
+    animation: crt-grain 0.5s steps(4) infinite;
+  }
 }
 
 /* Scanline lines overlay — thicker, more visible */
@@ -241,8 +246,10 @@
   97% { opacity: 1; }
 }
 
-.terminal::after {
-  animation: crt-flicker 4s infinite linear;
+@media (prefers-reduced-motion: no-preference) {
+  .terminal::after {
+    animation: crt-flicker 4s infinite linear;
+  }
 }
 
 /* Phosphor glow overlay — subtle green tint on everything */
@@ -290,15 +297,25 @@
   overflow: hidden;
   white-space: nowrap;
   border-right: 3px solid #00ff41;
-  animation:
-    terminal-typing 1.5s steps(40, end) forwards,
-    terminal-cursor 0.8s step-end infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .terminal [data-typing="true"] {
+    animation:
+      terminal-typing 1.5s steps(40, end) forwards,
+      terminal-cursor 0.8s step-end infinite;
+  }
 }
 
 /* Staggered typing for multi-line content */
 .terminal [data-typing-line] {
   opacity: 0;
-  animation: terminal-line-reveal 0.01s forwards;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .terminal [data-typing-line] {
+    animation: terminal-line-reveal 0.01s forwards;
+  }
 }
 
 .terminal [data-typing-line="1"] { animation-delay: 0.3s; }
@@ -1055,10 +1072,12 @@
   97% { opacity: 1; }
 }
 
-.synthwave main,
-.synthwave footer,
-.synthwave nav {
-  animation: synthwave-flicker 4s infinite;
+@media (prefers-reduced-motion: no-preference) {
+  .synthwave main,
+  .synthwave footer,
+  .synthwave nav {
+    animation: synthwave-flicker 4s infinite;
+  }
 }
 
 /* Ensure page content renders above fixed background elements */
@@ -1234,8 +1253,13 @@
   height: 45px;
   pointer-events: none;
   z-index: -1;
-  animation: synthwave-car-drive 6s linear infinite;
   filter: drop-shadow(0 0 8px rgba(255, 0, 255, 0.8)) drop-shadow(0 0 16px rgba(255, 0, 255, 0.4));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .synthwave-car {
+    animation: synthwave-car-drive 6s linear infinite;
+  }
 }
 
 /* Car body — simple rear silhouette */
@@ -1326,7 +1350,12 @@
     );
   transform: perspective(300px) rotateX(55deg);
   transform-origin: center top;
-  animation: synthwave-grid-scroll 1.5s linear infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .synthwave-grid::before {
+    animation: synthwave-grid-scroll 1.5s linear infinite;
+  }
 }
 
 /* Center lane lines */
@@ -1345,7 +1374,6 @@
     transparent 30px,
     transparent 60px
   );
-  animation: synthwave-grid-scroll 1.5s linear infinite;
   box-shadow: 0 0 16px rgba(255, 0, 255, 0.8), 0 0 30px rgba(255, 0, 255, 0.5);
 }
 
@@ -1441,7 +1469,12 @@
     93vw 22vh 1px #fff,
     45vw 6vh 1px #fff,
     78vw 17vh 1px #fff;
-  animation: synthwave-twinkle-1 3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .synthwave-stars::before {
+    animation: synthwave-twinkle-1 3s ease-in-out infinite;
+  }
 }
 
 .synthwave-stars::after {
@@ -1462,7 +1495,12 @@
     55vw 22vh 1px rgba(0,255,255,0.7),
     75vw 10vh 1px rgba(255,0,255,0.6),
     35vw 27vh 1px rgba(0,255,255,0.7);
-  animation: synthwave-twinkle-2 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .synthwave-stars::after {
+    animation: synthwave-twinkle-2 4s ease-in-out infinite;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1506,7 +1544,12 @@
     radial-gradient(circle 1px at 82% 55%, rgba(0,255,255,0.4) 0%, transparent 100%),
     radial-gradient(circle 1px at 88% 45%, rgba(255,0,255,0.5) 0%, transparent 100%),
     radial-gradient(circle 1px at 94% 50%, rgba(0,255,255,0.4) 0%, transparent 100%);
-  animation: synthwave-twinkle-3 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .synthwave-city::before {
+    animation: synthwave-twinkle-3 5s ease-in-out infinite;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -2040,6 +2083,28 @@
 .casino .casino-card-corner--tr { top: 0.75rem; right: 1rem; transform: rotate(180deg); }
 .casino .casino-card-corner--bl { bottom: 0.75rem; left: 1rem; transform: rotate(90deg); }
 .casino .casino-card-corner--br { bottom: 0.75rem; right: 1rem; transform: rotate(-90deg); }
+
+/* CSS containment for theme overlays — prevents repaint propagation */
+.synthwave-grid,
+.synthwave-horizon,
+.synthwave-sun,
+.synthwave-city,
+.synthwave-car,
+.synthwave-stars {
+  contain: layout style paint;
+}
+
+/* GPU compositing for animated elements */
+.synthwave-grid::before,
+.synthwave-grid::after {
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .synthwave-grid::after {
+    animation: synthwave-grid-scroll 1.5s linear infinite;
+  }
+}
 
 @layer base {
   * {
