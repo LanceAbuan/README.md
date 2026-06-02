@@ -8,6 +8,16 @@ import { useSectionReveal, SectionScrollArrow } from "@/components/section-revea
 import { useTheme } from "next-themes";
 import { experiences } from "@/data/experience";
 import { cn } from "@/lib/utils";
+import {
+  REVEAL_DURATION,
+  REVEAL_Y_OFFSET,
+  STAGGER_DELAY,
+  STAGGER_STEP,
+  SCROLL_ARROW_DURATION,
+  SCROLL_ARROW_DELAY,
+} from "@/config/animations";
+import { terminalPalette, newspaperPalette } from "@/config/theme-palette";
+import { SCROLL_BEHAVIOR } from "@/config/accessibility";
 
 export function Experience() {
   const { ref, isInView } = useSectionReveal();
@@ -20,9 +30,9 @@ export function Experience() {
     <section id="experience" className="py-24 px-6" ref={ref}>
       <div className="max-w-4xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: REVEAL_DURATION }}
           className={cn(isNewspaper ? "text-center mb-12" : "mb-12")}
         >
           {isCasino ? (
@@ -40,20 +50,34 @@ export function Experience() {
             </div>
           ) : isTerminal ? (
             <div>
-              <p className="text-xs font-mono text-[#00aa30] mb-2 tracking-wider" data-terminal-prompt>
+              <p
+                className="text-xs font-mono mb-2 tracking-wider"
+                data-terminal-prompt
+                style={{ color: terminalPalette.secondary }}
+              >
                 experience
               </p>
-              <h2 className="text-2xl sm:text-3xl font-bold font-mono text-[#00ff41] terminal-glow uppercase tracking-wider">
+              <h2
+                className="text-2xl sm:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
+                style={{ color: terminalPalette.primary }}
+              >
                 Work.History
               </h2>
             </div>
           ) : isNewspaper ? (
             <div>
-              <p className="text-xs font-serif tracking-[0.2em] text-[#7a6b5a] uppercase" data-newspaper-section>
+              <p
+                className="text-xs font-serif tracking-[0.2em] uppercase"
+                data-newspaper-section
+                style={{ color: newspaperPalette.muted }}
+              >
                 Career
               </p>
               <hr className="newspaper-triple-rule mx-auto max-w-sm mt-2" />
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a1208] mt-4 newspaper-letterpress">
+              <h2
+                className="text-3xl sm:text-4xl font-bold font-serif mt-4 newspaper-letterpress"
+                style={{ color: newspaperPalette.primary }}
+              >
                 Professional History
               </h2>
               <p className="newspaper-deck max-w-lg mx-auto mt-3">
@@ -72,12 +96,16 @@ export function Experience() {
           )}
         </motion.div>
 
-        <div className={cn(
-          "space-y-4",
-          isTerminal && "terminal-timeline pl-4 relative",
-          isNewspaper && "space-y-8",
-          isCasino && "casino-timeline relative space-y-6",
-        )}>
+        <div
+          className={cn(
+            "space-y-4",
+            isTerminal && "terminal-timeline pl-4 relative",
+            isNewspaper && "space-y-8",
+            isCasino && "casino-timeline relative space-y-6",
+          )}
+          role="list"
+          aria-label="Work experience"
+        >
           {experiences.map((exp, i) => (
             <ExperienceCard
               key={i}
@@ -98,16 +126,27 @@ export function Experience() {
             className="mt-12 animate-bounce flex justify-center cursor-pointer"
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.4, delay: 0.5 }}
+            transition={{ duration: SCROLL_ARROW_DURATION, delay: SCROLL_ARROW_DELAY }}
+            role="button"
+            tabIndex={0}
+            aria-label="Scroll to projects section"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                document.getElementById("projects")?.scrollIntoView({ behavior: SCROLL_BEHAVIOR });
+              }
+            }}
             onClick={() => {
-              document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
+              document.getElementById("projects")?.scrollIntoView({ behavior: SCROLL_BEHAVIOR });
             }}
           >
             <svg
-              className="w-5 h-5 text-[#00ff41]"
+              className="w-5 h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
+              style={{ color: terminalPalette.primary }}
             >
               <path
                 strokeLinecap="round"
@@ -138,34 +177,35 @@ function ExperienceCard({
   isNewspaper: boolean;
   isCasino?: boolean;
 }) {
+  const transitionDelay = STAGGER_DELAY + index * STAGGER_STEP;
+
   if (isCasino) {
     return (
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={isInView ? { opacity: 1, x: 0 } : {}}
-        transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
+        transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
         className="flex gap-4 items-center"
+        role="listitem"
       >
-        {/* Timeline dot */}
         <div className="flex flex-col items-center pt-1">
           <div className="casino-timeline-dot" />
         </div>
 
-        {/* Horizontal card */}
         <div className="casino-card flex-1 p-5 space-y-3">
           <h3 className="text-lg font-bold font-serif text-white text-center">
             {exp.role}
-            <span className="text-xs text-[#8a7e72] font-serif whitespace-nowrap ml-2 pt-0.5 align-text-top">
+            <span className="text-xs font-serif whitespace-nowrap ml-2 pt-0.5 align-text-top" style={{ color: "#8a7e72" }}>
               {exp.period}
             </span>
           </h3>
-          <div className="flex items-center justify-center gap-2 text-sm text-[#c8bfb2] font-serif flex-wrap">
-            <Building2 className="h-3.5 w-3.5 text-[#8b1a1a] flex-shrink-0" />
+          <div className="flex items-center justify-center gap-2 text-sm font-serif flex-wrap" style={{ color: "#c8bfb2" }}>
+            <Building2 className="h-3.5 w-3.5 flex-shrink-0" style={{ color: "#8b1a1a" }} />
             <span>{exp.company}</span>
             <span>&#8226;</span>
             <span>{exp.location}</span>
           </div>
-          <p className="text-sm text-[#c8bfb2] font-serif leading-relaxed max-w-xl mx-auto text-center">
+          <p className="text-sm font-serif leading-relaxed max-w-xl mx-auto text-center" style={{ color: "#c8bfb2" }}>
             {exp.description}
           </p>
           <div className="flex flex-wrap justify-center gap-1.5">
@@ -183,31 +223,35 @@ function ExperienceCard({
   if (isTerminal) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
+        transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
+        role="listitem"
       >
         <div className="terminal-card p-4 space-y-3">
           <div className="flex items-center gap-2 mb-2">
-            <Terminal className="h-4 w-4 text-[#00ff41]" />
-            <span className="text-xs text-[#00aa30] font-mono">
+            <Terminal className="h-4 w-4" style={{ color: terminalPalette.primary }} />
+            <span className="text-xs font-mono" style={{ color: terminalPalette.secondary }}>
               [{exp.period}]
             </span>
           </div>
           <div>
-            <h3 className="text-base font-bold text-[#00ff41] font-mono terminal-glow">
+            <h3
+              className="text-base font-bold font-mono terminal-glow"
+              style={{ color: terminalPalette.primary }}
+            >
               {exp.role}
             </h3>
-            <div className="flex items-center gap-2 text-sm text-[#00aa30] font-mono mt-1">
+            <div className="flex items-center gap-2 text-sm font-mono mt-1" style={{ color: terminalPalette.secondary }}>
               <Building2 className="h-3.5 w-3.5" />
               <span>{exp.company}</span>
               <span>&bull;</span>
               <span>{exp.location}</span>
               <span>&bull;</span>
-              <span className="text-[#008822]">{exp.type}</span>
+              <span style={{ color: "#008822" }}>{exp.type}</span>
             </div>
           </div>
-          <p className="text-sm text-[#00aa30] font-mono leading-relaxed">
+          <p className="text-sm font-mono leading-relaxed" style={{ color: terminalPalette.secondary }}>
             {exp.description}
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -228,39 +272,39 @@ function ExperienceCard({
   if (isNewspaper) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
+        transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
+        role="listitem"
       >
         <article className="newspaper-card space-y-4">
-          {/* Date in dateline style */}
           <div className="flex items-baseline justify-between">
-            <span className="newspaper-kicker">
-              {exp.company}
-            </span>
-            <span className="text-xs text-[#7a6b5a] font-serif italic">
+            <span className="newspaper-kicker">{exp.company}</span>
+            <span className="text-xs font-serif italic" style={{ color: newspaperPalette.muted }}>
               {exp.period}
             </span>
           </div>
 
-          {/* Role as headline */}
-          <h3 className="text-xl font-bold font-serif text-[#1a1208] newspaper-letterpress break-words leading-tight">
+          <h3
+            className="text-xl font-bold font-serif newspaper-letterpress break-words leading-tight"
+            style={{ color: newspaperPalette.primary }}
+          >
             {exp.role}
           </h3>
 
-          {/* Location / type as byline */}
           <div className="newspaper-byline text-left">
             {exp.location} &middot; {exp.type}
           </div>
 
           <hr className="newspaper-rule" />
 
-          {/* Body text */}
-          <p className="text-[0.9rem] text-[#3d2b1f] font-serif leading-relaxed break-words overflow-hidden">
+          <p
+            className="text-[0.9rem] font-serif leading-relaxed break-words overflow-hidden"
+            style={{ color: newspaperPalette.body }}
+          >
             {exp.description}
           </p>
 
-          {/* Skills as editorial tags */}
           <div className="flex flex-wrap gap-2 pt-1">
             {exp.skills.map((skill, j) => (
               <span key={j} className="newspaper-badge px-2 py-0.5">
@@ -275,9 +319,10 @@ function ExperienceCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
+      transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
+      role="listitem"
     >
       <Card className="group bg-white/50 dark:bg-neutral-900/50 border-neutral-200/50 dark:border-neutral-700/50 hover:border-neutral-300 dark:hover:border-neutral-600 transition-colors">
         <CardHeader className="pb-3">
@@ -296,9 +341,9 @@ function ExperienceCard({
                 <span>{exp.location}</span>
               </div>
             </div>
-            <span className="text-xs font-medium text-neutral-400 dark:text-neutral-500 whitespace-nowrap">
+            <time className="text-xs font-medium text-neutral-400 dark:text-neutral-500 whitespace-nowrap">
               {exp.period}
-            </span>
+            </time>
           </div>
         </CardHeader>
         <CardContent className="space-y-3">

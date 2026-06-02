@@ -1,12 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
-import { getIcon } from "@/lib/icons";
 import { useSectionReveal, SectionScrollArrow } from "@/components/section-reveal";
 import { useTheme } from "next-themes";
-import { aboutData } from "@/data/about";
 import { cn } from "@/lib/utils";
+import { aboutData } from "@/data/about";
+import {
+  REVEAL_DURATION,
+  REVEAL_Y_OFFSET,
+  STAGGER_DELAY,
+} from "@/config/animations";
+import { terminalPalette, newspaperPalette, casinoPalette } from "@/config/theme-palette";
 
 export function About() {
   const { ref, isInView } = useSectionReveal();
@@ -18,45 +22,54 @@ export function About() {
   return (
     <section id="about" className="py-24 px-6" ref={ref}>
       <div className="max-w-4xl mx-auto">
-        {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: REVEAL_DURATION }}
+          className="mb-12"
         >
           {isCasino ? (
-            <div className="mb-12">
-              <p className="casino-label mb-2">
-                THE DOSSIER
-              </p>
+            <div className="text-center mb-12">
+              <p className="casino-label mb-2">ABOUT</p>
               <h2 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight">
                 The Player
               </h2>
-              <div className="w-16 h-px bg-gradient-to-r from-[#d4af37] to-transparent mt-4" />
-              <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg">
-                Every great hand starts with reading the table.
+              <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto mt-4" />
+              <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg mx-auto">
+                A brief introduction to the developer behind the code.
               </p>
             </div>
           ) : isTerminal ? (
             <div>
-              <p className="text-xs font-mono text-[#00aa30] mb-2 tracking-wider" data-terminal-prompt>
+              <p
+                className="text-xs font-mono mb-2 tracking-wider"
+                data-terminal-prompt
+                style={{ color: terminalPalette.secondary }}
+              >
                 about
               </p>
-              <h2 className="text-2xl sm:text-3xl font-bold font-mono text-[#00ff41] terminal-glow uppercase tracking-wider">
-                System.Info
+              <h2
+                className="text-2xl sm:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
+                style={{ color: terminalPalette.primary }}
+              >
+                Who.Am.I
               </h2>
             </div>
           ) : isNewspaper ? (
-            <div className="text-center mb-12">
-              <p className="text-xs font-serif tracking-[0.2em] text-[#7a6b5a] uppercase" data-newspaper-section>
-                Profile
+            <div>
+              <p
+                className="text-xs font-serif tracking-[0.2em] uppercase"
+                data-newspaper-section
+                style={{ color: newspaperPalette.muted }}
+              >
+                Biography
               </p>
               <hr className="newspaper-triple-rule mx-auto max-w-sm mt-2" />
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a1208] mt-4 newspaper-letterpress">
-                A Little About Me
+              <h2 className="text-3xl sm:text-4xl font-bold font-serif mt-4 newspaper-letterpress" style={{ color: newspaperPalette.primary }}>
+                About the Developer
               </h2>
               <p className="newspaper-deck max-w-lg mx-auto mt-3">
-                The story behind the code — experience, background, and what drives the work.
+                A journey through code, curiosity, and continuous learning.
               </p>
             </div>
           ) : (
@@ -64,362 +77,42 @@ export function About() {
               <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
                 About
               </p>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-8">
-                A little about me
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                About Me
               </h2>
             </>
           )}
         </motion.div>
 
-        {isCasino ? (
-          /* Casino layout — Player Dossier: left-aligned header, bio card + sidebar stats */
-          <div className="space-y-6">
-            <div className="grid md:grid-cols-3 gap-6">
-              {/* Bio — wide left panel */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.15 }}
-                className="md:col-span-2 casino-card p-6 sm:p-8 space-y-4"
-              >
-                {aboutData.paragraphs.map((paragraph, i) => (
-                  <HighlightedParagraph
-                    key={i}
-                    {...paragraph}
-                    isTerminal={false}
-                    isNewspaper={false}
-                    isCasino={true}
-                  />
-                ))}
-              </motion.div>
-
-              {/* Stats — narrow right sidebar, vertically stacked */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.25 }}
-                className="space-y-3"
-              >
-                {aboutData.stats.map((stat, i) => {
-                  const Icon = getIcon(stat.icon);
-                  return (
-                    <AboutStatCard
-                      key={i}
-                      stat={stat}
-                      Icon={Icon}
-                      isTerminal={false}
-                      isNewspaper={false}
-                      isCasino={true}
-                    />
-                  );
-                })}
-              </motion.div>
-            </div>
-          </div>
-        ) : isNewspaper ? (
-          /* Newspaper editorial layout */
-          <div className="space-y-8">
-            {/* Two-column body text */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
+        <div className={cn(isNewspaper && "max-w-2xl mx-auto")}>
+          {aboutData.paragraphs.map((paragraph, i) => (
+            <motion.p
+              key={i}
+              className={cn(
+                "text-base sm:text-lg leading-relaxed mb-4 last:mb-0",
+                isCasino && "text-[#c8bfb2] font-serif",
+                isTerminal && "text-sm font-mono",
+                isNewspaper && "font-serif leading-relaxed",
+                !isTerminal && !isNewspaper && !isCasino && "text-neutral-600 dark:text-neutral-400",
+              )}
+              style={
+                isTerminal
+                  ? { color: terminalPalette.secondary }
+                  : isNewspaper
+                  ? { color: newspaperPalette.body }
+                  : undefined
+              }
+              initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="newspaper-body-columns"
+              transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY + i * STAGGER_DELAY }}
             >
-              {aboutData.paragraphs.map((paragraph, i) => (
-                <HighlightedParagraph
-                  key={i}
-                  {...paragraph}
-                  isTerminal={isTerminal}
-                  isNewspaper={isNewspaper}
-                />
-              ))}
-            </motion.div>
+              {paragraph.text}
+            </motion.p>
+          ))}
+        </div>
 
-            {/* Pull quote */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="newspaper-pull-quote"
-            >
-              Building things that matter — that&apos;s the thread running through everything I do.
-            </motion.div>
-
-            {/* Stat cards */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="grid grid-cols-2 sm:grid-cols-4 gap-4"
-            >
-              {aboutData.stats.map((stat, i) => {
-                const Icon = getIcon(stat.icon);
-                return (
-                  <AboutStatCard
-                    key={i}
-                    stat={stat}
-                    Icon={Icon}
-                    isTerminal={isTerminal}
-                    isNewspaper={isNewspaper}
-                  />
-                );
-              })}
-            </motion.div>
-
-            <SectionScrollArrow targetId="experience" isInView={isInView} />
-          </div>
-        ) : isTerminal ? (
-          /* Terminal layout */
-          <div className="gap-8 mt-8 space-y-6">
-            {/* Bio paragraphs */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="space-y-4 leading-relaxed text-[#00aa30] font-mono text-sm"
-            >
-              {aboutData.paragraphs.map((paragraph, i) => (
-                <HighlightedParagraph
-                  key={i}
-                  {...paragraph}
-                  isTerminal={true}
-                  isNewspaper={false}
-                />
-              ))}
-            </motion.div>
-
-            {/* Stat cards */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="grid grid-cols-2 gap-3"
-            >
-              {aboutData.stats.map((stat, i) => {
-                const Icon = getIcon(stat.icon);
-                return (
-                  <AboutStatCard
-                    key={i}
-                    stat={stat}
-                    Icon={Icon}
-                    isTerminal={true}
-                    isNewspaper={false}
-                  />
-                );
-              })}
-            </motion.div>
-
-            {/* Terminal scroll arrow */}
-            <motion.div
-              className="mt-12 animate-bounce flex justify-center cursor-pointer"
-              initial={{ opacity: 0 }}
-              animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-              transition={{ duration: 0.4, delay: 0.5 }}
-              onClick={() => {
-                document.getElementById("experience")?.scrollIntoView({ behavior: "smooth" });
-              }}
-            >
-              <svg
-                className="w-5 h-5 text-[#00ff41]"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                />
-              </svg>
-            </motion.div>
-          </div>
-        ) : (
-          /* Default layout */
-          <div className="gap-8 mt-8 grid md:grid-cols-2">
-            {/* Bio paragraphs */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="space-y-4 leading-relaxed text-neutral-600 dark:text-neutral-400"
-            >
-              {aboutData.paragraphs.map((paragraph, i) => (
-                <HighlightedParagraph
-                  key={i}
-                  {...paragraph}
-                  isTerminal={false}
-                  isNewspaper={false}
-                />
-              ))}
-            </motion.div>
-
-            {/* Stat cards */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="grid grid-cols-2 gap-3"
-            >
-              {aboutData.stats.map((stat, i) => {
-                const Icon = getIcon(stat.icon);
-                return (
-                  <AboutStatCard
-                    key={i}
-                    stat={stat}
-                    Icon={Icon}
-                    isTerminal={false}
-                    isNewspaper={false}
-                  />
-                );
-              })}
-            </motion.div>
-          </div>
-        )}
+        {isNewspaper && <SectionScrollArrow targetId="experience" isInView={isInView} />}
       </div>
     </section>
   );
-}
-
-function HighlightedParagraph({
-  text,
-  highlights,
-  isTerminal,
-  isNewspaper,
-  isCasino,
-}: {
-  text: string;
-  highlights?: string[];
-  isTerminal: boolean;
-  isNewspaper: boolean;
-  isCasino?: boolean;
-}) {
-  if (!highlights || highlights.length === 0) {
-    return <p className={isCasino ? "text-[#c8bfb2] font-serif leading-relaxed" : ""}>{text}</p>;
-  }
-
-  const parts = splitTextByHighlights(text, highlights);
-
-  return (
-    <p className={isCasino ? "text-[#c8bfb2] font-serif leading-relaxed" : ""}>
-      {parts.map((part, i) => (
-        <span key={i}>
-          {part.highlighted ? (
-            <strong
-              className={cn(
-                isTerminal && "text-[#00ff41] terminal-glow",
-                isNewspaper && "text-[#5c2e0e] font-bold",
-                isCasino && "text-[#d4af37] font-semibold",
-              )}
-            >
-              {part.content}
-            </strong>
-          ) : (
-            part.content
-          )}
-        </span>
-      ))}
-    </p>
-  );
-}
-
-function AboutStatCard({
-  stat,
-  Icon,
-  isTerminal,
-  isNewspaper,
-  isCasino,
-}: {
-  stat: { icon: string; label: string; value: string };
-  Icon: React.ComponentType<{ className?: string }>;
-  isTerminal: boolean;
-  isNewspaper: boolean;
-  isCasino?: boolean;
-}) {
-  if (isCasino) {
-    return (
-      <div className="casino-card flex items-center gap-4 px-4 py-3">
-        <Icon className="h-5 w-5 text-[#d4af37] flex-shrink-0" />
-        <div className="min-w-0">
-          <span className="text-[10px] text-[#8a7e72] uppercase tracking-wider font-serif block truncate">
-            {stat.label}
-          </span>
-          <span className="text-sm font-bold font-serif text-white leading-tight">
-            {stat.value}
-          </span>
-        </div>
-      </div>
-    );
-  }
-  if (isTerminal) {
-    return (
-      <div className="terminal-card p-3">
-        <Icon className="h-4 w-4 text-[#00ff41] mb-1" />
-        <span className="text-[10px] text-[#00aa30] uppercase tracking-wider font-mono block">
-          {stat.label}
-        </span>
-        <span className="text-sm font-bold text-[#00ff41] font-mono terminal-glow">
-          {stat.value}
-        </span>
-      </div>
-    );
-  }
-
-  if (isNewspaper) {
-    return (
-      <div className="newspaper-card text-center flex flex-col items-center justify-center">
-        <Icon className="h-4 w-4 text-[#5c2e0e] mx-auto mb-1 flex-shrink-0" />
-        <span className="text-[10px] text-[#7a6b5a] uppercase tracking-wider font-serif block">
-          {stat.label}
-        </span>
-        <span className="text-sm font-bold font-serif text-[#1a1208] newspaper-letterpress leading-tight break-words">
-          {stat.value}
-        </span>
-      </div>
-    );
-  }
-
-  return (
-    <Card className="bg-neutral-50/50 dark:bg-neutral-800/50 border-neutral-200/50 dark:border-neutral-700/50">
-      <CardContent className="flex flex-col items-center justify-center text-center p-4 gap-2">
-        <Icon className="h-5 w-5 text-neutral-400" />
-        <span className="text-xs text-neutral-500 dark:text-neutral-400">
-          {stat.label}
-        </span>
-        <span className="text-sm font-semibold">{stat.value}</span>
-      </CardContent>
-    </Card>
-  );
-}
-
-function splitTextByHighlights(
-  text: string,
-  highlights: string[],
-): Array<{ content: string; highlighted: boolean }> {
-  const sorted = [...highlights].sort((a, b) => b.length - a.length);
-  let remaining = text;
-  const parts: Array<{ content: string; highlighted: boolean }> = [];
-
-  while (remaining.length > 0) {
-    let matched = false;
-    for (const h of sorted) {
-      const idx = remaining.indexOf(h);
-      if (idx !== -1) {
-        if (idx > 0) {
-          parts.push({ content: remaining.slice(0, idx), highlighted: false });
-        }
-        parts.push({ content: h, highlighted: true });
-        remaining = remaining.slice(idx + h.length);
-        matched = true;
-        break;
-      }
-    }
-    if (!matched) {
-      parts.push({ content: remaining, highlighted: false });
-      remaining = "";
-    }
-  }
-
-  return parts;
 }

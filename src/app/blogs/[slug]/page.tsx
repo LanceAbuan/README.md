@@ -10,8 +10,6 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { useMDXComponents } from "@/mdx-components";
 import type { MDXComponents } from "mdx/types";
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
 import { AnimatedBackground } from "@/components/layout/background";
 
 /**
@@ -64,9 +62,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   return (
     <>
       <AnimatedBackground />
-      <Navbar />
-      <main>
-        <div className="min-h-screen pt-24 pb-16 px-6">
+      <div className="pt-24 pb-16 px-6">
           <div className="max-w-2xl mx-auto">
             <Link href="/blogs">
               <Button variant="ghost" size="sm" className="mb-8 -ml-3 gap-1">
@@ -133,8 +129,6 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
             <BlogMDX source={source} components={mdxComponents} />
           </div>
         </div>
-      </main>
-      <Footer />
     </>
   );
 }

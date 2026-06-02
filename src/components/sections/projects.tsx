@@ -11,6 +11,17 @@ import { useSectionReveal, SectionScrollArrow } from "@/components/section-revea
 import { useTheme } from "next-themes";
 import { projects, githubProfileUrl } from "@/data/projects";
 import { cn } from "@/lib/utils";
+import {
+  REVEAL_DURATION,
+  REVEAL_Y_OFFSET,
+  STAGGER_DELAY,
+  STAGGER_STEP,
+  SCROLL_ARROW_DURATION,
+  SCROLL_ARROW_DELAY,
+  PROJECT_REVEAL_MARGIN,
+} from "@/config/animations";
+import { terminalPalette, newspaperPalette } from "@/config/theme-palette";
+import { SCROLL_BEHAVIOR, LIVE_DEMO_LABEL, GITHUB_REPO_LABEL } from "@/config/accessibility";
 
 export function Projects() {
   const { ref, isInView } = useSectionReveal();
@@ -23,9 +34,9 @@ export function Projects() {
     <section id="projects" className="py-24 px-6" ref={ref}>
       <div className="max-w-5xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: REVEAL_DURATION }}
           className={cn(
             isNewspaper ? "text-center mb-12" : "flex items-end justify-between mb-12",
           )}
@@ -33,9 +44,7 @@ export function Projects() {
           <div>
             {isCasino ? (
               <>
-                <p className="casino-label mb-2">
-                  THE HAND
-                </p>
+                <p className="casino-label mb-2">THE HAND</p>
                 <h2 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight">
                   Selected Plays
                 </h2>
@@ -46,24 +55,39 @@ export function Projects() {
               </>
             ) : isTerminal ? (
               <>
-                <p className="text-xs font-mono text-[#00aa30] mb-2 tracking-wider" data-terminal-prompt>
+                <p
+                  className="text-xs font-mono mb-2 tracking-wider"
+                  data-terminal-prompt
+                  style={{ color: terminalPalette.secondary }}
+                >
                   projects
                 </p>
-                <h2 className="text-2xl sm:text-3xl font-bold font-mono text-[#00ff41] terminal-glow uppercase tracking-wider">
+                <h2
+                  className="text-2xl sm:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
+                  style={{ color: terminalPalette.primary }}
+                >
                   Projects.List
                 </h2>
               </>
             ) : isNewspaper ? (
               <>
-                <p className="text-xs font-serif tracking-[0.2em] text-[#7a6b5a] uppercase" data-newspaper-section>
+                <p
+                  className="text-xs font-serif tracking-[0.2em] uppercase"
+                  data-newspaper-section
+                  style={{ color: newspaperPalette.muted }}
+                >
                   Portfolio
                 </p>
                 <hr className="newspaper-triple-rule mx-auto max-w-sm mt-2" />
-                <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a1208] mt-4 newspaper-letterpress">
+                <h2
+                  className="text-3xl sm:text-4xl font-bold font-serif mt-4 newspaper-letterpress"
+                  style={{ color: newspaperPalette.primary }}
+                >
                   Selected Works
                 </h2>
                 <p className="newspaper-deck max-w-lg mx-auto mt-3">
-                  A curated collection of projects, each representing a distinct challenge and solution.
+                  A curated collection of projects, each representing a distinct
+                  challenge and solution.
                 </p>
               </>
             ) : (
@@ -81,22 +105,42 @@ export function Projects() {
             <Link
               href={githubProfileUrl}
               target="_blank"
+              rel="noopener noreferrer"
               className={cn(
-                buttonVariants({ variant: "ghost", className: "hidden sm:flex items-center gap-1 text-sm" }),
-                isTerminal && "rounded-none font-mono text-[#00ff41] hover:bg-[#0d1a0d]",
-                isNewspaper && "rounded-none font-serif text-[#5c2e0e] hover:bg-[#ddd2be]",
-                isCasino && "rounded-md font-serif text-[#d4af37] hover:text-white hover:bg-[#8b1a1a]/60 border border-[#d4af37]/20",
+                buttonVariants({
+                  variant: "ghost",
+                  className: "hidden sm:flex items-center gap-1 text-sm",
+                }),
+                isTerminal &&
+                  "rounded-none font-mono hover:bg-[#0d1a0d]",
+                isNewspaper &&
+                  "rounded-none font-serif hover:bg-[#ddd2be]",
+                isCasino &&
+                  "rounded-md font-serif border border-[#d4af37]/20 hover:bg-[#8b1a1a]/60",
               )}
+              style={
+                isTerminal
+                  ? { color: terminalPalette.primary }
+                  : isNewspaper
+                    ? { color: "#5c2e0e" }
+                    : isCasino
+                      ? { color: "#d4af37" }
+                      : undefined
+              }
             >
               View all <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
           )}
         </motion.div>
 
-        <div className={cn(
-          "grid sm:grid-cols-2 lg:grid-cols-3 gap-4",
-          isNewspaper && "lg:grid-cols-2",
-        )}>
+        <div
+          className={cn(
+            "grid sm:grid-cols-2 lg:grid-cols-3 gap-4",
+            isNewspaper && "lg:grid-cols-2",
+          )}
+          role="list"
+          aria-label="Projects"
+        >
           {projects.map((project, i) => (
             <ProjectCard
               key={i}
@@ -113,15 +157,21 @@ export function Projects() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.6 }}
+            transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 6 }}
             className="text-center mt-8"
           >
             <Link
               href={githubProfileUrl}
               target="_blank"
-              className="newspaper-btn inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] px-6 py-2 border-2 border-[#1a1208] text-[#1a1208] hover:bg-[#1a1208] hover:text-[#f7f2ea] transition-colors font-serif"
+              rel="noopener noreferrer"
+              className="newspaper-btn inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] px-6 py-2 border-2 transition-colors font-serif"
+              style={{
+                borderColor: newspaperPalette.primary,
+                color: newspaperPalette.primary,
+              }}
             >
-              View Complete Archive <ArrowUpRight className="h-3.5 w-3.5" />
+              View Complete Archive{" "}
+              <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
           </motion.div>
         )}
@@ -133,16 +183,31 @@ export function Projects() {
             className="mt-12 animate-bounce flex justify-center cursor-pointer"
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.4, delay: 0.5 }}
+            transition={{ duration: SCROLL_ARROW_DURATION, delay: SCROLL_ARROW_DELAY }}
+            role="button"
+            tabIndex={0}
+            aria-label="Scroll to skills section"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                document.getElementById("skills")?.scrollIntoView({
+                  behavior: SCROLL_BEHAVIOR,
+                });
+              }
+            }}
             onClick={() => {
-              document.getElementById("skills")?.scrollIntoView({ behavior: "smooth" });
+              document
+                .getElementById("skills")
+                ?.scrollIntoView({ behavior: SCROLL_BEHAVIOR });
             }}
           >
             <svg
-              className="w-5 h-5 text-[#00ff41]"
+              className="w-5 h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
+              style={{ color: terminalPalette.primary }}
             >
               <path
                 strokeLinecap="round"
@@ -172,15 +237,24 @@ function ProjectCard({
   isCasino?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const isInView = useInView(ref, {
+    once: true,
+    margin: PROJECT_REVEAL_MARGIN,
+  });
+  const transitionDelay = STAGGER_DELAY + index * STAGGER_STEP;
 
   if (isCasino) {
     return (
       <motion.div
         ref={ref}
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
+        initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
+        animate={
+          isInView
+            ? { opacity: 1, y: 0 }
+            : { opacity: 0, y: REVEAL_Y_OFFSET }
+        }
+        transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
+        role="listitem"
       >
         <div className="casino-card h-full flex flex-col gap-3 p-5">
           <div className="flex items-start justify-between">
@@ -189,11 +263,25 @@ function ProjectCard({
             </h3>
             <div className="flex items-center gap-1">
               {project.demo && (
-                <Link href={project.demo} className="h-7 w-7 flex items-center justify-center text-[#d4af37] hover:text-white rounded-md transition-colors">
+                <Link
+                  href={project.demo}
+                  className="h-7 w-7 flex items-center justify-center rounded-md transition-colors"
+                  style={{ color: "#d4af37" }}
+                  aria-label={LIVE_DEMO_LABEL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <ExternalLink className="h-3.5 w-3.5" />
                 </Link>
               )}
-              <Link href={project.github} className="h-7 w-7 flex items-center justify-center text-[#d4af37] hover:text-white rounded-md transition-colors">
+              <Link
+                href={project.github}
+                className="h-7 w-7 flex items-center justify-center rounded-md transition-colors"
+                style={{ color: "#d4af37" }}
+                aria-label={GITHUB_REPO_LABEL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <GitFork className="h-3.5 w-3.5" />
               </Link>
             </div>
@@ -203,12 +291,20 @@ function ProjectCard({
               ★
             </span>
           )}
-          <p className="text-sm text-[#c8bfb2] font-serif leading-relaxed flex-1">
+          <p
+            className="text-sm font-serif leading-relaxed flex-1"
+            style={{ color: "#c8bfb2" }}
+          >
             {project.description}
           </p>
           <div className="flex flex-wrap gap-1.5">
             {project.tags.map((tag, i) => (
-              <span key={i} className="casino-chip text-[10px] px-2 py-0.5 rounded-full font-serif">{tag}</span>
+              <span
+                key={i}
+                className="casino-chip text-[10px] px-2 py-0.5 rounded-full font-serif"
+              >
+                {tag}
+              </span>
             ))}
           </div>
         </div>
@@ -220,38 +316,73 @@ function ProjectCard({
     return (
       <motion.div
         ref={ref}
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
+        initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
+        animate={
+          isInView
+            ? { opacity: 1, y: 0 }
+            : { opacity: 0, y: REVEAL_Y_OFFSET }
+        }
+        transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
+        role="listitem"
       >
         <div className="terminal-card p-4 h-full flex flex-col gap-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
-              <Terminal className="h-3.5 w-3.5 text-[#00ff41]" />
-              <h3 className="text-sm font-bold font-mono text-[#00ff41] terminal-glow">
+              <Terminal
+                className="h-3.5 w-3.5"
+                style={{ color: terminalPalette.primary }}
+              />
+              <h3
+                className="text-sm font-bold font-mono terminal-glow"
+                style={{ color: terminalPalette.primary }}
+              >
                 {project.name}
               </h3>
             </div>
             <div className="flex items-center gap-1">
               {project.demo && (
-                <Link href={project.demo} className="h-7 w-7 flex items-center justify-center text-[#00ff41] hover:bg-[#0d1a0d]">
+                <Link
+                  href={project.demo}
+                  className="h-7 w-7 flex items-center justify-center hover:bg-[#0d1a0d]"
+                  style={{ color: terminalPalette.primary }}
+                  aria-label={LIVE_DEMO_LABEL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <ExternalLink className="h-3.5 w-3.5" />
                 </Link>
               )}
-              <Link href={project.github} className="h-7 w-7 flex items-center justify-center text-[#00ff41] hover:bg-[#0d1a0d]">
+              <Link
+                href={project.github}
+                className="h-7 w-7 flex items-center justify-center hover:bg-[#0d1a0d]"
+                style={{ color: terminalPalette.primary }}
+                aria-label={GITHUB_REPO_LABEL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <GitFork className="h-3.5 w-3.5" />
               </Link>
             </div>
           </div>
           {project.featured && (
-            <span className="terminal-badge text-[10px] px-1.5 py-0 block w-fit">featured</span>
+            <span className="terminal-badge text-[10px] px-1.5 py-0 block w-fit">
+              featured
+            </span>
           )}
-          <p className="text-xs text-[#00aa30] font-mono leading-relaxed flex-1">
+          <p
+            className="text-xs font-mono leading-relaxed flex-1"
+            style={{ color: terminalPalette.secondary }}
+          >
             {project.description}
           </p>
           <div className="flex flex-wrap gap-1.5">
             {project.tags.map((tag, i) => (
-              <span key={i} className="terminal-badge text-xs px-2 py-0.5 font-mono">{tag}</span>
+              <span
+                key={i}
+                className="terminal-badge text-xs px-2 py-0.5 font-mono"
+              >
+                {tag}
+              </span>
             ))}
           </div>
         </div>
@@ -263,35 +394,51 @@ function ProjectCard({
     return (
       <motion.div
         ref={ref}
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
+        initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
+        animate={
+          isInView
+            ? { opacity: 1, y: 0 }
+            : { opacity: 0, y: REVEAL_Y_OFFSET }
+        }
+        transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
+        role="listitem"
       >
         <article className="newspaper-card h-full flex flex-col gap-3">
-          {/* Project name as article headline */}
-          <h3 className="text-lg font-bold font-serif text-[#1a1208] newspaper-letterpress break-words leading-tight">
+          <h3
+            className="text-lg font-bold font-serif newspaper-letterpress break-words leading-tight"
+            style={{ color: newspaperPalette.primary }}
+          >
             {project.name}
           </h3>
 
-          {/* Featured star + links */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {project.featured && (
-                <span className="text-[10px] font-serif text-[#7a6b5a] italic">* Featured *</span>
+                <span className="text-[10px] font-serif italic" style={{ color: newspaperPalette.muted }}>
+                  * Featured *
+                </span>
               )}
             </div>
             <div className="flex items-center gap-1">
               {project.demo && (
                 <Link
                   href={project.demo}
-                  className="h-7 w-7 flex items-center justify-center text-[#5c2e0e] hover:bg-[#ddd2be] font-serif"
+                  className="h-7 w-7 flex items-center justify-center font-serif"
+                  style={{ color: "#5c2e0e" }}
+                  aria-label={LIVE_DEMO_LABEL}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
                 </Link>
               )}
               <Link
                 href={project.github}
-                className="h-7 w-7 flex items-center justify-center text-[#5c2e0e] hover:bg-[#ddd2be] font-serif"
+                className="h-7 w-7 flex items-center justify-center font-serif"
+                style={{ color: "#5c2e0e" }}
+                aria-label={GITHUB_REPO_LABEL}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <GitFork className="h-3.5 w-3.5" />
               </Link>
@@ -300,12 +447,13 @@ function ProjectCard({
 
           <hr className="newspaper-rule" />
 
-          {/* Body copy */}
-          <p className="text-sm text-[#3d2b1f] font-serif leading-relaxed flex-1 break-words overflow-hidden">
+          <p
+            className="text-sm font-serif leading-relaxed flex-1 break-words overflow-hidden"
+            style={{ color: newspaperPalette.body }}
+          >
             {project.description}
           </p>
 
-          {/* Tags as caption */}
           <div className="newspaper-caption flex flex-wrap gap-2">
             {project.tags.map((tag, i) => (
               <span key={i} className="newspaper-badge px-2 py-0.5">
@@ -321,9 +469,14 @@ function ProjectCard({
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-      transition={{ duration: 0.5, delay: 0.1 + index * 0.08 }}
+      initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
+      animate={
+        isInView
+          ? { opacity: 1, y: 0 }
+          : { opacity: 0, y: REVEAL_Y_OFFSET }
+      }
+      transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
+      role="listitem"
     >
       <Card className="group h-full bg-white/50 dark:bg-neutral-900/50 border-neutral-200/50 dark:border-neutral-700/50 hover:border-neutral-300 dark:hover:border-neutral-600 transition-all duration-300 hover:shadow-lg hover:shadow-neutral-200/50 dark:hover:shadow-neutral-800/50">
         <CardHeader className="pb-3">
@@ -331,7 +484,10 @@ function ProjectCard({
             <CardTitle className="text-base font-semibold flex items-center gap-2">
               {project.name}
               {project.featured && (
-                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-normal">
+                <Badge
+                  variant="secondary"
+                  className="text-[10px] px-1.5 py-0 font-normal"
+                >
                   Featured
                 </Badge>
               )}
@@ -340,18 +496,30 @@ function ProjectCard({
               {project.demo && (
                 <Link
                   href={project.demo}
-                  className={buttonVariants({ variant: "ghost", size: "icon", className: "h-7 w-7" })}
+                  className={buttonVariants({
+                    variant: "ghost",
+                    size: "icon",
+                    className: "h-7 w-7",
+                  })}
+                  aria-label={LIVE_DEMO_LABEL}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
-                  <span className="sr-only">Live demo</span>
                 </Link>
               )}
               <Link
                 href={project.github}
-                className={buttonVariants({ variant: "ghost", size: "icon", className: "h-7 w-7" })}
+                className={buttonVariants({
+                  variant: "ghost",
+                  size: "icon",
+                  className: "h-7 w-7",
+                })}
+                aria-label={GITHUB_REPO_LABEL}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <GitFork className="h-3.5 w-3.5" />
-                <span className="sr-only">GitHub</span>
               </Link>
             </div>
           </div>

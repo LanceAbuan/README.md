@@ -968,6 +968,29 @@
   color: #ede5ff !important;
 }
 
+/* Also cover dark: variants — synthwave enables dark mode so these are the active classes */
+.dark.synthwave .dark\:text-neutral-300,
+.dark.synthwave .dark\:text-neutral-400,
+.dark.synthwave .dark\:text-neutral-500,
+.dark.synthwave .dark\:text-neutral-600 {
+  color: #dcd0f7 !important;
+}
+
+.dark.synthwave .dark\:text-neutral-700 {
+  color: #ede5ff !important;
+}
+
+/* Background overrides for dark: variants too */
+.dark.synthwave .dark\:bg-neutral-800,
+.dark.synthwave .dark\:bg-neutral-900 {
+  background-color: rgba(139, 92, 246, 0.15) !important;
+}
+
+.dark.synthwave .dark\:border-neutral-700,
+.dark.synthwave .dark\:border-neutral-800 {
+  border-color: #ff00ff30 !important;
+}
+
 /* Hover states that switch to foreground */
 .synthwave .group:hover .group-hover\:text-foreground {
   color: #ede5ff !important;
@@ -979,8 +1002,12 @@
   background-color: rgba(139, 92, 246, 0.15) !important;
 }
 
-/* ── Background: deep night sky gradient ── */
-.synthwave body,
+/* ── Background: deep night sky gradient on html ── */
+/* Synthwave elements live inside body with z-index: -1.
+   Body must be transparent so they show through. Apply gradient to html instead. */
+.synthwave body {
+  background: transparent !important;
+}
 .synthwave {
   background: linear-gradient(180deg, #05021a 0%, #0a0520 30%, #1a0a3e 60%, #2d1b69 85%, #1a0a3e 100%) !important;
 }
@@ -1028,26 +1055,22 @@
   97% { opacity: 1; }
 }
 
-.synthwave > main,
-.synthwave > * {
+.synthwave main,
+.synthwave footer,
+.synthwave nav {
   animation: synthwave-flicker 4s infinite;
 }
 
 /* Ensure page content renders above fixed background elements */
-/* The synthwave class is on <body>, so use descendant selectors, not direct-child */
+/* The synthwave class is on <html>. Body is transparent.
+   Content inside body stacks normally above z-index: -1 backgrounds. */
 .synthwave body {
   position: relative;
-  z-index: 1;
 }
 
 .synthwave main {
   position: relative;
-  z-index: 2;
-}
-
-.synthwave main > * {
-  position: relative;
-  z-index: 2;
+  z-index: 1;
 }
 
 /* ── RGB chromatic aberration on headings ── */

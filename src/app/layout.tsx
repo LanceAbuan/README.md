@@ -2,36 +2,29 @@ import type { Metadata, Viewport } from "next";
 import {
   Inter,
   JetBrains_Mono,
-  Orbitron,
   Playfair_Display,
   Source_Serif_4,
 } from "next/font/google";
-import Script from "next/script";
-import "./globals.css";
 import { Providers } from "@/components/layout/providers";
+import { Navbar } from "@/components/layout/navbar";
+import { Footer } from "@/components/layout/footer";
+import { SynthwaveBackground } from "@/components/synthwave-background";
 import { siteConfig } from "@/data/site";
+import { personSchema, websiteSchema } from "@/config/seo";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
-// Terminal theme: monospace everywhere
 const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-terminal",
 });
 
-// Newspaper theme: serif headlines + serif body
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800", "900"],
   variable: "--font-newspaper-heading",
-});
-
-// Synthwave theme: retro-futuristic heading font
-const orbitron = Orbitron({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-orbitron",
 });
 
 const sourceSerif4 = Source_Serif_4({
@@ -45,6 +38,8 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
   ],
+  width: "device-width",
+  initialScale: 1,
 };
 
 export const metadata: Metadata = {
@@ -70,46 +65,10 @@ export const metadata: Metadata = {
     title: siteConfig.title,
     description: siteConfig.description,
     images: [siteConfig.ogImage],
+    creator: "@lanceabuan",
   },
-};
-
-const personJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: siteConfig.author.name,
-  jobTitle: siteConfig.author.jobTitle,
-  url: siteConfig.url,
-  sameAs: siteConfig.author.sameAs,
-  knowsAbout: [
-    "AI",
-    "Agentic Workflows",
-    "Full-Stack Development",
-    "LLM Integration",
-    "React",
-    "TypeScript",
-    "Python",
-  ],
-};
-
-const websiteJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: siteConfig.title,
-  url: siteConfig.url,
-  author: {
-    "@type": "Person",
-    name: siteConfig.author.name,
-  },
-  navigation: {
-    "@type": "SiteNavigationElement",
-    navigationElement: [
-      { "@id": `${siteConfig.url}/#about` },
-      { "@id": `${siteConfig.url}/#experience` },
-      { "@id": `${siteConfig.url}/#projects` },
-      { "@id": `${siteConfig.url}/#skills` },
-      { "@id": `${siteConfig.url}/blogs` },
-      { "@id": `${siteConfig.url}/#contact` },
-    ],
+  alternates: {
+    canonical: "https://lanceabuan.com",
   },
 };
 
@@ -127,21 +86,33 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Lance Abuan" />
         <meta name="theme-color" content="#ffffff" />
+        {/* JSON-LD structured data for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
       </head>
       <body
-        className={`${inter.variable} ${jetBrainsMono.variable} ${orbitron.variable} ${playfairDisplay.variable} ${sourceSerif4.variable} font-sans antialiased`}
+        className={`${inter.variable} ${jetBrainsMono.variable} ${playfairDisplay.variable} ${sourceSerif4.variable} font-sans antialiased`}
       >
-        <Providers>{children}</Providers>
-        <Script
-          id="json-ld-person"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
-        />
-        <Script
-          id="json-ld-website"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-        />
+        <Providers>
+          <a
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:dark:bg-neutral-800 focus:text-foreground focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg"
+            href="#main-content"
+          >
+            Skip to main content
+          </a>
+          <Navbar />
+          <main id="main-content" role="main">
+            {children}
+          </main>
+          <Footer />
+          <SynthwaveBackground />
+        </Providers>
       </body>
     </html>
   );
