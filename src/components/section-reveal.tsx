@@ -2,6 +2,9 @@
 
 import { motion, useInView, Variants } from "framer-motion";
 import { useRef, type ReactNode } from "react";
+
+/** Framer-motion uses this type for the `margin` option but does not export it. */
+type MarginType = `${number}${"px" | "%"}` | `${number}${"px" | "%"} ${number}${"px" | "%"}` | `${number}${"px" | "%"} ${number}${"px" | "%"} ${number}${"px" | "%"}` | `${number}${"px" | "%"} ${number}${"px" | "%"} ${number}${"px" | "%"} ${number}${"px" | "%"}`;
 import {
   REVEAL_DURATION,
   REVEAL_Y_OFFSET,
@@ -32,8 +35,11 @@ export interface SectionRevealProps {
   /** Only animate once (don't replay on re-scroll). @default true */
   once?: boolean;
   /** Intersection observer margin offset. @default "-100px" */
-  margin?: string;
+  margin?: MarginType;
 }
+
+/** Default intersection observer margin. */
+const DEFAULT_MARGIN = "-100px" as MarginType;
 
 /**
  * Reusable reveal-on-scroll wrapper component.
@@ -58,8 +64,7 @@ export function SectionReveal({
   margin,
 }: SectionRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const isInView = useInView(ref as any, { once, margin: margin as any });
+  const isInView = useInView(ref, { once, margin: margin ?? DEFAULT_MARGIN });
 
   const animVariants: Variants = variants ?? {
     initial: DEFAULT_INITIAL,
@@ -100,12 +105,11 @@ export function useSectionReveal(options?: {
   /** Only animate once. @default true */
   once?: boolean;
   /** Intersection observer margin offset. @default "-100px" */
-  margin?: string;
+  margin?: MarginType;
 }) {
   const ref = useRef<HTMLElement>(null);
   const { once = true, margin } = options ?? {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const isInView = useInView(ref as any, { once, margin: margin as any });
+  const isInView = useInView(ref, { once, margin: margin ?? DEFAULT_MARGIN });
   return { ref, isInView };
 }
 

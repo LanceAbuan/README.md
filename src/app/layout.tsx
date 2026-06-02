@@ -10,7 +10,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { SynthwaveBackground } from "@/components/synthwave-background";
 import { siteConfig } from "@/data/site";
-import { DEFAULT_DESCRIPTION, AUTHOR, personSchema, websiteSchema } from "@/config/seo";
+import { personSchema, websiteSchema } from "@/config/seo";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -89,12 +89,10 @@ export default function RootLayout({
         {/* JSON-LD structured data for SEO */}
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
         />
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
       </head>

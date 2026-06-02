@@ -27,12 +27,10 @@ const NAV_LINKS = [
 ];
 
 export function Navbar() {
-  const { theme, resolvedTheme } = useTheme();
+  const { theme } = useTheme();
   const isTerminal = theme === "terminal";
   const isNewspaper = theme === "newspaper";
   const isCasino = theme === "casino";
-  const isDark = resolvedTheme === "dark" || isTerminal || isCasino;
-
   const [visible, setVisible] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
