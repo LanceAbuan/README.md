@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Button, Textarea, Input } from "@mantine/core";
+import { Button, Textarea, Input, Anchor, UnstyledButton, Group, Text, Stack, Container, Title } from "@mantine/core";
 import { Send, CheckCircle, AlertCircle } from "lucide-react";
 import { getIcon } from "@/lib/icons";
 import { useSectionReveal } from "@/components/section-reveal";
@@ -67,7 +67,7 @@ export function Contact() {
 
   return (
     <section id="contact" className="py-24 px-6" ref={ref}>
-      <div className="max-w-4xl mx-auto">
+      <Container size="4xl">
         <motion.div
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -76,79 +76,92 @@ export function Contact() {
         >
           {isTerminal ? (
             <div>
-              <p
-                className="text-xs font-mono mb-2 tracking-wider"
+              <Text
+                size="xs"
+                className="font-mono mb-2 tracking-wider"
                 data-terminal-prompt
                 style={{ color: terminalPalette.secondary }}
               >
                 contact
-              </p>
-              <h2
+              </Text>
+              <Title
+                order={2}
                 className="text-2xl sm:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
                 style={{ color: terminalPalette.primary }}
               >
                 Establish.Link
-              </h2>
-              <p
-                className="text-sm font-mono mt-4 max-w-lg"
+              </Title>
+              <Text
+                size="sm"
+                className="font-mono mt-4 max-w-lg"
                 style={{ color: terminalPalette.secondary }}
               >
                 Have a project in mind, want to collaborate, or just want to
                 say hi?
                 {"\n"}Drop me a message and I&apos;ll get back to you.
-              </p>
+              </Text>
             </div>
           ) : isCasino ? (
             <div>
               <p className="casino-label mb-2">CONTACT</p>
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight mb-4">
+              <Title
+                order={2}
+                className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight mb-4"
+              >
                 Place Your Hand
-              </h2>
+              </Title>
               <div className="w-16 h-px bg-gradient-to-r from-[#d4af37] to-transparent mb-4" />
-              <p
+              <Text
                 className="font-serif max-w-lg leading-relaxed"
                 style={{ color: "#c8bfb2" }}
               >
                 Have a project in mind, want to collaborate, or just want to
                 say hi? Drop me a message and I&apos;ll get back to you.
-              </p>
+              </Text>
             </div>
           ) : isNewspaper ? (
             <div>
-              <p
-                className="text-xs font-serif tracking-[0.2em] mb-1 uppercase"
+              <Text
+                size="xs"
+                className="font-serif tracking-[0.2em] mb-1 uppercase"
                 data-newspaper-section
                 style={{ color: newspaperPalette.muted }}
               >
                 Contact
-              </p>
+              </Text>
               <hr className="newspaper-rule" />
-              <h2
+              <Title
+                order={2}
                 className="text-3xl sm:text-4xl font-bold font-serif mt-4"
                 style={{ color: newspaperPalette.primary }}
               >
                 Let&apos;s Connect
-              </h2>
-              <p
+              </Title>
+              <Text
                 className="font-serif mt-4 max-w-lg leading-relaxed"
                 style={{ color: newspaperPalette.body }}
               >
                 Have a project in mind, want to collaborate, or just want to
                 say hi? Drop me a message and I&apos;ll get back to you.
-              </p>
+              </Text>
             </div>
           ) : (
             <>
-              <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
+              <Text
+                size="xs"
+                fw={600}
+                tt="uppercase"
+                className="tracking-widest text-neutral-400 dark:text-neutral-500 mb-3"
+              >
                 Contact
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
+              </Text>
+              <Title order={2} className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
                 Let&apos;s connect
-              </h2>
-              <p className="text-neutral-600 dark:text-neutral-400 max-w-lg leading-relaxed">
+              </Title>
+              <Text c="dimmed" className="max-w-lg leading-relaxed">
                 Have a project in mind, want to collaborate, or just want to
                 say hi? Drop me a message and I&apos;ll get back to you.
-              </p>
+              </Text>
             </>
           )}
         </motion.div>
@@ -170,10 +183,13 @@ export function Contact() {
             }}
             className="space-y-4"
           >
-            <div className="space-y-3">
-              <h3
+            <Stack gap="sm">
+              <Text
+                size="sm"
+                fw={600}
+                tt="uppercase"
                 className={cn(
-                  "text-sm font-semibold uppercase tracking-wider text-neutral-400",
+                  "tracking-wider text-neutral-400",
                   isTerminal && "font-mono",
                   isCasino && "font-serif tracking-[0.2em]",
                   isNewspaper && "font-serif tracking-[0.15em]",
@@ -195,15 +211,16 @@ export function Contact() {
                     : isNewspaper
                       ? "Find me on"
                       : "Find me on"}
-              </h3>
+              </Text>
               {contactLinks.map((link, i) => {
                 const Icon = getIcon(link.icon);
                 return (
-                  <a
+                  <Anchor
                     key={i}
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
+                    underline="never"
                     className={cn(
                       "flex items-center gap-3 p-3 rounded-xl border transition-colors group",
                       isTerminal &&
@@ -246,16 +263,17 @@ export function Contact() {
                             : undefined
                       }
                     />
-                    <span
+                    <Text
+                      size="sm"
+                      fw={500}
                       className={cn(
-                        "text-sm font-medium",
                         isTerminal && "font-mono",
                         isCasino && "font-serif",
                         isNewspaper && "font-serif",
                       )}
                     >
                       {link.label}
-                    </span>
+                    </Text>
                     <svg
                       className={cn(
                         "h-3.5 w-3.5 ml-auto transition-colors",
@@ -290,12 +308,13 @@ export function Contact() {
                         d="M7 17L17 7M17 7H7M17 7v10"
                       />
                     </svg>
-                  </a>
+                  </Anchor>
                 );
               })}
               <div className="pt-2">
-                <a
+                <Anchor
                   href={`mailto:${contactEmail}`}
+                  underline="never"
                   className={cn(
                     "flex items-center gap-3 p-3 rounded-xl border transition-colors group",
                     isTerminal &&
@@ -349,19 +368,20 @@ export function Contact() {
                       d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                     />
                   </svg>
-                  <span
+                  <Text
+                    size="sm"
+                    fw={500}
                     className={cn(
-                      "text-sm font-medium",
                       isTerminal && "font-mono",
                       isCasino && "font-serif",
                       isNewspaper && "font-serif",
                     )}
                   >
                     {contactEmail}
-                  </span>
-                </a>
+                  </Text>
+                </Anchor>
               </div>
-            </div>
+            </Stack>
           </motion.div>
 
           {/* Contact form */}
@@ -533,9 +553,10 @@ export function Contact() {
               className="min-h-[1.5rem]"
             >
               {status === "error" && (
-                <div className="flex items-center gap-2 text-sm">
+                <Group gap="xs" className="text-sm">
                   <AlertCircle className="h-4 w-4 shrink-0" />
-                  <span
+                  <Text
+                    size="sm"
                     className={cn(
                       isTerminal && "font-mono",
                       isCasino && "font-serif",
@@ -550,8 +571,8 @@ export function Contact() {
                     }
                   >
                     {errorMsg}
-                  </span>
-                </div>
+                  </Text>
+                </Group>
               )}
             </div>
 
@@ -611,7 +632,7 @@ export function Contact() {
             </Button>
           </motion.form>
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

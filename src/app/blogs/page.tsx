@@ -3,7 +3,7 @@ import NextDynamic from "next/dynamic";
 import { getAllBlogMetas } from "@/lib/blog";
 import { siteConfig } from "@/data/site";
 import Link from "next/link";
-import { Badge } from "@mantine/core";
+import { Badge, Title, Text, Container } from "@mantine/core";
 import { ArrowLeft } from "lucide-react";
 
 // Defer animated background — renders after initial paint
@@ -33,19 +33,24 @@ export default function BlogIndex() {
     <>
       <AnimatedBackground />
       <div className="pt-24 pb-16 px-6">
-        <div className="max-w-3xl mx-auto">
-          <Link href="/" className="inline-flex items-center gap-1 text-sm text-neutral-600 dark:text-neutral-400 hover:text-foreground mb-8 -ml-3 transition-colors">
+        <Container size="3xl">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1 text-sm text-neutral-600 dark:text-neutral-400 hover:text-foreground mb-8 -ml-3 transition-colors"
+          >
             <ArrowLeft className="h-3.5 w-3.5" /> Back
           </Link>
 
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">Blog</h1>
-          <p className="text-neutral-500 dark:text-neutral-400 mb-12">
+          <Title order={1} className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">
+            Blog
+          </Title>
+          <Text c="dimmed" className="mb-12">
             Thoughts on software, systems, and the stuff I&apos;m working on.
-          </p>
+          </Text>
 
           <div className="space-y-4">
             {posts.length === 0 && (
-              <p className="text-neutral-400 dark:text-neutral-500">No posts yet. Coming soon.</p>
+              <Text c="dimmed">No posts yet. Coming soon.</Text>
             )}
             {posts.map((post) => (
               <Link key={post.slug} href={`/blogs/${post.slug}`}>
@@ -92,7 +97,7 @@ export default function BlogIndex() {
               </Link>
             ))}
           </div>
-        </div>
+        </Container>
       </div>
     </>
   );

@@ -15,6 +15,7 @@ import {
 } from "@/config/animations";
 import { terminalPalette, newspaperPalette, casinoPalette } from "@/config/theme-palette";
 import { SCROLL_BEHAVIOR } from "@/config/accessibility";
+import { Container, Title, Text, Card, Badge, Group, Stack, SimpleGrid } from "@mantine/core";
 
 export function Skills() {
   const { ref, isInView } = useSectionReveal();
@@ -25,7 +26,7 @@ export function Skills() {
 
   return (
     <section id="skills" className="py-24 px-6" ref={ref}>
-      <div className="max-w-4xl mx-auto">
+      <Container size="4xl">
         <motion.div
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -35,64 +36,78 @@ export function Skills() {
           {isCasino ? (
             <div className="text-center mb-12">
               <p className="casino-label mb-2">ARSENAL</p>
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight">
+              <Title
+                order={2}
+                className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight"
+              >
                 Tools & Techniques
-              </h2>
+              </Title>
               <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto mt-4" />
-              <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg mx-auto">
+              <Text className="text-[#c8bfb2] font-serif mt-3 max-w-lg mx-auto">
                 The skills that keep the edge sharp.
-              </p>
+              </Text>
             </div>
           ) : isTerminal ? (
             <div>
-              <p
-                className="text-xs font-mono mb-2 tracking-wider"
+              <Text
+                size="xs"
+                className="font-mono mb-2 tracking-wider"
                 data-terminal-prompt
                 style={{ color: terminalPalette.secondary }}
               >
                 skills
-              </p>
-              <h2
+              </Text>
+              <Title
+                order={2}
                 className="text-2xl sm:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
                 style={{ color: terminalPalette.primary }}
               >
                 Stack.List
-              </h2>
+              </Title>
             </div>
           ) : isNewspaper ? (
             <div>
-              <p
-                className="text-xs font-serif tracking-[0.2em] uppercase"
+              <Text
+                size="xs"
+                className="font-serif tracking-[0.2em] uppercase"
                 data-newspaper-section
                 style={{ color: newspaperPalette.muted }}
               >
                 Expertise
-              </p>
+              </Text>
               <hr className="newspaper-triple-rule mx-auto max-w-sm mt-2" />
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif mt-4 newspaper-letterpress" style={{ color: newspaperPalette.primary }}>
+              <Title
+                order={2}
+                className="text-3xl sm:text-4xl font-bold font-serif mt-4 newspaper-letterpress"
+                style={{ color: newspaperPalette.primary }}
+              >
                 Technical Proficiency
-              </h2>
-              <p className="newspaper-deck max-w-lg mx-auto mt-3">
+              </Title>
+              <Text className="newspaper-deck max-w-lg mx-auto mt-3">
                 The tools, languages, and frameworks that form the foundation of my craft.
-              </p>
+              </Text>
             </div>
           ) : (
             <>
-              <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
+              <Text
+                size="xs"
+                fw={600}
+                tt="uppercase"
+                className="tracking-widest text-neutral-400 dark:text-neutral-500 mb-3"
+              >
                 Skills
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              </Text>
+              <Title order={2} className="text-3xl sm:text-4xl font-bold tracking-tight">
                 What I work with
-              </h2>
+              </Title>
             </>
           )}
         </motion.div>
 
-        <div
-          className={cn(
-            "grid sm:grid-cols-2 gap-6",
-            isNewspaper && "grid-cols-1 sm:grid-cols-2",
-          )}
+        <SimpleGrid
+          cols={{ base: 1, sm: 2 }}
+          spacing="md"
+          className={isNewspaper ? "grid-cols-1 sm:grid-cols-2" : ""}
         >
           {skillCategories.map((cat, ci) => (
             <SkillCategoryCard
@@ -105,7 +120,7 @@ export function Skills() {
               isCasino={isCasino}
             />
           ))}
-        </div>
+        </SimpleGrid>
 
         {isNewspaper && <SectionScrollArrow targetId="contact" isInView={isInView} />}
 
@@ -145,7 +160,7 @@ export function Skills() {
             </svg>
           </motion.div>
         )}
-      </div>
+      </Container>
     </section>
   );
 }
@@ -251,21 +266,38 @@ function SkillCategoryCard({
       initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: REVEAL_Y_OFFSET }}
       transition={{ duration: 0.5, delay: transitionDelay }}
-      className="p-5 rounded-2xl border border-neutral-200/50 dark:border-neutral-700/50 bg-white/30 dark:bg-neutral-900/30"
     >
-      <h3 className="text-sm font-semibold mb-3 text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-        {category.name}
-      </h3>
-      <div className="flex flex-wrap gap-2">
-        {category.items.map((skill, i) => (
-          <span
-            key={i}
-            className="inline-block px-3 py-1.5 rounded-lg text-sm bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
+      <Card
+        className="bg-white/30 dark:bg-neutral-900/30"
+        padding="lg"
+        radius="md"
+        withBorder
+      >
+        <Card.Section pb="sm">
+          <Text
+            size="xs"
+            fw={600}
+            tt="uppercase"
+            className="tracking-wider text-neutral-500 dark:text-neutral-400"
           >
-            {skill}
-          </span>
-        ))}
-      </div>
+            {category.name}
+          </Text>
+        </Card.Section>
+        <Card.Section>
+          <Group gap="xs">
+            {category.items.map((skill, i) => (
+              <Badge
+                key={i}
+                variant="light"
+                size="sm"
+                radius="sm"
+              >
+                {skill}
+              </Badge>
+            ))}
+          </Group>
+        </Card.Section>
+      </Card>
     </motion.div>
   );
 }

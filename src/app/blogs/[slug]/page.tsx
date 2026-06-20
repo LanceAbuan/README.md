@@ -3,7 +3,7 @@ import NextDynamic from "next/dynamic";
 import Script from "next/script";
 import { getBlogPost, getBlogSlugs } from "@/lib/blog";
 import { siteConfig } from "@/data/site";
-import { Badge } from "@mantine/core";
+import { Badge, Title, Text, Container } from "@mantine/core";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
@@ -16,13 +16,8 @@ const AnimatedBackground = NextDynamic(
   () => import("@/components/layout/background").then(m => ({ default: m.AnimatedBackground })),
 );
 
-/**
- * MDX component map — created at module scope to avoid
- * calling hooks inside an async Server Component.
- */
 const mdxComponents: MDXComponents = getMDXComponents({});
 
-/** Generate static params for all blog slugs. */
 export async function generateStaticParams() {
   const slugs = getBlogSlugs();
   return slugs.map((slug) => ({
@@ -30,7 +25,6 @@ export async function generateStaticParams() {
   }));
 }
 
-/** Generate page metadata from blog frontmatter. */
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const { meta } = getBlogPost(slug);
@@ -52,13 +46,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-/**
- * Individual blog post page.
- *
- * Uses getBlogPost() to fetch both metadata and MDX source in one call,
- * eliminating duplicate file I/O and matter parsing that was previously
- * scattered across the component.
- */
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const { meta, source } = getBlogPost(slug);
@@ -67,88 +54,76 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     <>
       <AnimatedBackground />
       <div className="pt-24 pb-16 px-6">
-          <div className="max-w-2xl mx-auto">
-            <Link href="/blogs" className="inline-flex items-center gap-1 text-sm text-neutral-600 dark:text-neutral-400 hover:text-foreground mb-8 -ml-3 transition-colors">
-              <ArrowLeft className="h-3.5 w-3.5" /> Back to Blog
-            </Link>
+        <Container size="2xl">
+          <Link
+            href="/blogs"
+            className="inline-flex items-center gap-1 text-sm text-neutral-600 dark:text-neutral-400 hover:text-foreground mb-8 -ml-3 transition-colors"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" /> Back to Blog
+          </Link>
 
-            {/* Post header: title, date, reading time, tags */}
-            <header className="mb-8">
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
-                {meta.title || slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
-              </h1>
-              <div className="flex items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
-                <time dateTime={meta.date}>
-                  {new Date(meta.date).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </time>
-                {meta.readingTime && (
-                  <>
-                    <span>·</span>
-                    <span>{meta.readingTime} min read</span>
-                  </>
-                )}
-                {meta.tags && meta.tags.length > 0 && (
-                  <>
-                    <span>·</span>
-                    <div className="flex gap-1.5">
-                      {meta.tags.map((tag, i) => (
-                        <Badge key={i} variant="light" size="xs" radius="sm">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
-            </header>
+          <header className="mb-8">
+            <Title order={1} className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
+              {meta.title || slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
+            </Title>
+            <div className="flex items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
+              <time dateTime={meta.date}>
+                {new Date(meta.date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </time>
+              {meta.readingTime && (
+                <>
+                  <span>·</span>
+                  <span>{meta.readingTime} min read</span>
+                </>
+              )}
+              {meta.tags && meta.tags.length > 0 && (
+                <>
+                  <span>·</span>
+                  <div className="flex gap-1.5">
+                    {meta.tags.map((tag, i) => (
+                      <Badge key={i} variant="light" size="xs" radius="sm">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </header>
 
-            {/* Structured data for search engines */}
-            <Script
-              id="json-ld-article"
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{
-                __html: JSON.stringify({
-                  "@context": "https://schema.org",
-                  "@type": "Article",
-                  headline: meta.title,
-                  description: meta.excerpt,
-                  datePublished: meta.date,
-                  dateModified: meta.modified ?? meta.date,
-                  author: {
-                    "@type": "Person",
-                    name: siteConfig.author.name,
-                  },
-                  url: `${siteConfig.url}/blogs/${slug}`,
-                }),
-              }}
+          <Script
+            id="json-ld-article"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Article",
+                headline: meta.title,
+                description: meta.excerpt,
+                datePublished: meta.date,
+                dateModified: meta.modified ?? meta.date,
+                author: {
+                  "@type": "Person",
+                  name: siteConfig.author.name,
+                },
+                url: `${siteConfig.url}/blogs/${slug}`,
+              }),
+            }}
+          />
+
+          <article className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-foreground prose-code:bg-neutral-100 dark:prose-code:bg-neutral-800 prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm">
+            <MDXRemote
+              source={source}
+              options={{ mdxOptions: { remarkPlugins: [[remarkGfm]] } }}
+              components={mdxComponents}
             />
-
-            {/* Render MDX content */}
-            <BlogMDX source={source} components={mdxComponents} />
-          </div>
-        </div>
+          </article>
+        </Container>
+      </div>
     </>
-  );
-}
-
-/**
- * Client-side blog content renderer.
- *
- * Separated from the async server page to avoid hook-in-async-server-component
- * errors. Receives pre-parsed components from module scope.
- */
-function BlogMDX({ source, components }: { source: string; components: MDXComponents }) {
-  return (
-    <article className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-foreground prose-code:bg-neutral-100 dark:prose-code:bg-neutral-800 prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm">
-      <MDXRemote
-        source={source}
-        options={{ mdxOptions: { remarkPlugins: [[remarkGfm]] } }}
-        components={components}
-      />
-    </article>
   );
 }
