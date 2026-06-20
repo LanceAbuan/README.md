@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Badge, Text, Group } from "@mantine/core";
 import { Building2, Terminal } from "lucide-react";
 import { useSectionReveal, SectionScrollArrow } from "@/components/section-reveal";
 import { useTheme } from "next-themes";
@@ -84,14 +83,14 @@ export function Experience() {
               </p>
             </div>
           ) : (
-            <>
+            <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
                 Experience
               </p>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
                 Where I&apos;ve worked
               </h2>
-            </>
+            </div>
           )}
         </motion.div>
 
@@ -323,14 +322,12 @@ function ExperienceCard({
       transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
       role="listitem"
     >
-      <div className="group rounded-xl border border-neutral-200/60 dark:border-neutral-800/60 bg-white/30 dark:bg-neutral-900/30 p-6 transition-all duration-300 hover:shadow-md hover:shadow-neutral-200/50 dark:hover:shadow-neutral-900/50 hover:border-neutral-300/60 dark:hover:border-neutral-700/60">
+      <div className="group glass-card glass-card-hover p-6 border-l-2 border-l-indigo-500 dark:border-l-indigo-400">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
           <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <Text fw={600} size="lg">{exp.role}</Text>
-              <Badge variant="light" size="xs" radius="xl">
-                {exp.type}
-              </Badge>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="text-lg font-semibold text-foreground">{exp.role}</h3>
+              <span className="gradient-badge">{exp.type}</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
               <Building2 className="h-3.5 w-3.5" />
@@ -339,20 +336,20 @@ function ExperienceCard({
               <span>{exp.location}</span>
             </div>
           </div>
-          <time className="text-xs font-medium text-neutral-400 dark:text-neutral-500 whitespace-nowrap">
+          <time className="text-xs font-medium text-neutral-400 dark:text-neutral-500 whitespace-nowrap bg-neutral-100 dark:bg-neutral-800 px-3 py-1 rounded-full">
             {exp.period}
           </time>
         </div>
-        <Text size="sm" c="dimmed" className="leading-relaxed mb-3">
+        <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed mb-4">
           {exp.description}
-        </Text>
-        <Group gap="xs">
+        </p>
+        <div className="flex flex-wrap gap-1.5">
           {exp.skills.map((skill, j) => (
-            <Badge key={j} variant="light" size="xs" radius="sm">
+            <span key={j} className="gradient-badge">
               {skill}
-            </Badge>
+            </span>
           ))}
-        </Group>
+        </div>
       </div>
     </motion.div>
   );

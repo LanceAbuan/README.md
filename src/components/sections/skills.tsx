@@ -15,7 +15,6 @@ import {
 } from "@/config/animations";
 import { terminalPalette, newspaperPalette, casinoPalette } from "@/config/theme-palette";
 import { SCROLL_BEHAVIOR } from "@/config/accessibility";
-import { Title, Text } from "@mantine/core";
 
 export function Skills() {
   const { ref, isInView } = useSectionReveal();
@@ -36,71 +35,59 @@ export function Skills() {
           {isCasino ? (
             <div className="text-center mb-12">
               <p className="casino-label mb-2">ARSENAL</p>
-              <Title
-                order={2}
-                className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight"
-              >
+              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight">
                 Tools & Techniques
-              </Title>
+              </h2>
               <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto mt-4" />
-              <Text className="text-[#c8bfb2] font-serif mt-3 max-w-lg mx-auto">
+              <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg mx-auto">
                 The skills that keep the edge sharp.
-              </Text>
+              </p>
             </div>
           ) : isTerminal ? (
             <div>
-              <Text
-                size="xs"
-                className="font-mono mb-2 tracking-wider"
+              <p
+                className="text-xs font-mono mb-2 tracking-wider"
                 data-terminal-prompt
                 style={{ color: terminalPalette.secondary }}
               >
                 skills
-              </Text>
-              <Title
-                order={2}
+              </p>
+              <h2
                 className="text-2xl sm:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
                 style={{ color: terminalPalette.primary }}
               >
                 Stack.List
-              </Title>
+              </h2>
             </div>
           ) : isNewspaper ? (
             <div>
-              <Text
-                size="xs"
-                className="font-serif tracking-[0.2em] uppercase"
+              <p
+                className="text-xs font-serif tracking-[0.2em] uppercase"
                 data-newspaper-section
                 style={{ color: newspaperPalette.muted }}
               >
                 Expertise
-              </Text>
+              </p>
               <hr className="newspaper-triple-rule mx-auto max-w-sm mt-2" />
-              <Title
-                order={2}
+              <h2
                 className="text-3xl sm:text-4xl font-bold font-serif mt-4 newspaper-letterpress"
                 style={{ color: newspaperPalette.primary }}
               >
                 Technical Proficiency
-              </Title>
-              <Text className="newspaper-deck max-w-lg mx-auto mt-3">
+              </h2>
+              <p className="newspaper-deck max-w-lg mx-auto mt-3">
                 The tools, languages, and frameworks that form the foundation of my craft.
-              </Text>
+              </p>
             </div>
           ) : (
-            <>
-              <Text
-                size="xs"
-                fw={600}
-                tt="uppercase"
-                className="tracking-widest text-neutral-400 dark:text-neutral-500 mb-3"
-              >
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
                 Skills
-              </Text>
-              <Title order={2} className="text-3xl sm:text-4xl font-bold tracking-tight">
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
                 What I work with
-              </Title>
-            </>
+              </h2>
+            </div>
           )}
         </motion.div>
 
@@ -263,21 +250,14 @@ function SkillCategoryCard({
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: REVEAL_Y_OFFSET }}
       transition={{ duration: 0.5, delay: transitionDelay }}
     >
-      <div className="rounded-xl border border-neutral-200/60 dark:border-neutral-800/60 bg-white/30 dark:bg-neutral-900/30 p-5 transition-all duration-300 hover:shadow-md hover:shadow-neutral-200/50 dark:hover:shadow-neutral-900/50">
-        <Text
-          size="xs"
-          fw={600}
-          tt="uppercase"
-          className="text-xs font-semibold tracking-wider text-neutral-500 dark:text-neutral-400 mb-3"
-        >
+      <div className="glass-card glass-card-hover p-5 h-full">
+        <div className="gradient-accent h-1 w-full rounded-full mb-4" />
+        <h3 className="text-xs font-semibold uppercase tracking-wider gradient-text mb-4">
           {category.name}
-        </Text>
+        </h3>
         <div className="flex flex-wrap gap-1.5">
           {category.items.map((skill, i) => (
-            <span
-              key={i}
-              className="inline-flex items-center rounded-md bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 text-xs font-medium text-neutral-700 dark:text-neutral-300"
-            >
+            <span key={i} className="gradient-badge">
               {skill}
             </span>
           ))}

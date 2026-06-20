@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Button } from "@mantine/core";
 import { useTheme } from "next-themes";
 import {
   REVEAL_DURATION,
@@ -27,13 +26,19 @@ export function Hero() {
 
 /* ============================================================
    DEFAULT HERO (light/dark/system/custom)
+   Modern glassmorphism with gradient text
    ============================================================ */
 function HeroDefault() {
   return (
-    <section className="min-h-screen flex items-center justify-center px-6 pt-16">
-      <div className="max-w-3xl mx-auto text-center">
+    <section className="relative min-h-screen flex items-center justify-center px-6 pt-16 overflow-hidden">
+      {/* Decorative gradient orbs */}
+      <div className="gradient-orb w-96 h-96 bg-indigo-500 top-1/4 -left-48" />
+      <div className="gradient-orb w-80 h-80 bg-purple-500 bottom-1/4 -right-40" />
+      <div className="gradient-orb w-64 h-64 bg-pink-500 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+
+      <div className="relative max-w-3xl mx-auto text-center z-10">
         <motion.p
-          className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mb-4 tracking-wide uppercase"
+          className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-6 tracking-widest uppercase"
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY }}
@@ -47,36 +52,42 @@ function HeroDefault() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 2 }}
         >
-          <span className="block">Hi, I&apos;m Lance Abuan</span>
+          <span className="block gradient-text">Hi, I&apos;m Lance Abuan</span>
           <span className="block text-neutral-400 dark:text-neutral-500 mt-2">
             I build things that scale
           </span>
         </motion.h1>
 
         <motion.p
-          className="mt-6 text-base sm:text-lg text-neutral-600 dark:text-neutral-400 max-w-xl mx-auto leading-relaxed"
+          className="mt-8 text-base sm:text-lg text-neutral-600 dark:text-neutral-400 max-w-xl mx-auto leading-relaxed"
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 3 }}
         >
           Currently developing AI tools and agentic workflows at{" "}
-          <span className="font-medium text-foreground">Saltech Systems</span>.
+          <span className="font-semibold text-foreground">Saltech Systems</span>.
           Building intelligent systems that automate complex workflows and push
           the boundaries of what AI agents can do.
         </motion.p>
 
         <motion.div
-          className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3"
+          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 4 }}
         >
-          <Button component={Link} href="#projects" variant="filled" radius="xl" px="lg">
+          <Link
+            href="#projects"
+            className="gradient-btn"
+          >
             View Projects
-          </Button>
-          <Button component={Link} href="#contact" variant="outline" radius="xl" px="lg">
+          </Link>
+          <Link
+            href="#contact"
+            className="gradient-outline-btn"
+          >
             Get In Touch
-          </Button>
+          </Link>
         </motion.div>
 
         <ScrollArrow
@@ -145,48 +156,30 @@ function HeroTerminal() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: STAGGER_DELAY * 4 }}
         >
-          <Button
-            component={Link}
+          <Link
             href="#projects"
-            variant="outline"
-            radius={0}
-            px="md"
+            className="inline-flex items-center justify-center px-6 py-2.5 font-mono text-sm uppercase tracking-wider border transition-colors"
             style={{
               borderColor: terminalPalette.primary,
               color: terminalPalette.primary,
               fontFamily: "var(--font-terminal), monospace",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              background: "transparent",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as unknown as HTMLElement).style.backgroundColor = terminalPalette.primary;
-              (e.currentTarget as unknown as HTMLElement).style.color = "#000";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as unknown as HTMLElement).style.backgroundColor = "transparent";
-              (e.currentTarget as unknown as HTMLElement).style.color = terminalPalette.primary;
+              borderRadius: 0,
             }}
           >
             ./view_projects
-          </Button>
-          <Button
-            component={Link}
+          </Link>
+          <Link
             href="#contact"
-            variant="outline"
-            radius={0}
-            px="md"
+            className="inline-flex items-center justify-center px-6 py-2.5 font-mono text-sm uppercase tracking-wider border transition-colors"
             style={{
               borderColor: terminalPalette.glowBorder,
               color: terminalPalette.secondary,
               fontFamily: "var(--font-terminal), monospace",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              background: "transparent",
+              borderRadius: 0,
             }}
           >
             ./get_in_touch
-          </Button>
+          </Link>
         </motion.div>
 
         <ScrollArrow
@@ -277,43 +270,28 @@ function HeroNewspaper() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 4.5 }}
         >
-          <Button
-            component={Link}
+          <Link
             href="#projects"
-            variant="outline"
-            radius={0}
-            px="xl"
+            className="inline-flex items-center justify-center px-8 py-2.5 text-xs uppercase tracking-[0.15em] border-2 transition-colors font-serif"
             style={{
               borderColor: newspaperPalette.primary,
-              borderWidth: 2,
               color: newspaperPalette.primary,
-              fontFamily: "var(--font-newspaper-heading), serif",
-              fontSize: "0.75rem",
-              textTransform: "uppercase",
-              letterSpacing: "0.15em",
-              background: "transparent",
+              borderRadius: 0,
             }}
           >
             View Projects
-          </Button>
-          <Button
-            component={Link}
+          </Link>
+          <Link
             href="#contact"
-            variant="outline"
-            radius={0}
-            px="xl"
+            className="inline-flex items-center justify-center px-8 py-2.5 text-xs uppercase tracking-[0.15em] border-2 transition-colors font-serif"
             style={{
               borderColor: newspaperPalette.accent,
               color: newspaperPalette.secondary,
-              fontFamily: "var(--font-newspaper-heading), serif",
-              fontSize: "0.75rem",
-              textTransform: "uppercase",
-              letterSpacing: "0.15em",
-              background: "transparent",
+              borderRadius: 0,
             }}
           >
             Get In Touch
-          </Button>
+          </Link>
         </motion.div>
 
         <ScrollArrow
@@ -402,31 +380,23 @@ function HeroCasino() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 3.5 }}
         >
-          <Button
-            component={Link}
+          <Link
             href="#projects"
-            className="casino-btn"
-            px="xl"
-            py="md"
+            className="casino-btn inline-flex items-center justify-center px-8 py-2.5 text-sm font-serif uppercase tracking-wider"
           >
             ♠ View Projects
-          </Button>
-          <Button
-            component={Link}
+          </Link>
+          <Link
             href="#contact"
-            variant="outline"
-            radius="md"
-            px="xl"
-            py="md"
-            size="sm"
+            className="inline-flex items-center justify-center px-8 py-2.5 text-sm font-serif uppercase tracking-wider border transition-colors"
             style={{
-              fontFamily: "serif",
-              letterSpacing: "0.05em",
-              background: "transparent",
+              borderColor: "rgba(212, 175, 55, 0.3)",
+              color: casinoPalette.gold,
+              borderRadius: "0.375rem",
             }}
           >
             ♦ Get In Touch
-          </Button>
+          </Link>
         </motion.div>
 
         <ScrollArrow

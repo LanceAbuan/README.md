@@ -4,7 +4,6 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/data/site";
 import { terminalPalette, newspaperPalette } from "@/config/theme-palette";
-import { Group, Text } from "@mantine/core";
 
 export function Footer() {
   const { theme } = useTheme();
@@ -18,37 +17,30 @@ export function Footer() {
   return (
     <footer
       className={cn(
-        "border-t py-8 px-6",
-        isNewspaper &&
-          "border-[#c4b59e]",
-        isTerminal &&
-          "border-[#00ff4120]",
-        isCasino &&
-          "border-[#d4af37]/15",
-        isSynthwave &&
-          "border-[#ff00ff] shadow-[0_-1px_20px_rgba(255,0,255,0.1)]",
-        !isTerminal &&
-          !isNewspaper &&
-          !isCasino &&
-          !isSynthwave &&
-          "border-neutral-200/50 dark:border-neutral-700/50",
+        "relative py-8 px-6",
+        isNewspaper && "border-t border-[#c4b59e]",
+        isTerminal && "border-t border-[#00ff4120]",
+        isCasino && "border-t border-[#d4af37]/15",
+        isSynthwave && "border-t border-[#ff00ff] shadow-[0_-1px_20px_rgba(255,0,255,0.1)]",
+        !isTerminal && !isNewspaper && !isCasino && !isSynthwave && "border-t border-transparent gradient-divider",
       )}
       role="contentinfo"
     >
       <div className="max-w-6xl mx-auto">
-        <Group
-          justify="space-between"
-          align="center"
-          className="flex-col sm:flex-row gap-4 text-center sm:text-left"
+        <div
+          className={cn(
+            "flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left",
+            !isTerminal && !isNewspaper && !isCasino && !isSynthwave && "glass-card px-6 py-4",
+          )}
         >
-          <Text
-            size="sm"
+          <p
             className={cn(
-              "text-neutral-500 dark:text-neutral-400",
+              "text-sm",
               isTerminal && "font-mono",
               isNewspaper && "font-serif text-[#7a6b5a]",
               isCasino && "font-serif",
               isSynthwave && "text-[#ff00ff]",
+              !isTerminal && !isNewspaper && !isCasino && !isSynthwave && "text-neutral-500 dark:text-neutral-400",
             )}
             style={
               isTerminal
@@ -63,57 +55,56 @@ export function Footer() {
                 <span style={{ color: terminalPalette.primary }}>
                   {"<<"}
                 </span>{" "}
-                © {currentYear} {siteConfig.name}{" "}
+                &copy; {currentYear} {siteConfig.name}{" "}
                 <span style={{ color: terminalPalette.primary }}>
                   {">>"}
                 </span>
               </span>
             ) : isNewspaper ? (
-              <p className="font-serif text-xs">
+              <span className="font-serif text-xs">
                 <span className="font-bold newspaper-letterpress" style={{ color: newspaperPalette.primary }}>
-                  © {currentYear} {siteConfig.name}
+                  &copy; {currentYear} {siteConfig.name}
                 </span>
-              </p>
+              </span>
             ) : isCasino ? (
-              <p className="font-serif" style={{ color: "#8a7e72" }}>
-                © {currentYear} {siteConfig.name}
-              </p>
+              <span className="font-serif" style={{ color: "#8a7e72" }}>
+                &copy; {currentYear} {siteConfig.name}
+              </span>
             ) : (
-              <>© {currentYear} {siteConfig.name}</>
+              <span>
+                &copy; {currentYear} {siteConfig.name}
+              </span>
             )}
             <span className="sr-only">. All rights reserved.</span>
-          </Text>
+          </p>
 
           {isTerminal ? (
-            <Text
-              size="xs"
-              className="font-mono"
+            <p
+              className="text-xs font-mono"
               style={{ color: "#00ff4140" }}
             >
               [session closed]
-            </Text>
+            </p>
           ) : isNewspaper ? (
-            <Text
-              size="xs"
-              className="font-serif italic"
+            <p
+              className="text-xs font-serif italic"
               style={{ color: newspaperPalette.muted }}
             >
               — End of Edition —
-            </Text>
+            </p>
           ) : isCasino ? (
-            <Text
-              size="xs"
-              className="font-serif"
+            <p
+              className="text-xs font-serif"
               style={{ color: "#8a7e72" }}
             >
               The house always wins — but only after you&apos;ve impressed them.
-            </Text>
+            </p>
           ) : (
-            <Text size="xs" c="dimmed">
+            <p className="text-xs text-neutral-400 dark:text-neutral-500">
               All rights reserved.
-            </Text>
+            </p>
           )}
-        </Group>
+        </div>
       </div>
     </footer>
   );

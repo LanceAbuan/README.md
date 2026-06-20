@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Button, Textarea, Input, Anchor, Group, Text, Stack, Title } from "@mantine/core";
 import { Send, CheckCircle, AlertCircle } from "lucide-react";
 import { getIcon } from "@/lib/icons";
 import { useSectionReveal } from "@/components/section-reveal";
@@ -76,93 +75,82 @@ export function Contact() {
         >
           {isTerminal ? (
             <div>
-              <Text
-                size="xs"
-                className="font-mono mb-2 tracking-wider"
+              <p
+                className="text-xs font-mono mb-2 tracking-wider"
                 data-terminal-prompt
                 style={{ color: terminalPalette.secondary }}
               >
                 contact
-              </Text>
-              <Title
-                order={2}
+              </p>
+              <h2
                 className="text-2xl sm:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
                 style={{ color: terminalPalette.primary }}
               >
                 Establish.Link
-              </Title>
-              <Text
-                size="sm"
-                className="font-mono mt-4 max-w-lg"
+              </h2>
+              <p
+                className="text-sm font-mono mt-4 max-w-lg"
                 style={{ color: terminalPalette.secondary }}
               >
                 Have a project in mind, want to collaborate, or just want to
                 say hi?
                 {"\n"}Drop me a message and I&apos;ll get back to you.
-              </Text>
+              </p>
             </div>
           ) : isCasino ? (
             <div>
               <p className="casino-label mb-2">CONTACT</p>
-              <Title
-                order={2}
+              <h2
                 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight mb-4"
               >
                 Place Your Hand
-              </Title>
+              </h2>
               <div className="w-16 h-px bg-gradient-to-r from-[#d4af37] to-transparent mb-4" />
-              <Text
+              <p
                 className="font-serif max-w-lg leading-relaxed"
                 style={{ color: "#c8bfb2" }}
               >
                 Have a project in mind, want to collaborate, or just want to
                 say hi? Drop me a message and I&apos;ll get back to you.
-              </Text>
+              </p>
             </div>
           ) : isNewspaper ? (
             <div>
-              <Text
-                size="xs"
-                className="font-serif tracking-[0.2em] mb-1 uppercase"
+              <p
+                className="text-xs font-serif tracking-[0.2em] mb-1 uppercase"
                 data-newspaper-section
                 style={{ color: newspaperPalette.muted }}
               >
                 Contact
-              </Text>
+              </p>
               <hr className="newspaper-rule" />
-              <Title
-                order={2}
+              <h2
                 className="text-3xl sm:text-4xl font-bold font-serif mt-4"
                 style={{ color: newspaperPalette.primary }}
               >
                 Let&apos;s Connect
-              </Title>
-              <Text
+              </h2>
+              <p
                 className="font-serif mt-4 max-w-lg leading-relaxed"
                 style={{ color: newspaperPalette.body }}
               >
                 Have a project in mind, want to collaborate, or just want to
                 say hi? Drop me a message and I&apos;ll get back to you.
-              </Text>
+              </p>
             </div>
           ) : (
-            <>
-              <Text
-                size="xs"
-                fw={600}
-                tt="uppercase"
-                className="tracking-widest text-neutral-400 dark:text-neutral-500 mb-3"
-              >
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
                 Contact
-              </Text>
-              <Title order={2} className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
                 Let&apos;s connect
-              </Title>
-              <Text c="dimmed" className="max-w-lg leading-relaxed">
+              </h2>
+              <p className="text-neutral-600 dark:text-neutral-400 max-w-lg leading-relaxed">
                 Have a project in mind, want to collaborate, or just want to
                 say hi? Drop me a message and I&apos;ll get back to you.
-              </Text>
-            </>
+              </p>
+            </div>
           )}
         </motion.div>
 
@@ -183,46 +171,41 @@ export function Contact() {
             }}
             className="space-y-4"
           >
-            <Stack gap="sm">
-              <Text
-                size="sm"
-                fw={600}
-                tt="uppercase"
-                className={cn(
-                  "tracking-wider text-neutral-400",
-                  isTerminal && "font-mono",
-                  isCasino && "font-serif tracking-[0.2em]",
-                  isNewspaper && "font-serif tracking-[0.15em]",
-                )}
-                style={
-                  isTerminal
-                    ? { color: terminalPalette.secondary }
-                    : isCasino
-                      ? { color: "#d4af37" }
-                      : isNewspaper
-                        ? { color: newspaperPalette.muted }
-                        : undefined
-                }
-              >
-                {isTerminal
-                  ? "$ find --links"
+            <p
+              className={cn(
+                "text-xs font-semibold uppercase tracking-wider text-neutral-400",
+                isTerminal && "font-mono",
+                isCasino && "font-serif tracking-[0.2em]",
+                isNewspaper && "font-serif tracking-[0.15em]",
+              )}
+              style={
+                isTerminal
+                  ? { color: terminalPalette.secondary }
                   : isCasino
-                    ? "Connect"
+                    ? { color: "#d4af37" }
                     : isNewspaper
-                      ? "Find me on"
-                      : "Find me on"}
-              </Text>
+                      ? { color: newspaperPalette.muted }
+                      : undefined
+              }
+            >
+              {isTerminal
+                ? "$ find --links"
+                : isCasino
+                  ? "Connect"
+                  : "Find me on"}
+            </p>
+
+            <div className="space-y-3">
               {contactLinks.map((link, i) => {
                 const Icon = getIcon(link.icon);
                 return (
-                  <Anchor
+                  <a
                     key={i}
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    underline="never"
                     className={cn(
-                      "flex items-center gap-3 p-3 rounded-xl border transition-colors group",
+                      "flex items-center gap-3 p-3 rounded-xl transition-all group",
                       isTerminal &&
                         "terminal-card rounded-none",
                       isCasino &&
@@ -232,7 +215,7 @@ export function Contact() {
                       !isTerminal &&
                         !isCasino &&
                         !isNewspaper &&
-                        "border-neutral-200/60 dark:border-neutral-800/60 bg-white/30 dark:bg-neutral-900/30 hover:bg-white/60 dark:hover:bg-neutral-800/60",
+                        "glass-card glass-card-hover",
                     )}
                     style={
                       isTerminal
@@ -244,39 +227,48 @@ export function Contact() {
                             : undefined
                     }
                   >
-                    <Icon
+                    <div
                       className={cn(
-                        "h-5 w-5 transition-colors",
-                        isTerminal && "text-[#00ff41]",
-                        isCasino && "group-hover:text-white",
-                        isNewspaper && "group-hover:text-[#1a1208]",
-                        !isTerminal &&
-                          !isCasino &&
-                          !isNewspaper &&
-                          "text-neutral-400 group-hover:text-foreground",
+                        "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors",
+                        isTerminal && "bg-[#00ff41]/10",
+                        isCasino && "bg-[#d4af37]/10",
+                        isNewspaper && "bg-[#5c2e0e]/10",
+                        !isTerminal && !isCasino && !isNewspaper && "gradient-icon-circle",
                       )}
-                      style={
-                        isCasino
-                          ? { color: "#d4af37" }
-                          : isNewspaper
-                            ? { color: "#5c2e0e" }
-                            : undefined
-                      }
-                    />
-                    <Text
-                      size="sm"
-                      fw={500}
+                    >
+                      <Icon
+                        className={cn(
+                          "h-5 w-5 transition-colors",
+                          isTerminal && "text-[#00ff41]",
+                          isCasino && "group-hover:text-white",
+                          isNewspaper && "group-hover:text-[#1a1208]",
+                          !isTerminal &&
+                            !isCasino &&
+                            !isNewspaper &&
+                            "text-indigo-500 dark:text-indigo-400",
+                        )}
+                        style={
+                          isCasino
+                            ? { color: "#d4af37" }
+                            : isNewspaper
+                              ? { color: "#5c2e0e" }
+                              : undefined
+                        }
+                      />
+                    </div>
+                    <span
                       className={cn(
+                        "text-sm font-medium flex-1",
                         isTerminal && "font-mono",
                         isCasino && "font-serif",
                         isNewspaper && "font-serif",
                       )}
                     >
                       {link.label}
-                    </Text>
+                    </span>
                     <svg
                       className={cn(
-                        "h-3.5 w-3.5 ml-auto transition-colors",
+                        "h-4 w-4 transition-colors",
                         isTerminal &&
                           "group-hover:text-[#00ff41]",
                         isCasino && "group-hover:text-[#d4af37]",
@@ -285,7 +277,7 @@ export function Contact() {
                         !isTerminal &&
                           !isCasino &&
                           !isNewspaper &&
-                          "text-neutral-300 dark:text-neutral-600 group-hover:text-foreground",
+                          "text-neutral-300 dark:text-neutral-600 group-hover:text-indigo-500 dark:group-hover:text-indigo-400",
                       )}
                       style={
                         isTerminal
@@ -308,35 +300,44 @@ export function Contact() {
                         d="M7 17L17 7M17 7H7M17 7v10"
                       />
                     </svg>
-                  </Anchor>
+                  </a>
                 );
               })}
-              <div className="pt-2">
-                <Anchor
-                  href={`mailto:${contactEmail}`}
-                  underline="never"
+
+              {/* Email link */}
+              <a
+                href={`mailto:${contactEmail}`}
+                className={cn(
+                  "flex items-center gap-3 p-3 rounded-xl transition-all group",
+                  isTerminal &&
+                    "terminal-card rounded-none",
+                  isCasino &&
+                    "casino-card rounded-lg border-[#d4af37]/15 hover:bg-[#1c0c0c]/80",
+                  isNewspaper &&
+                    "newspaper-card rounded-none",
+                  !isTerminal &&
+                    !isCasino &&
+                    !isNewspaper &&
+                    "glass-card glass-card-hover",
+                )}
+                style={
+                  isTerminal
+                    ? { color: terminalPalette.primary }
+                    : isCasino
+                      ? { color: "#c8bfb2" }
+                      : isNewspaper
+                        ? { color: newspaperPalette.primary }
+                        : undefined
+                }
+              >
+                <div
                   className={cn(
-                    "flex items-center gap-3 p-3 rounded-xl border transition-colors group",
-                    isTerminal &&
-                      "terminal-card rounded-none",
-                    isCasino &&
-                      "casino-card rounded-lg border-[#d4af37]/15 hover:bg-[#1c0c0c]/80",
-                    isNewspaper &&
-                      "newspaper-card rounded-none",
-                    !isTerminal &&
-                      !isCasino &&
-                      !isNewspaper &&
-                      "border-neutral-200/60 dark:border-neutral-800/60 bg-white/30 dark:bg-neutral-900/30 hover:bg-white/60 dark:hover:bg-neutral-800/60",
+                    "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors",
+                    isTerminal && "bg-[#00ff41]/10",
+                    isCasino && "bg-[#d4af37]/10",
+                    isNewspaper && "bg-[#5c2e0e]/10",
+                    !isTerminal && !isCasino && !isNewspaper && "gradient-icon-circle",
                   )}
-                  style={
-                    isTerminal
-                      ? { color: terminalPalette.primary }
-                      : isCasino
-                        ? { color: "#c8bfb2" }
-                        : isNewspaper
-                          ? { color: newspaperPalette.primary }
-                          : undefined
-                  }
                 >
                   <svg
                     className={cn(
@@ -347,7 +348,7 @@ export function Contact() {
                       !isTerminal &&
                         !isCasino &&
                         !isNewspaper &&
-                        "text-neutral-400 group-hover:text-foreground",
+                        "text-indigo-500 dark:text-indigo-400",
                     )}
                     style={
                       isCasino
@@ -368,20 +369,19 @@ export function Contact() {
                       d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                     />
                   </svg>
-                  <Text
-                    size="sm"
-                    fw={500}
-                    className={cn(
-                      isTerminal && "font-mono",
-                      isCasino && "font-serif",
-                      isNewspaper && "font-serif",
-                    )}
-                  >
-                    {contactEmail}
-                  </Text>
-                </Anchor>
-              </div>
-            </Stack>
+                </div>
+                <span
+                  className={cn(
+                    "text-sm font-medium flex-1",
+                    isTerminal && "font-mono",
+                    isCasino && "font-serif",
+                    isNewspaper && "font-serif",
+                  )}
+                >
+                  {contactEmail}
+                </span>
+              </a>
+            </div>
           </motion.div>
 
           {/* Contact form */}
@@ -393,7 +393,10 @@ export function Contact() {
               delay: STAGGER_DELAY * 3,
             }}
             onSubmit={handleSubmit}
-            className="space-y-4"
+            className={cn(
+              "space-y-4",
+              !isTerminal && !isCasino && !isNewspaper && "glass-card p-6",
+            )}
             aria-label={CONTACT_FORM_LABEL}
             noValidate
           >
@@ -422,7 +425,7 @@ export function Contact() {
                     ? "Your Name"
                     : "Name"}
               </label>
-              <Input
+              <input
                 id="name"
                 name="name"
                 placeholder={isTerminal ? "enter_name..." : "Your name"}
@@ -436,7 +439,7 @@ export function Contact() {
                       ? "casino-input font-serif text-[#f5f0e8] placeholder:text-[#8a7e72] focus:border-[#d4af37]"
                       : isNewspaper
                         ? "rounded-none font-serif border-[#c4b59e] bg-[#efe8da] text-[#1a1208] placeholder:text-[#7a6b5a] focus:border-[#5c2e0e]"
-                        : "bg-white/50 dark:bg-neutral-900/50",
+                        : "glass-input",
                 )}
                 style={
                   isTerminal
@@ -470,7 +473,7 @@ export function Contact() {
                     ? "Your Email"
                     : "Email"}
               </label>
-              <Input
+              <input
                 id="email"
                 name="email"
                 type="email"
@@ -485,7 +488,7 @@ export function Contact() {
                       ? "casino-input font-serif text-[#f5f0e8] placeholder:text-[#8a7e72] focus:border-[#d4af37]"
                       : isNewspaper
                         ? "rounded-none font-serif border-[#c4b59e] bg-[#efe8da] text-[#1a1208] placeholder:text-[#7a6b5a] focus:border-[#5c2e0e]"
-                        : "bg-white/50 dark:bg-neutral-900/50",
+                        : "glass-input",
                 )}
                 style={
                   isTerminal
@@ -517,7 +520,7 @@ export function Contact() {
                   ? "> message:"
                   : "Message"}
               </label>
-              <Textarea
+              <textarea
                 id="message"
                 name="message"
                 placeholder={
@@ -536,7 +539,7 @@ export function Contact() {
                       ? "casino-input font-serif text-[#f5f0e8] placeholder:text-[#8a7e72] focus:border-[#d4af37]"
                       : isNewspaper
                         ? "rounded-none font-serif border-[#c4b59e] bg-[#efe8da] text-[#1a1208] placeholder:text-[#7a6b5a] focus:border-[#5c2e0e]"
-                        : "bg-white/50 dark:bg-neutral-900/50",
+                        : "glass-input",
                 )}
                 style={
                   isTerminal
@@ -553,10 +556,9 @@ export function Contact() {
               className="min-h-[1.5rem]"
             >
               {status === "error" && (
-                <Group gap="xs" className="text-sm">
+                <div className="flex items-center gap-2 text-sm">
                   <AlertCircle className="h-4 w-4 shrink-0" />
-                  <Text
-                    size="sm"
+                  <span
                     className={cn(
                       isTerminal && "font-mono",
                       isCasino && "font-serif",
@@ -571,26 +573,26 @@ export function Contact() {
                     }
                   >
                     {errorMsg}
-                  </Text>
-                </Group>
+                  </span>
+                </div>
               )}
             </div>
 
-            <Button
+            <button
               type="submit"
               disabled={status === "sending" || status === "sent"}
-              fullWidth
               className={cn(
+                "w-full font-semibold transition-all",
                 isTerminal &&
-                  "rounded-none font-mono uppercase tracking-wider border bg-transparent hover:bg-[#00ff41] hover:text-black terminal-glow",
+                  "rounded-none font-mono uppercase tracking-wider border bg-transparent hover:bg-[#00ff41] hover:text-black terminal-glow py-2.5",
                 isCasino &&
-                  "casino-btn font-serif uppercase tracking-wider px-8",
+                  "casino-btn font-serif uppercase tracking-wider px-8 py-2.5",
                 isNewspaper &&
-                  "rounded-none font-serif uppercase tracking-wider border-2 bg-transparent hover:bg-[#1a1208] hover:text-[#f7f2ea]",
+                  "rounded-none font-serif uppercase tracking-wider border-2 bg-transparent hover:bg-[#1a1208] hover:text-[#f7f2ea] py-2.5",
                 !isTerminal &&
                   !isCasino &&
                   !isNewspaper &&
-                  "rounded-full",
+                  "gradient-btn py-3",
               )}
               style={
                 isTerminal
@@ -609,12 +611,12 @@ export function Contact() {
               {status === "sending" ? (
                 isTerminal ? "[ sending... ]" : "Sending..."
               ) : status === "sent" ? (
-                <>
-                  <CheckCircle className="mr-2 h-3.5 w-3.5" />
+                <span className="flex items-center justify-center gap-2">
+                  <CheckCircle className="h-4 w-4" />
                   {isTerminal ? "message_sent" : "Message sent"}
-                </>
+                </span>
               ) : (
-                <>
+                <span className="flex items-center justify-center gap-2">
                   {isTerminal
                     ? "[ send_message ]"
                     : isCasino
@@ -625,11 +627,11 @@ export function Contact() {
                   {!isTerminal &&
                     !isCasino &&
                     !isNewspaper && (
-                      <Send className="ml-2 h-3.5 w-3.5" />
+                      <Send className="h-4 w-4" />
                     )}
-                </>
+                </span>
               )}
-            </Button>
+            </button>
           </motion.form>
         </div>
       </div>

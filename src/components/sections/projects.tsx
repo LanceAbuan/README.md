@@ -2,7 +2,6 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Badge, Button, Text, Group } from "@mantine/core";
 import { ExternalLink, GitFork, ArrowUpRight, Terminal } from "lucide-react";
 import Link from "next/link";
 import { useSectionReveal, SectionScrollArrow } from "@/components/section-reveal";
@@ -89,42 +88,38 @@ export function Projects() {
                 </p>
               </>
             ) : (
-              <>
+              <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
                   Projects
                 </p>
                 <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
                   Things I&apos;ve built
                 </h2>
-              </>
+              </div>
             )}
           </div>
           {!isNewspaper && (
-            <Button
-              component={Link}
+            <Link
               href={githubProfileUrl}
               target="_blank"
               rel="noopener noreferrer"
-              variant="subtle"
-              size="sm"
               className={cn(
-                "hidden sm:flex items-center gap-1",
-                isTerminal && "rounded-none font-mono",
-                isNewspaper && "rounded-none font-serif",
-                isCasino && "rounded-md font-serif border border-[#d4af37]/20",
+                "hidden sm:flex items-center gap-1.5 text-sm font-medium transition-colors",
+                isTerminal && "font-mono",
+                isNewspaper && "font-serif",
+                isCasino && "font-serif",
+                !isTerminal && !isNewspaper && !isCasino && "text-neutral-500 dark:text-neutral-400 hover:text-indigo-500 dark:hover:text-indigo-400",
               )}
               style={
                 isTerminal
                   ? { color: terminalPalette.primary }
-                  : isNewspaper
-                    ? { color: "#5c2e0e" }
-                    : isCasino
-                      ? { color: "#d4af37" }
-                      : undefined
+                  : isCasino
+                    ? { color: "#d4af37" }
+                    : undefined
               }
             >
-              View all <ArrowUpRight className="h-3.5 w-3.5" />
-            </Button>
+              View all <ArrowUpRight className="h-4 w-4" />
+            </Link>
           )}
         </motion.div>
 
@@ -473,57 +468,59 @@ function ProjectCard({
       transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
       role="listitem"
     >
-      <div className="group h-full flex flex-col rounded-xl border border-neutral-200/60 dark:border-neutral-800/60 bg-white/30 dark:bg-neutral-900/30 p-6 transition-all duration-300 hover:shadow-md hover:shadow-neutral-200/50 dark:hover:shadow-neutral-900/50 hover:border-neutral-300/60 dark:hover:border-neutral-700/60">
-        <div className="flex items-start justify-between mb-2">
-          <Text fw={600} size="sm" className="flex items-center gap-2">
-            {project.name}
-            {project.featured && (
-              <Badge
-                variant="light"
-                size="xs"
-                radius="sm"
-              >
-                Featured
-              </Badge>
-            )}
-          </Text>
-          <div className="flex items-center gap-1">
-            {project.demo && (
-              <Button
-                component={Link}
-                href={project.demo}
-                variant="subtle"
-                size="compact-xs"
-                aria-label={LIVE_DEMO_LABEL}
+      <div className={cn(
+        "group h-full flex flex-col glass-card glass-card-hover overflow-hidden",
+        project.featured && "shadow-lg shadow-indigo-500/10 dark:shadow-indigo-500/5",
+      )}>
+        {/* Gradient accent strip */}
+        <div className="gradient-accent h-1 w-full" />
+
+        <div className="p-6 flex flex-col flex-1">
+          <div className="flex items-start justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-semibold text-foreground">
+                {project.name}
+              </h3>
+              {project.featured && (
+                <span className="gradient-badge text-[10px]">
+                  Featured
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-1">
+              {project.demo && (
+                <Link
+                  href={project.demo}
+                  className="h-8 w-8 flex items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 hover:text-indigo-500 dark:hover:text-indigo-400 transition-all"
+                  aria-label={LIVE_DEMO_LABEL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </Link>
+              )}
+              <Link
+                href={project.github}
+                className="h-8 w-8 flex items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 hover:text-indigo-500 dark:hover:text-indigo-400 transition-all"
+                aria-label={GITHUB_REPO_LABEL}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <ExternalLink className="h-3.5 w-3.5" />
-              </Button>
-            )}
-            <Button
-              component={Link}
-              href={project.github}
-              variant="subtle"
-              size="compact-xs"
-              aria-label={GITHUB_REPO_LABEL}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <GitFork className="h-3.5 w-3.5" />
-            </Button>
+                <GitFork className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed flex-1 mb-4">
+            {project.description}
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {project.tags.map((tag, i) => (
+              <span key={i} className="gradient-badge">
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
-        <Text size="sm" c="dimmed" className="leading-relaxed flex-1 mb-3">
-          {project.description}
-        </Text>
-        <Group gap="xs">
-          {project.tags.map((tag, i) => (
-            <Badge key={i} variant="light" size="xs" radius="sm">
-              {tag}
-            </Badge>
-          ))}
-        </Group>
       </div>
     </motion.div>
   );
