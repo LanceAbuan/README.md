@@ -2,7 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Card, Badge, Button, Text, Group } from "@mantine/core";
+import { Badge, Button, Text, Group } from "@mantine/core";
 import { ExternalLink, GitFork, ArrowUpRight, Terminal } from "lucide-react";
 import Link from "next/link";
 import { useSectionReveal, SectionScrollArrow } from "@/components/section-reveal";
@@ -30,7 +30,7 @@ export function Projects() {
 
   return (
     <section id="projects" className="py-24 px-6" ref={ref}>
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -130,7 +130,7 @@ export function Projects() {
 
         <div
           className={cn(
-            "grid sm:grid-cols-2 lg:grid-cols-3 gap-4",
+            "grid sm:grid-cols-2 gap-4",
             isNewspaper && "lg:grid-cols-2",
           )}
           role="list"
@@ -473,62 +473,58 @@ function ProjectCard({
       transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
       role="listitem"
     >
-      <Card className="group h-full bg-white/50 dark:bg-neutral-900/50 border-neutral-200/50 dark:border-neutral-700/50 hover:border-neutral-300 dark:hover:border-neutral-600 transition-all duration-300 hover:shadow-lg hover:shadow-neutral-200/50 dark:hover:shadow-neutral-800/50" padding="lg" radius="md" withBorder>
-        <Card.Section className="pb-3">
-          <div className="flex items-start justify-between mb-2">
-            <Text fw={600} size="sm" className="flex items-center gap-2">
-              {project.name}
-              {project.featured && (
-                <Badge
-                  variant="light"
-                  size="xs"
-                  radius="sm"
-                >
-                  Featured
-                </Badge>
-              )}
-            </Text>
-            <div className="flex items-center gap-1">
-              {project.demo && (
-                <Button
-                  component={Link}
-                  href={project.demo}
-                  variant="subtle"
-                  size="compact-xs"
-                  aria-label={LIVE_DEMO_LABEL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" />
-                </Button>
-              )}
+      <div className="group h-full flex flex-col rounded-xl border border-neutral-200/60 dark:border-neutral-800/60 bg-white/30 dark:bg-neutral-900/30 p-6 transition-all duration-300 hover:shadow-md hover:shadow-neutral-200/50 dark:hover:shadow-neutral-900/50 hover:border-neutral-300/60 dark:hover:border-neutral-700/60">
+        <div className="flex items-start justify-between mb-2">
+          <Text fw={600} size="sm" className="flex items-center gap-2">
+            {project.name}
+            {project.featured && (
+              <Badge
+                variant="light"
+                size="xs"
+                radius="sm"
+              >
+                Featured
+              </Badge>
+            )}
+          </Text>
+          <div className="flex items-center gap-1">
+            {project.demo && (
               <Button
                 component={Link}
-                href={project.github}
+                href={project.demo}
                 variant="subtle"
                 size="compact-xs"
-                aria-label={GITHUB_REPO_LABEL}
+                aria-label={LIVE_DEMO_LABEL}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <GitFork className="h-3.5 w-3.5" />
+                <ExternalLink className="h-3.5 w-3.5" />
               </Button>
-            </div>
+            )}
+            <Button
+              component={Link}
+              href={project.github}
+              variant="subtle"
+              size="compact-xs"
+              aria-label={GITHUB_REPO_LABEL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <GitFork className="h-3.5 w-3.5" />
+            </Button>
           </div>
-          <Text size="sm" c="dimmed" className="leading-relaxed">
-            {project.description}
-          </Text>
-        </Card.Section>
-        <Card.Section>
-          <Group gap="xs">
-            {project.tags.map((tag, i) => (
-              <Badge key={i} variant="light" size="xs" radius="sm">
-                {tag}
-              </Badge>
-            ))}
-          </Group>
-        </Card.Section>
-      </Card>
+        </div>
+        <Text size="sm" c="dimmed" className="leading-relaxed flex-1 mb-3">
+          {project.description}
+        </Text>
+        <Group gap="xs">
+          {project.tags.map((tag, i) => (
+            <Badge key={i} variant="light" size="xs" radius="sm">
+              {tag}
+            </Badge>
+          ))}
+        </Group>
+      </div>
     </motion.div>
   );
 }

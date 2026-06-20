@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Button, Textarea, Input, Anchor, Group, Text, Stack, Container, Title } from "@mantine/core";
+import { Button, Textarea, Input, Anchor, Group, Text, Stack, Title } from "@mantine/core";
 import { Send, CheckCircle, AlertCircle } from "lucide-react";
 import { getIcon } from "@/lib/icons";
 import { useSectionReveal } from "@/components/section-reveal";
@@ -67,7 +67,7 @@ export function Contact() {
 
   return (
     <section id="contact" className="py-24 px-6" ref={ref}>
-      <Container size="4xl">
+      <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -232,7 +232,7 @@ export function Contact() {
                       !isTerminal &&
                         !isCasino &&
                         !isNewspaper &&
-                        "border-neutral-200/50 dark:border-neutral-700/50 bg-white/30 dark:bg-neutral-900/30 hover:bg-white/60 dark:hover:bg-neutral-800/60",
+                        "border-neutral-200/60 dark:border-neutral-800/60 bg-white/30 dark:bg-neutral-900/30 hover:bg-white/60 dark:hover:bg-neutral-800/60",
                     )}
                     style={
                       isTerminal
@@ -326,7 +326,7 @@ export function Contact() {
                     !isTerminal &&
                       !isCasino &&
                       !isNewspaper &&
-                      "border-neutral-200/50 dark:border-neutral-700/50 bg-white/30 dark:bg-neutral-900/30 hover:bg-white/60 dark:hover:bg-neutral-800/60",
+                      "border-neutral-200/60 dark:border-neutral-800/60 bg-white/30 dark:bg-neutral-900/30 hover:bg-white/60 dark:hover:bg-neutral-800/60",
                   )}
                   style={
                     isTerminal
@@ -632,7 +632,7 @@ export function Contact() {
             </Button>
           </motion.form>
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

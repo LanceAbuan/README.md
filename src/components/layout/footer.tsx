@@ -4,7 +4,7 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/data/site";
 import { terminalPalette, newspaperPalette } from "@/config/theme-palette";
-import { Group, Text, Container } from "@mantine/core";
+import { Group, Text } from "@mantine/core";
 
 export function Footer() {
   const { theme } = useTheme();
@@ -35,7 +35,7 @@ export function Footer() {
       )}
       role="contentinfo"
     >
-      <Container size="6xl">
+      <div className="max-w-6xl mx-auto">
         <Group
           justify="space-between"
           align="center"
@@ -114,7 +114,7 @@ export function Footer() {
             </Text>
           )}
         </Group>
-      </Container>
+      </div>
     </footer>
   );
 }

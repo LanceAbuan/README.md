@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Card, Badge, Text, Group } from "@mantine/core";
+import { Badge, Text, Group } from "@mantine/core";
 import { Building2, Terminal } from "lucide-react";
 import { useSectionReveal, SectionScrollArrow } from "@/components/section-reveal";
 import { useTheme } from "next-themes";
@@ -323,41 +323,37 @@ function ExperienceCard({
       transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
       role="listitem"
     >
-      <Card className="group bg-white/50 dark:bg-neutral-900/50 border-neutral-200/50 dark:border-neutral-700/50 hover:border-neutral-300 dark:hover:border-neutral-600 transition-colors" padding="lg" radius="md" withBorder>
-        <Card.Section className="pb-3">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <Text fw={600} size="lg">{exp.role}</Text>
-                <Badge variant="light" size="xs" radius="xl">
-                  {exp.type}
-                </Badge>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
-                <Building2 className="h-3.5 w-3.5" />
-                <span>{exp.company}</span>
-                <span>&#8226;</span>
-                <span>{exp.location}</span>
-              </div>
-            </div>
-            <time className="text-xs font-medium text-neutral-400 dark:text-neutral-500 whitespace-nowrap">
-              {exp.period}
-            </time>
-          </div>
-        </Card.Section>
-        <Card.Section className="space-y-3">
-          <Text size="sm" c="dimmed" className="leading-relaxed">
-            {exp.description}
-          </Text>
-          <Group gap="xs">
-            {exp.skills.map((skill, j) => (
-              <Badge key={j} variant="light" size="xs" radius="sm">
-                {skill}
+      <div className="group rounded-xl border border-neutral-200/60 dark:border-neutral-800/60 bg-white/30 dark:bg-neutral-900/30 p-6 transition-all duration-300 hover:shadow-md hover:shadow-neutral-200/50 dark:hover:shadow-neutral-900/50 hover:border-neutral-300/60 dark:hover:border-neutral-700/60">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Text fw={600} size="lg">{exp.role}</Text>
+              <Badge variant="light" size="xs" radius="xl">
+                {exp.type}
               </Badge>
-            ))}
-          </Group>
-        </Card.Section>
-      </Card>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
+              <Building2 className="h-3.5 w-3.5" />
+              <span>{exp.company}</span>
+              <span>&#8226;</span>
+              <span>{exp.location}</span>
+            </div>
+          </div>
+          <time className="text-xs font-medium text-neutral-400 dark:text-neutral-500 whitespace-nowrap">
+            {exp.period}
+          </time>
+        </div>
+        <Text size="sm" c="dimmed" className="leading-relaxed mb-3">
+          {exp.description}
+        </Text>
+        <Group gap="xs">
+          {exp.skills.map((skill, j) => (
+            <Badge key={j} variant="light" size="xs" radius="sm">
+              {skill}
+            </Badge>
+          ))}
+        </Group>
+      </div>
     </motion.div>
   );
 }

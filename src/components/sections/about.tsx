@@ -11,7 +11,15 @@ import {
   STAGGER_DELAY,
 } from "@/config/animations";
 import { terminalPalette, newspaperPalette } from "@/config/theme-palette";
-import { Container, Title, Text, Stack } from "@mantine/core";
+import { Title, Text } from "@mantine/core";
+import { Brain, GraduationCap, MapPin, Mail } from "lucide-react";
+
+const statIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  brain: Brain,
+  "graduation-cap": GraduationCap,
+  "map-pin": MapPin,
+  mail: Mail,
+};
 
 export function About() {
   const { ref, isInView } = useSectionReveal();
@@ -22,7 +30,7 @@ export function About() {
 
   return (
     <section id="about" className="py-24 px-6" ref={ref}>
-      <Container size="4xl">
+      <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -101,7 +109,7 @@ export function About() {
         </motion.div>
 
         <div className={cn(isNewspaper && "max-w-2xl mx-auto")}>
-          <Stack gap="md">
+          <div className="space-y-4">
             {aboutData.paragraphs.map((paragraph, i) => (
               <motion.p
                 key={i}
@@ -126,11 +134,84 @@ export function About() {
                 {paragraph.text}
               </motion.p>
             ))}
-          </Stack>
+          </div>
         </div>
 
+        {/* Stats grid */}
+        <motion.div
+          className={cn(
+            "grid grid-cols-2 sm:grid-cols-4 gap-4 mt-12",
+            isNewspaper && "max-w-2xl mx-auto",
+          )}
+          initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 4 }}
+        >
+          {aboutData.stats.map((stat, i) => {
+            const Icon = statIcons[stat.icon];
+            return (
+              <div
+                key={i}
+                className={cn(
+                  "text-center p-4 rounded-xl",
+                  isCasino && "bg-[#1c0c0c]/60 border border-[#d4af37]/10",
+                  isTerminal && "bg-[#0a0f0a] border border-[#00ff4120]",
+                  isNewspaper && "bg-[#efe8da]/50 border border-[#c4b59e]/30",
+                  !isTerminal && !isNewspaper && !isCasino && "bg-neutral-100/50 dark:bg-neutral-800/30 border border-neutral-200/60 dark:border-neutral-800/60",
+                )}
+              >
+                {Icon && (
+                  <Icon
+                    className={cn(
+                      "h-5 w-5 mx-auto mb-2",
+                      isCasino && "text-[#d4af37]",
+                      isTerminal && "text-[#00ff41]",
+                      isNewspaper && "text-[#5c2e0e]",
+                      !isTerminal && !isNewspaper && !isCasino && "text-neutral-400 dark:text-neutral-500",
+                    )}
+                  />
+                )}
+                <p
+                  className={cn(
+                    "text-xs uppercase tracking-wider mb-1",
+                    isCasino && "font-serif text-[#8a7e72]",
+                    isTerminal && "font-mono",
+                    isNewspaper && "font-serif text-[#7a6b5a]",
+                    !isTerminal && !isNewspaper && !isCasino && "text-neutral-400 dark:text-neutral-500 font-medium",
+                  )}
+                  style={
+                    isTerminal
+                      ? { color: terminalPalette.secondary }
+                      : undefined
+                  }
+                >
+                  {stat.label}
+                </p>
+                <p
+                  className={cn(
+                    "text-sm font-semibold",
+                    isCasino && "font-serif text-white",
+                    isTerminal && "font-mono",
+                    isNewspaper && "font-serif newspaper-letterpress",
+                    !isTerminal && !isNewspaper && !isCasino && "text-neutral-700 dark:text-neutral-300",
+                  )}
+                  style={
+                    isTerminal
+                      ? { color: terminalPalette.primary }
+                      : isNewspaper
+                      ? { color: newspaperPalette.primary }
+                      : undefined
+                  }
+                >
+                  {stat.value}
+                </p>
+              </div>
+            );
+          })}
+        </motion.div>
+
         {isNewspaper && <SectionScrollArrow targetId="experience" isInView={isInView} />}
-      </Container>
+      </div>
     </section>
   );
 }

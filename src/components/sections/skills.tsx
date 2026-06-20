@@ -15,7 +15,7 @@ import {
 } from "@/config/animations";
 import { terminalPalette, newspaperPalette, casinoPalette } from "@/config/theme-palette";
 import { SCROLL_BEHAVIOR } from "@/config/accessibility";
-import { Container, Title, Text, Card, Badge, Group, SimpleGrid } from "@mantine/core";
+import { Title, Text } from "@mantine/core";
 
 export function Skills() {
   const { ref, isInView } = useSectionReveal();
@@ -26,7 +26,7 @@ export function Skills() {
 
   return (
     <section id="skills" className="py-24 px-6" ref={ref}>
-      <Container size="4xl">
+      <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -104,11 +104,7 @@ export function Skills() {
           )}
         </motion.div>
 
-        <SimpleGrid
-          cols={{ base: 1, sm: 2 }}
-          spacing="md"
-          className={isNewspaper ? "grid-cols-1 sm:grid-cols-2" : ""}
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {skillCategories.map((cat, ci) => (
             <SkillCategoryCard
               key={cat.name}
@@ -120,7 +116,7 @@ export function Skills() {
               isCasino={isCasino}
             />
           ))}
-        </SimpleGrid>
+        </div>
 
         {isNewspaper && <SectionScrollArrow targetId="contact" isInView={isInView} />}
 
@@ -160,7 +156,7 @@ export function Skills() {
             </svg>
           </motion.div>
         )}
-      </Container>
+      </div>
     </section>
   );
 }
@@ -267,37 +263,26 @@ function SkillCategoryCard({
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: REVEAL_Y_OFFSET }}
       transition={{ duration: 0.5, delay: transitionDelay }}
     >
-      <Card
-        className="bg-white/30 dark:bg-neutral-900/30"
-        padding="lg"
-        radius="md"
-        withBorder
-      >
-        <Card.Section pb="sm">
-          <Text
-            size="xs"
-            fw={600}
-            tt="uppercase"
-            className="tracking-wider text-neutral-500 dark:text-neutral-400"
-          >
-            {category.name}
-          </Text>
-        </Card.Section>
-        <Card.Section>
-          <Group gap="xs">
-            {category.items.map((skill, i) => (
-              <Badge
-                key={i}
-                variant="light"
-                size="sm"
-                radius="sm"
-              >
-                {skill}
-              </Badge>
-            ))}
-          </Group>
-        </Card.Section>
-      </Card>
+      <div className="rounded-xl border border-neutral-200/60 dark:border-neutral-800/60 bg-white/30 dark:bg-neutral-900/30 p-5 transition-all duration-300 hover:shadow-md hover:shadow-neutral-200/50 dark:hover:shadow-neutral-900/50">
+        <Text
+          size="xs"
+          fw={600}
+          tt="uppercase"
+          className="text-xs font-semibold tracking-wider text-neutral-500 dark:text-neutral-400 mb-3"
+        >
+          {category.name}
+        </Text>
+        <div className="flex flex-wrap gap-1.5">
+          {category.items.map((skill, i) => (
+            <span
+              key={i}
+              className="inline-flex items-center rounded-md bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 text-xs font-medium text-neutral-700 dark:text-neutral-300"
+            >
+              {skill}
+            </span>
+          ))}
+        </div>
+      </div>
     </motion.div>
   );
 }
