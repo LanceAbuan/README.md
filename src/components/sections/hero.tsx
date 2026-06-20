@@ -3,8 +3,6 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import {
   REVEAL_DURATION,
   REVEAL_Y_OFFSET,
@@ -17,8 +15,6 @@ import {
 } from "@/config/theme-palette";
 import { SCROLL_ARROW_LABEL } from "@/config/accessibility";
 
-const HERO_TRANSITION_BASE = { duration: REVEAL_DURATION, y: REVEAL_Y_OFFSET };
-
 export function Hero() {
   const { theme } = useTheme();
 
@@ -30,13 +26,18 @@ export function Hero() {
 
 /* ============================================================
    DEFAULT HERO (light/dark/system/custom)
+   Earth tone dark mode — terracotta gradient text, monospace headings
    ============================================================ */
 function HeroDefault() {
   return (
-    <section className="min-h-screen flex items-center justify-center px-6 pt-16">
-      <div className="max-w-3xl mx-auto text-center">
+    <section className="relative min-h-screen flex items-center justify-center px-6 pt-16 overflow-hidden">
+      {/* Decorative orbs — subtle terracotta glow */}
+      <div className="absolute w-96 h-96 rounded-full bg-[#C45D3E]/5 blur-3xl top-1/4 -left-48 pointer-events-none dark:bg-[#C45D3E]/8" />
+      <div className="absolute w-80 h-80 rounded-full bg-[#7C8C5E]/5 blur-3xl bottom-1/4 -right-40 pointer-events-none dark:bg-[#7C8C5E]/6" />
+
+      <div className="relative max-w-3xl mx-auto text-center z-10">
         <motion.p
-          className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mb-4 tracking-wide uppercase"
+          className="section-label mb-6 font-mono"
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY }}
@@ -45,39 +46,45 @@ function HeroDefault() {
         </motion.p>
 
         <motion.h1
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1]"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] font-mono"
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 2 }}
         >
-          <span className="block">Hi, I&apos;m Lance Abuan</span>
-          <span className="block text-neutral-400 dark:text-neutral-500 mt-2">
+          <span className="block terracotta-text">Hi, I&apos;m Lance Abuan</span>
+          <span className="block text-neutral-500 dark:text-[#A89888] mt-2 font-mono text-2xl sm:text-3xl md:text-4xl">
             I build things that scale
           </span>
         </motion.h1>
 
         <motion.p
-          className="mt-6 text-base sm:text-lg text-neutral-600 dark:text-neutral-400 max-w-xl mx-auto leading-relaxed"
+          className="mt-8 text-base sm:text-lg text-neutral-600 dark:text-[#A89888] max-w-xl mx-auto leading-relaxed"
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 3 }}
         >
           Currently developing AI tools and agentic workflows at{" "}
-          <span className="font-medium text-foreground">Saltech Systems</span>.
+          <span className="font-semibold text-foreground">Saltech Systems</span>.
           Building intelligent systems that automate complex workflows and push
           the boundaries of what AI agents can do.
         </motion.p>
 
         <motion.div
-          className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3"
+          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 4 }}
         >
-          <Link href="#projects" className={buttonVariants({ className: "rounded-full px-6" })}>
+          <Link
+            href="#projects"
+            className="earth-btn"
+          >
             View Projects
           </Link>
-          <Link href="#contact" className={buttonVariants({ variant: "outline", className: "rounded-full px-6" })}>
+          <Link
+            href="#contact"
+            className="earth-btn-outline"
+          >
             Get In Touch
           </Link>
         </motion.div>
@@ -150,37 +157,24 @@ function HeroTerminal() {
         >
           <Link
             href="#projects"
-            className={cn(
-              buttonVariants({
-                className: cn(
-                  "rounded-none px-6 font-mono uppercase tracking-wider bg-transparent hover:text-black",
-                ),
-              }),
-            )}
+            className="inline-flex items-center justify-center px-6 py-2.5 font-mono text-sm uppercase tracking-wider border transition-colors"
             style={{
               borderColor: terminalPalette.primary,
               color: terminalPalette.primary,
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = terminalPalette.primary;
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "transparent";
+              fontFamily: "var(--font-terminal), monospace",
+              borderRadius: 0,
             }}
           >
             ./view_projects
           </Link>
           <Link
             href="#contact"
-            className={cn(
-              buttonVariants({
-                variant: "outline",
-                className: "rounded-none px-6 font-mono uppercase tracking-wider bg-transparent hover:bg-transparent",
-              }),
-            )}
+            className="inline-flex items-center justify-center px-6 py-2.5 font-mono text-sm uppercase tracking-wider border transition-colors"
             style={{
               borderColor: terminalPalette.glowBorder,
               color: terminalPalette.secondary,
+              fontFamily: "var(--font-terminal), monospace",
+              borderRadius: 0,
             }}
           >
             ./get_in_touch
@@ -277,29 +271,22 @@ function HeroNewspaper() {
         >
           <Link
             href="#projects"
-            className={cn(
-              buttonVariants({
-                className: "rounded-none px-8 font-serif text-xs uppercase tracking-[0.15em] bg-transparent text-[#1a1208] hover:text-[#f7f2ea] transition-colors",
-              }),
-            )}
+            className="inline-flex items-center justify-center px-8 py-2.5 text-xs uppercase tracking-[0.15em] border-2 transition-colors font-serif"
             style={{
               borderColor: newspaperPalette.primary,
-              borderWidth: 2,
+              color: newspaperPalette.primary,
+              borderRadius: 0,
             }}
           >
             View Projects
           </Link>
           <Link
             href="#contact"
-            className={cn(
-              buttonVariants({
-                variant: "outline",
-                className: "rounded-none px-8 font-serif text-xs uppercase tracking-[0.15em] bg-transparent transition-colors",
-              }),
-            )}
+            className="inline-flex items-center justify-center px-8 py-2.5 text-xs uppercase tracking-[0.15em] border-2 transition-colors font-serif"
             style={{
               borderColor: newspaperPalette.accent,
               color: newspaperPalette.secondary,
+              borderRadius: 0,
             }}
           >
             Get In Touch
@@ -392,17 +379,20 @@ function HeroCasino() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 3.5 }}
         >
-          <Link href="#projects" className={cn(buttonVariants({ className: "casino-btn px-10 py-3" }))}>
+          <Link
+            href="#projects"
+            className="casino-btn inline-flex items-center justify-center px-8 py-2.5 text-sm font-serif uppercase tracking-wider"
+          >
             ♠ View Projects
           </Link>
           <Link
             href="#contact"
-            className={cn(
-              buttonVariants({
-                variant: "outline",
-                className: "rounded-lg px-10 py-3 text-sm font-serif tracking-wider bg-transparent transition-all",
-              }),
-            )}
+            className="inline-flex items-center justify-center px-8 py-2.5 text-sm font-serif uppercase tracking-wider border transition-colors"
+            style={{
+              borderColor: "rgba(212, 175, 55, 0.3)",
+              color: casinoPalette.gold,
+              borderRadius: "0.375rem",
+            }}
           >
             ♦ Get In Touch
           </Link>

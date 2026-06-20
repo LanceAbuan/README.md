@@ -2,9 +2,6 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
 import { ExternalLink, GitFork, ArrowUpRight, Terminal } from "lucide-react";
 import Link from "next/link";
 import { useSectionReveal, SectionScrollArrow } from "@/components/section-reveal";
@@ -31,25 +28,25 @@ export function Projects() {
   const isCasino = theme === "casino";
 
   return (
-    <section id="projects" className="py-24 px-6" ref={ref}>
-      <div className="max-w-5xl mx-auto">
+    <section id="projects" className="py-20 sm:py-32 px-4 sm:px-6" ref={ref}>
+      <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: REVEAL_DURATION }}
           className={cn(
-            isNewspaper ? "text-center mb-12" : "flex items-end justify-between mb-12",
+            isNewspaper ? "text-center mb-10 sm:mb-12" : "flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 sm:mb-12",
           )}
         >
           <div>
             {isCasino ? (
               <>
                 <p className="casino-label mb-2">THE HAND</p>
-                <h2 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif text-white tracking-tight">
                   Selected Plays
                 </h2>
                 <div className="w-16 h-px bg-gradient-to-r from-[#d4af37] to-transparent mt-3" />
-                <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg">
+                <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg text-sm sm:text-base">
                   Selected plays from the table.
                 </p>
               </>
@@ -63,7 +60,7 @@ export function Projects() {
                   projects
                 </p>
                 <h2
-                  className="text-2xl sm:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
+                  className="text-xl sm:text-2xl md:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
                   style={{ color: terminalPalette.primary }}
                 >
                   Projects.List
@@ -80,7 +77,7 @@ export function Projects() {
                 </p>
                 <hr className="newspaper-triple-rule mx-auto max-w-sm mt-2" />
                 <h2
-                  className="text-3xl sm:text-4xl font-bold font-serif mt-4 newspaper-letterpress"
+                  className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif mt-4 newspaper-letterpress"
                   style={{ color: newspaperPalette.primary }}
                 >
                   Selected Works
@@ -91,14 +88,12 @@ export function Projects() {
                 </p>
               </>
             ) : (
-              <>
-                <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
-                  Projects
-                </p>
-                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              <div>
+                <p className="section-label mb-3 font-mono">Projects</p>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight font-mono">
                   Things I&apos;ve built
                 </h2>
-              </>
+              </div>
             )}
           </div>
           {!isNewspaper && (
@@ -107,35 +102,28 @@ export function Projects() {
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
-                buttonVariants({
-                  variant: "ghost",
-                  className: "hidden sm:flex items-center gap-1 text-sm",
-                }),
-                isTerminal &&
-                  "rounded-none font-mono hover:bg-[#0d1a0d]",
-                isNewspaper &&
-                  "rounded-none font-serif hover:bg-[#ddd2be]",
-                isCasino &&
-                  "rounded-md font-serif border border-[#d4af37]/20 hover:bg-[#8b1a1a]/60",
+                "hidden sm:flex items-center gap-1.5 text-sm font-medium transition-colors self-end",
+                isTerminal && "font-mono",
+                isNewspaper && "font-serif",
+                isCasino && "font-serif",
+                !isTerminal && !isNewspaper && !isCasino && "text-neutral-500 dark:text-[#A89888] hover:text-terracotta dark:hover:text-[#C45D3E]",
               )}
               style={
                 isTerminal
                   ? { color: terminalPalette.primary }
-                  : isNewspaper
-                    ? { color: "#5c2e0e" }
-                    : isCasino
-                      ? { color: "#d4af37" }
-                      : undefined
+                  : isCasino
+                    ? { color: "#d4af37" }
+                    : undefined
               }
             >
-              View all <ArrowUpRight className="h-3.5 w-3.5" />
+              View all <ArrowUpRight className="h-4 w-4" />
             </Link>
           )}
         </motion.div>
 
         <div
           className={cn(
-            "grid sm:grid-cols-2 lg:grid-cols-3 gap-4",
+            "grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4",
             isNewspaper && "lg:grid-cols-2",
           )}
           role="list"
@@ -158,7 +146,7 @@ export function Projects() {
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : {}}
             transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 6 }}
-            className="text-center mt-8"
+            className="text-center mt-6 sm:mt-8"
           >
             <Link
               href={githubProfileUrl}
@@ -180,7 +168,7 @@ export function Projects() {
 
         {isTerminal && (
           <motion.div
-            className="mt-12 animate-bounce flex justify-center cursor-pointer"
+            className="mt-10 sm:mt-12 animate-bounce flex justify-center cursor-pointer"
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: SCROLL_ARROW_DURATION, delay: SCROLL_ARROW_DELAY }}
@@ -256,33 +244,33 @@ function ProjectCard({
         transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
         role="listitem"
       >
-        <div className="casino-card h-full flex flex-col gap-3 p-5">
+        <div className="casino-card h-full flex flex-col gap-2 sm:gap-3 p-4 sm:p-5">
           <div className="flex items-start justify-between">
-            <h3 className="text-base font-bold font-serif text-white">
+            <h3 className="text-sm sm:text-base font-bold font-serif text-white">
               {project.name}
             </h3>
             <div className="flex items-center gap-1">
               {project.demo && (
                 <Link
                   href={project.demo}
-                  className="h-7 w-7 flex items-center justify-center rounded-md transition-colors"
+                  className="h-6 w-6 sm:h-7 sm:w-7 flex items-center justify-center rounded-md transition-colors"
                   style={{ color: "#d4af37" }}
                   aria-label={LIVE_DEMO_LABEL}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <ExternalLink className="h-3.5 w-3.5" />
+                  <ExternalLink className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 </Link>
               )}
               <Link
                 href={project.github}
-                className="h-7 w-7 flex items-center justify-center rounded-md transition-colors"
+                className="h-6 w-6 sm:h-7 sm:w-7 flex items-center justify-center rounded-md transition-colors"
                 style={{ color: "#d4af37" }}
                 aria-label={GITHUB_REPO_LABEL}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <GitFork className="h-3.5 w-3.5" />
+                <GitFork className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
               </Link>
             </div>
           </div>
@@ -292,7 +280,7 @@ function ProjectCard({
             </span>
           )}
           <p
-            className="text-sm font-serif leading-relaxed flex-1"
+            className="text-xs sm:text-sm font-serif leading-relaxed flex-1"
             style={{ color: "#c8bfb2" }}
           >
             {project.description}
@@ -301,7 +289,7 @@ function ProjectCard({
             {project.tags.map((tag, i) => (
               <span
                 key={i}
-                className="casino-chip text-[10px] px-2 py-0.5 rounded-full font-serif"
+                className="casino-chip text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full font-serif"
               >
                 {tag}
               </span>
@@ -325,7 +313,7 @@ function ProjectCard({
         transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
         role="listitem"
       >
-        <div className="terminal-card p-4 h-full flex flex-col gap-3">
+        <div className="terminal-card p-3 sm:p-4 h-full flex flex-col gap-2 sm:gap-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
               <Terminal
@@ -333,7 +321,7 @@ function ProjectCard({
                 style={{ color: terminalPalette.primary }}
               />
               <h3
-                className="text-sm font-bold font-mono terminal-glow"
+                className="text-xs sm:text-sm font-bold font-mono terminal-glow"
                 style={{ color: terminalPalette.primary }}
               >
                 {project.name}
@@ -343,24 +331,24 @@ function ProjectCard({
               {project.demo && (
                 <Link
                   href={project.demo}
-                  className="h-7 w-7 flex items-center justify-center hover:bg-[#0d1a0d]"
+                  className="h-6 w-6 sm:h-7 sm:w-7 flex items-center justify-center hover:bg-[#0d1a0d]"
                   style={{ color: terminalPalette.primary }}
                   aria-label={LIVE_DEMO_LABEL}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <ExternalLink className="h-3.5 w-3.5" />
+                  <ExternalLink className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 </Link>
               )}
               <Link
                 href={project.github}
-                className="h-7 w-7 flex items-center justify-center hover:bg-[#0d1a0d]"
+                className="h-6 w-6 sm:h-7 sm:w-7 flex items-center justify-center hover:bg-[#0d1a0d]"
                 style={{ color: terminalPalette.primary }}
                 aria-label={GITHUB_REPO_LABEL}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <GitFork className="h-3.5 w-3.5" />
+                <GitFork className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
               </Link>
             </div>
           </div>
@@ -370,7 +358,7 @@ function ProjectCard({
             </span>
           )}
           <p
-            className="text-xs font-mono leading-relaxed flex-1"
+            className="text-[11px] sm:text-xs font-mono leading-relaxed flex-1"
             style={{ color: terminalPalette.secondary }}
           >
             {project.description}
@@ -379,7 +367,7 @@ function ProjectCard({
             {project.tags.map((tag, i) => (
               <span
                 key={i}
-                className="terminal-badge text-xs px-2 py-0.5 font-mono"
+                className="terminal-badge text-[10px] sm:text-xs px-2 py-0.5 font-mono"
               >
                 {tag}
               </span>
@@ -403,9 +391,9 @@ function ProjectCard({
         transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
         role="listitem"
       >
-        <article className="newspaper-card h-full flex flex-col gap-3">
+        <article className="newspaper-card h-full flex flex-col gap-2 sm:gap-3">
           <h3
-            className="text-lg font-bold font-serif newspaper-letterpress break-words leading-tight"
+            className="text-base sm:text-lg font-bold font-serif newspaper-letterpress break-words leading-tight"
             style={{ color: newspaperPalette.primary }}
           >
             {project.name}
@@ -423,24 +411,24 @@ function ProjectCard({
               {project.demo && (
                 <Link
                   href={project.demo}
-                  className="h-7 w-7 flex items-center justify-center font-serif"
+                  className="h-6 w-6 sm:h-7 sm:w-7 flex items-center justify-center font-serif"
                   style={{ color: "#5c2e0e" }}
                   aria-label={LIVE_DEMO_LABEL}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <ExternalLink className="h-3.5 w-3.5" />
+                  <ExternalLink className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 </Link>
               )}
               <Link
                 href={project.github}
-                className="h-7 w-7 flex items-center justify-center font-serif"
+                className="h-6 w-6 sm:h-7 sm:w-7 flex items-center justify-center font-serif"
                 style={{ color: "#5c2e0e" }}
                 aria-label={GITHUB_REPO_LABEL}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <GitFork className="h-3.5 w-3.5" />
+                <GitFork className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
               </Link>
             </div>
           </div>
@@ -448,13 +436,13 @@ function ProjectCard({
           <hr className="newspaper-rule" />
 
           <p
-            className="text-sm font-serif leading-relaxed flex-1 break-words overflow-hidden"
+            className="text-xs sm:text-sm font-serif leading-relaxed flex-1 break-words overflow-hidden"
             style={{ color: newspaperPalette.body }}
           >
             {project.description}
           </p>
 
-          <div className="newspaper-caption flex flex-wrap gap-2">
+          <div className="newspaper-caption flex flex-wrap gap-1.5 sm:gap-2">
             {project.tags.map((tag, i) => (
               <span key={i} className="newspaper-badge px-2 py-0.5">
                 {tag}
@@ -478,65 +466,60 @@ function ProjectCard({
       transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
       role="listitem"
     >
-      <Card className="group h-full bg-white/50 dark:bg-neutral-900/50 border-neutral-200/50 dark:border-neutral-700/50 hover:border-neutral-300 dark:hover:border-neutral-600 transition-all duration-300 hover:shadow-lg hover:shadow-neutral-200/50 dark:hover:shadow-neutral-800/50">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between mb-2">
-            <CardTitle className="text-base font-semibold flex items-center gap-2">
-              {project.name}
+      <div className={cn(
+        "group h-full flex flex-col earth-card earth-card-hover overflow-hidden",
+        project.featured && "shadow-lg shadow-[#C45D3E]/10",
+      )}>
+        {/* Terracotta accent strip */}
+        <div className="earth-accent-top w-full" />
+
+        <div className="p-4 sm:p-6 flex flex-col flex-1">
+          <div className="flex items-start justify-between mb-2 sm:mb-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="text-sm sm:text-base font-semibold text-foreground font-mono">
+                {project.name}
+              </h3>
               {project.featured && (
-                <Badge
-                  variant="secondary"
-                  className="text-[10px] px-1.5 py-0 font-normal"
-                >
+                <span className="earth-badge text-[9px] sm:text-[10px]">
                   Featured
-                </Badge>
+                </span>
               )}
-            </CardTitle>
+            </div>
             <div className="flex items-center gap-1">
               {project.demo && (
                 <Link
                   href={project.demo}
-                  className={buttonVariants({
-                    variant: "ghost",
-                    size: "icon",
-                    className: "h-7 w-7",
-                  })}
+                  className="h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center rounded-lg bg-neutral-100 dark:bg-[#242019] text-neutral-500 dark:text-[#A89888] hover:bg-neutral-200 dark:hover:bg-[#2A231C] hover:text-terracotta dark:hover:text-[#C45D3E] transition-all"
                   aria-label={LIVE_DEMO_LABEL}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <ExternalLink className="h-3.5 w-3.5" />
+                  <ExternalLink className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </Link>
               )}
               <Link
                 href={project.github}
-                className={buttonVariants({
-                  variant: "ghost",
-                  size: "icon",
-                  className: "h-7 w-7",
-                })}
+                className="h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center rounded-lg bg-neutral-100 dark:bg-[#242019] text-neutral-500 dark:text-[#A89888] hover:bg-neutral-200 dark:hover:bg-[#2A231C] hover:text-terracotta dark:hover:text-[#C45D3E] transition-all"
                 aria-label={GITHUB_REPO_LABEL}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <GitFork className="h-3.5 w-3.5" />
+                <GitFork className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Link>
             </div>
           </div>
-          <CardDescription className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
+          <p className="text-xs sm:text-sm text-neutral-600 dark:text-[#A89888] leading-relaxed flex-1 mb-3 sm:mb-4">
             {project.description}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </p>
           <div className="flex flex-wrap gap-1.5">
             {project.tags.map((tag, i) => (
-              <Badge key={i} variant="secondary" className="text-xs font-normal">
+              <span key={i} className="earth-badge text-[10px] sm:text-xs">
                 {tag}
-              </Badge>
+              </span>
             ))}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </motion.div>
   );
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { MantineProvider, Tooltip } from "@mantine/core";
+import "@mantine/core/styles.css";
 
 /**
  * Available theme names.
@@ -25,7 +26,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       enableColorScheme
       themes={THEMES}
     >
-      <TooltipProvider>{children}</TooltipProvider>
+      <MantineProvider defaultColorScheme="light">
+        <Tooltip.Group>{children}</Tooltip.Group>
+      </MantineProvider>
     </NextThemesProvider>
   );
 }

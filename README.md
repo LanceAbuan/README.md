@@ -1,15 +1,16 @@
 # Lance Abuan — Portfolio
 
-Personal portfolio and blog built with **Next.js 16**, **shadcn/ui**, **Tailwind CSS 4**, and **Framer Motion**.
+Personal portfolio and blog built with **Next.js 16**, **Mantine**, **Tailwind CSS 4**, and **Framer Motion**.
 
 ## Stack
 
 - **Framework:** Next.js 16 (App Router)
-- **Styling:** Tailwind CSS 4 + shadcn/ui
+- **UI Components:** Mantine
+- **Styling:** Tailwind CSS 4
 - **Animations:** Framer Motion
 - **Blog:** MDX with `next-mdx-remote` + `gray-matter`
 - **Icons:** Lucide React
-- **Themes:** next-themes (system dark/light)
+- **Themes:** next-themes (7 themes: light, dark, terminal, newspaper, synthwave, casino, custom)
 
 ## Getting Started
 
@@ -34,11 +35,10 @@ src/
 │       └── [slug]/page.tsx # Dynamic blog post
 ├── components/
 │   ├── sections/          # Portfolio sections (Hero, About, etc.)
-│   ├── ui/                # shadcn/ui components
 │   ├── navbar.tsx
 │   ├── footer.tsx
 │   ├── background.tsx     # Animated particle canvas
-│   └── providers.tsx      # Theme + tooltip providers
+│   └── providers.tsx      # Theme + Mantine providers
 ├── lib/
 │   ├── blog.ts            # MDX blog utilities
 │   └── utils.ts

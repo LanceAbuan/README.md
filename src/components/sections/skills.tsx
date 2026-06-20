@@ -24,22 +24,22 @@ export function Skills() {
   const isCasino = theme === "casino";
 
   return (
-    <section id="skills" className="py-24 px-6" ref={ref}>
+    <section id="skills" className="py-20 sm:py-32 px-4 sm:px-6" ref={ref}>
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: REVEAL_DURATION }}
-          className={cn(isNewspaper ? "text-center mb-12" : "mb-12")}
+          className={cn(isNewspaper ? "text-center mb-10 sm:mb-12" : "mb-10 sm:mb-12")}
         >
           {isCasino ? (
-            <div className="text-center mb-12">
+            <div className="text-center mb-10 sm:mb-12">
               <p className="casino-label mb-2">ARSENAL</p>
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif text-white tracking-tight">
                 Tools & Techniques
               </h2>
               <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto mt-4" />
-              <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg mx-auto">
+              <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg mx-auto text-sm sm:text-base">
                 The skills that keep the edge sharp.
               </p>
             </div>
@@ -53,7 +53,7 @@ export function Skills() {
                 skills
               </p>
               <h2
-                className="text-2xl sm:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
+                className="text-xl sm:text-2xl md:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
                 style={{ color: terminalPalette.primary }}
               >
                 Stack.List
@@ -69,7 +69,10 @@ export function Skills() {
                 Expertise
               </p>
               <hr className="newspaper-triple-rule mx-auto max-w-sm mt-2" />
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif mt-4 newspaper-letterpress" style={{ color: newspaperPalette.primary }}>
+              <h2
+                className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif mt-4 newspaper-letterpress"
+                style={{ color: newspaperPalette.primary }}
+              >
                 Technical Proficiency
               </h2>
               <p className="newspaper-deck max-w-lg mx-auto mt-3">
@@ -77,23 +80,16 @@ export function Skills() {
               </p>
             </div>
           ) : (
-            <>
-              <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
-                Skills
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+            <div>
+              <p className="section-label mb-3 font-mono">Skills</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight font-mono">
                 What I work with
               </h2>
-            </>
+            </div>
           )}
         </motion.div>
 
-        <div
-          className={cn(
-            "grid sm:grid-cols-2 gap-6",
-            isNewspaper && "grid-cols-1 sm:grid-cols-2",
-          )}
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {skillCategories.map((cat, ci) => (
             <SkillCategoryCard
               key={cat.name}
@@ -111,7 +107,7 @@ export function Skills() {
 
         {isTerminal && (
           <motion.div
-            className="mt-12 animate-bounce flex justify-center cursor-pointer"
+            className="mt-10 sm:mt-12 animate-bounce flex justify-center cursor-pointer"
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: SCROLL_ARROW_DURATION, delay: SCROLL_ARROW_DELAY }}
@@ -174,13 +170,13 @@ function SkillCategoryCard({
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: REVEAL_Y_OFFSET }}
         transition={{ duration: 0.5, delay: transitionDelay }}
       >
-        <div className="casino-card p-5 space-y-3">
-          <h3 className="text-xs font-serif uppercase tracking-[0.15em] border-b pb-2" style={{ color: casinoPalette.gold, borderColor: `${casinoPalette.gold}15` }}>
+        <div className="casino-card p-4 sm:p-5 space-y-2 sm:space-y-3">
+          <h3 className="text-[10px] sm:text-xs font-serif uppercase tracking-[0.15em] border-b pb-2" style={{ color: casinoPalette.gold, borderColor: `${casinoPalette.gold}15` }}>
             {category.name}
           </h3>
           <div className="flex flex-wrap gap-1.5">
             {category.items.map((skill, i) => (
-              <span key={i} className="casino-chip text-[10px] px-2 py-0.5 rounded-full font-serif">
+              <span key={i} className="casino-chip text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full font-serif">
                 {skill}
               </span>
             ))}
@@ -197,16 +193,16 @@ function SkillCategoryCard({
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: REVEAL_Y_OFFSET }}
         transition={{ duration: 0.5, delay: transitionDelay }}
       >
-        <div className="terminal-card p-4 space-y-3">
+        <div className="terminal-card p-3 sm:p-4 space-y-2 sm:space-y-3">
           <h3
-            className="text-xs font-mono uppercase tracking-wider border-b pb-2"
+            className="text-[10px] sm:text-xs font-mono uppercase tracking-wider border-b pb-2"
             style={{ color: terminalPalette.secondary, borderColor: terminalPalette.glowBorder }}
           >
             {category.name}
           </h3>
           <div className="flex flex-wrap gap-1.5">
             {category.items.map((skill, i) => (
-              <span key={i} className="terminal-badge text-xs px-2 py-0.5 font-mono">
+              <span key={i} className="terminal-badge text-[10px] sm:text-xs px-2 py-0.5 font-mono">
                 {skill}
               </span>
             ))}
@@ -223,20 +219,20 @@ function SkillCategoryCard({
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: REVEAL_Y_OFFSET }}
         transition={{ duration: 0.5, delay: transitionDelay }}
       >
-        <div className="newspaper-card space-y-3">
+        <div className="newspaper-card space-y-2 sm:space-y-3">
           <h3
-            className="text-xs font-bold font-serif uppercase tracking-[0.15em]"
+            className="text-[10px] sm:text-xs font-bold font-serif uppercase tracking-[0.15em]"
             style={{ color: newspaperPalette.secondary }}
           >
             {category.name}
           </h3>
           <hr className="newspaper-rule" />
-          <div className="flex flex-wrap font-serif text-sm leading-relaxed" style={{ color: newspaperPalette.body }}>
+          <div className="flex flex-wrap font-serif text-xs sm:text-sm leading-relaxed" style={{ color: newspaperPalette.body }}>
             {category.items.map((skill, i) => (
               <span key={i} className="whitespace-nowrap">
                 {skill}
                 {i < category.items.length - 1 && (
-                  <span className="mx-1.5" style={{ color: newspaperPalette.accent }}>·</span>
+                  <span className="mx-1 sm:mx-1.5" style={{ color: newspaperPalette.accent }}>·</span>
                 )}
               </span>
             ))}
@@ -251,20 +247,19 @@ function SkillCategoryCard({
       initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: REVEAL_Y_OFFSET }}
       transition={{ duration: 0.5, delay: transitionDelay }}
-      className="p-5 rounded-2xl border border-neutral-200/50 dark:border-neutral-700/50 bg-white/30 dark:bg-neutral-900/30"
     >
-      <h3 className="text-sm font-semibold mb-3 text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-        {category.name}
-      </h3>
-      <div className="flex flex-wrap gap-2">
-        {category.items.map((skill, i) => (
-          <span
-            key={i}
-            className="inline-block px-3 py-1.5 rounded-lg text-sm bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
-          >
-            {skill}
-          </span>
-        ))}
+      <div className="earth-card earth-card-hover p-4 sm:p-5 h-full">
+        <div className="earth-accent-top w-full rounded-full mb-3 sm:mb-4" />
+        <h3 className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider terracotta-text mb-3 sm:mb-4 font-mono">
+          {category.name}
+        </h3>
+        <div className="flex flex-wrap gap-1.5">
+          {category.items.map((skill, i) => (
+            <span key={i} className="earth-badge text-[10px] sm:text-xs">
+              {skill}
+            </span>
+          ))}
+        </div>
       </div>
     </motion.div>
   );

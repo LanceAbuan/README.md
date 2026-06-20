@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
+import NextDynamic from "next/dynamic";
 import Link from "next/link";
-import { AnimatedBackground } from "@/components/layout/background";
-import { buttonVariants } from "@/components/ui/button";
+import { Button } from "@mantine/core";
+
+// Defer animated background — renders after initial paint
+const AnimatedBackground = NextDynamic(
+  () => import("@/components/layout/background").then(m => ({ default: m.AnimatedBackground })),
+);
 
 export const metadata: Metadata = {
   title: "404 — Page Not Found",
@@ -20,8 +25,10 @@ export default function NotFound() {
           <p className="text-neutral-500 dark:text-neutral-400 mb-8">
             The page you&apos;re looking for doesn&apos;t exist or has been moved.
           </p>
-          <Link href="/" className={buttonVariants({ className: "rounded-full px-6" })}>
-            Back Home
+          <Link href="/" className="inline-block">
+            <Button variant="filled" radius="xl" px="lg">
+              Back Home
+            </Button>
           </Link>
         </div>
       </div>

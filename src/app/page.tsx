@@ -1,11 +1,28 @@
+import NextDynamic from "next/dynamic";
 import Script from "next/script";
-import { AnimatedBackground } from "@/components/layout/background";
 import { Hero } from "@/components/sections/hero";
-import { About } from "@/components/sections/about";
-import { Experience } from "@/components/sections/experience";
-import { Projects } from "@/components/sections/projects";
-import { Skills } from "@/components/sections/skills";
-import { Contact } from "@/components/sections/contact";
+
+// Defer animated canvas background — renders after initial paint
+// to improve LCP and avoid jank during first meaningful paint.
+const AnimatedBackground = NextDynamic(
+  () => import("@/components/layout/background").then(m => ({ default: m.AnimatedBackground })),
+);
+
+const About = NextDynamic(
+  () => import("@/components/sections/about").then(m => ({ default: m.About })),
+);
+const Experience = NextDynamic(
+  () => import("@/components/sections/experience").then(m => ({ default: m.Experience })),
+);
+const Projects = NextDynamic(
+  () => import("@/components/sections/projects").then(m => ({ default: m.Projects })),
+);
+const Skills = NextDynamic(
+  () => import("@/components/sections/skills").then(m => ({ default: m.Skills })),
+);
+const Contact = NextDynamic(
+  () => import("@/components/sections/contact").then(m => ({ default: m.Contact })),
+);
 
 // Force static generation — this page has no dynamic data
 export const dynamic = "force-static";
@@ -62,7 +79,6 @@ export default function Home() {
       <Projects />
       <Skills />
       <Contact />
-
     </>
   );
 }

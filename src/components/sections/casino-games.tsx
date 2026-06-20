@@ -24,7 +24,7 @@ const VP_SUITS = ["♠", "♥", "♦", "♣"];
 const VP_RANKS = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 
 /* ─── Sound FX (Web Audio, no files needed) ─── */
-const audioCtx = typeof window !== "undefined" ? new (window.AudioContext || (window as any).webkitAudioContext)() : null;
+const audioCtx = typeof window !== "undefined" ? new (window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext)() : null;
 
 function playTone(freq: number, dur: number, type: OscillatorType = "sine", vol = 0.12) {
   if (!audioCtx) return;
@@ -129,24 +129,25 @@ function evaluateHand(hand: Card[]): { rank: string; mult: number } {
 /* ─── Enhanced Confetti Burst (30+ particles, varied sizes/colors) ─── */
 function ConfettiBurst({ active, intensity = 1 }: { active: boolean; intensity?: number }) {
   if (!active) return null;
-  const count = Math.floor(50 + Math.random() * 30) * intensity;
+  const count = Math.floor(50 + 5 * 30) * intensity;
   const colors = ["#d4af37", "#f5f0e8", "#8b1a1a", "#fff", "#ff6b6b", "#ffd93d", "#6bcb77", "#4d96ff", "#ff6fff", "#ffa500"];
   const particles = Array.from({ length: count }, (_, i) => {
-    const angle = (i / count) * 360 + Math.random() * 30;
-    const dist = 80 + Math.random() * 140;
+    const angle = (i / count) * 360 + ((i * 7) % 30);
+    const dist = 80 + ((i * 11) % 140);
     const dx = Math.cos((angle * Math.PI) / 180) * dist;
     const dy = Math.sin((angle * Math.PI) / 180) * dist;
     const color = colors[i % colors.length];
-    const size = 4 + Math.random() * 10;
-    const shape = Math.random() > 0.5 ? "rounded-full" : "rounded-sm";
+    const size = 4 + ((i * 3) % 10);
+    const shape = i % 2 === 0 ? "rounded-full" : "rounded-sm";
+    const aspect = 0.6 + ((i * 5) % 40) / 100;
     return (
       <motion.div
         key={i}
         initial={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: 0 }}
-        animate={{ opacity: 0, scale: 0, x: dx, y: dy, rotate: Math.random() * 720 - 360 }}
-        transition={{ duration: 1 + Math.random() * 0.8, ease: "easeOut", delay: Math.random() * 0.15 }}
+        animate={{ opacity: 0, scale: 0, x: dx, y: dy, rotate: ((i * 13) % 720) - 360 }}
+        transition={{ duration: 1 + ((i * 7) % 80) / 100, ease: "easeOut", delay: ((i * 3) % 15) / 100 }}
         className={`absolute left-1/2 top-1/2 ${shape}`}
-        style={{ backgroundColor: color, width: size, height: size * (0.6 + Math.random() * 0.4) }}
+        style={{ backgroundColor: color, width: size, height: size * aspect }}
       />
     );
   });
@@ -188,7 +189,9 @@ export function CollectibleChips() {
     try {
       const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
       const newBal = (stored.balance || 0) + value;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ balance: newBal, lastVisit: Date.now() }));
+      // eslint-disable-next-line react-hooks/purity
+      const now = Date.now();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ balance: newBal, lastVisit: now }));
       // Notify any listeners
       window.dispatchEvent(new CustomEvent("casinoChipCollected", { detail: value }));
     } catch {}
@@ -262,13 +265,16 @@ function NeonPulse({ active, children }: { active: boolean; children: React.Reac
 /* ─── Particle Trail ─── */
 function ParticleTrail({ active }: { active: boolean }) {
   if (!active) return null;
+  const colors = ["#d4af37", "#f5f0e8", "#8b1a1a", "#ff6b6b", "#ffd93d"];
   const particles = Array.from({ length: 15 }, (_, i) => ({
     id: i,
-    x: Math.random() * 100,
-    size: 2 + Math.random() * 4,
-    dur: 1.5 + Math.random() * 2,
-    delay: Math.random() * 1,
-    color: pick(["#d4af37", "#f5f0e8", "#8b1a1a", "#ff6b6b", "#ffd93d"]),
+    x: ((i * 17 + 5) % 100),
+    size: 2 + ((i * 7 + 3) % 5),
+    dur: 1.5 + ((i * 11 + 2) % 20) / 10,
+    delay: ((i * 3 + 7) % 10) / 10,
+    color: colors[i % colors.length],
+    driftX: ((i * 9 + 4) % 40) - 20,
+    driftY: 120 + ((i * 6 + 1) % 80),
   }));
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -276,7 +282,7 @@ function ParticleTrail({ active }: { active: boolean }) {
         <motion.div
           key={p.id}
           initial={{ opacity: 0.8, y: 0 }}
-          animate={{ opacity: 0, y: -120 - Math.random() * 80, x: (Math.random() - 0.5) * 40 }}
+          animate={{ opacity: 0, y: -p.driftY, x: p.driftX }}
           transition={{ duration: p.dur, delay: p.delay, repeat: Infinity, ease: "easeOut" }}
           className="absolute rounded-full"
           style={{ left: `${p.x}%`, bottom: "20%", width: p.size, height: p.size, backgroundColor: p.color }}
@@ -454,7 +460,7 @@ function ResultBanner({ result }: { result: string | null }) {
 /* ─── Slot Machine (3×3) ─── */
 function SlotMachine({ bet, setBet, balance, setBalance }: { bet: number; setBet: (v: number) => void; balance: number; setBalance: (fn: (b: number) => number) => void }) {
   type Grid = string[][];
-  const blankGrid = (): Grid => Array.from({ length: 3 }, () => ["", "", ""]);
+  const blankGrid = (): Grid => Array.from({ length: 3 }, () => [pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS)]);
   const [grid, setGrid] = useState<Grid>(blankGrid);
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -533,11 +539,6 @@ function SlotMachine({ bet, setBet, balance, setBalance }: { bet: number; setBet
       }
     }, 50);
   }, [spinning, bet, balance, setBalance]);
-
-  useEffect(() => {
-    if (grid[0][0] === "") setGrid(Array.from({ length: 3 }, () => [pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS), pick(SLOT_SYMBOLS)]));
-    // eslint-disable-next-line
-  }, []);
 
   return (
     <div className="space-y-4">
@@ -1084,7 +1085,7 @@ function VideoPoker({ bet, setBet, balance, setBalance }: { bet: number; setBet:
     setAnimating(true);
     animatingRef.current = true;
     const deck = [...deckRef.current];
-    let currentHand = [...hand];
+    const currentHand = [...hand];
 
     // Pre-compute which indices need replacement
     const toReplace = held.reduce<number[]>((acc, h, i) => {
@@ -1293,6 +1294,51 @@ function VideoPoker({ bet, setBet, balance, setBalance }: { bet: number; setBet:
   );
 }
 
+/* ─── Dice Dot Pattern & Face Component ─── */
+const DOT_POSITIONS: Record<number, { top?: string; left?: string; bottom?: string; right?: string }[]> = {
+  1: [{ top: "50%", left: "50%", bottom: "auto", right: "auto" }],
+  2: [{ top: "20%", left: "70%" }, { top: "70%", left: "20%" }],
+  3: [{ top: "20%", left: "70%" }, { top: "50%", left: "50%" }, { top: "70%", left: "20%" }],
+  4: [{ top: "20%", left: "20%" }, { top: "20%", left: "70%" }, { top: "70%", left: "20%" }, { top: "70%", left: "70%" }],
+  5: [{ top: "20%", left: "20%" }, { top: "20%", left: "70%" }, { top: "50%", left: "50%" }, { top: "70%", left: "20%" }, { top: "70%", left: "70%" }],
+  6: [{ top: "20%", left: "20%" }, { top: "20%", left: "70%" }, { top: "50%", left: "20%" }, { top: "50%", left: "70%" }, { top: "70%", left: "20%" }, { top: "70%", left: "70%" }],
+};
+
+const FACE_ROTATIONS: Record<number, { x: number; y: number }> = {
+  1: { x: 0, y: 0 },
+  2: { x: 90, y: 0 },
+  3: { x: 0, y: -90 },
+  4: { x: 0, y: 90 },
+  5: { x: -90, y: 0 },
+  6: { x: 180, y: 0 },
+};
+
+function DiceFace({ value }: { value: number }) {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center" style={{ backfaceVisibility: "hidden" }}>
+      <div className="w-full h-full rounded-md bg-gradient-to-br from-[#faf5eb] to-[#e8dcc8] border border-[#d4af3720] p-1.5" style={{ boxShadow: "inset 0 1px 3px #00000020" }}>
+        <div className="relative w-full h-full">
+          {DOT_POSITIONS[value]?.map((pos, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full bg-[#2a1a1a]"
+              style={{
+                width: value === 1 ? "24%" : "18%",
+                height: value === 1 ? "24%" : "18%",
+                top: pos.top,
+                left: pos.left,
+                bottom: pos.bottom || "auto",
+                right: pos.right || "auto",
+                transform: "translate(-50%, -50%)",
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Dice / Craps ─── */
 function DiceGame({ bet, setBet, balance, setBalance }: { bet: number; setBet: (v: number) => void; balance: number; setBalance: (fn: (b: number) => number) => void }) {
   const [dice, setDice] = useState([1, 1]);
@@ -1330,8 +1376,8 @@ function DiceGame({ bet, setBet, balance, setBalance }: { bet: number; setBet: (
     const d2 = 1 + Math.floor(Math.random() * 6);
 
     // Animate with extra random spins, then land on the correct face
-    const target1 = faceRotations[d1];
-    const target2 = faceRotations[d2];
+    const target1 = FACE_ROTATIONS[d1];
+    const target2 = FACE_ROTATIONS[d2];
     const extraSpins = 3 + Math.floor(Math.random() * 3);
     const final1 = {
       x: target1.x + extraSpins * 360 + Math.floor(Math.random() * 2) * 360,
@@ -1392,53 +1438,6 @@ function DiceGame({ bet, setBet, balance, setBalance }: { bet: number; setBet: (
       }
     }, 1800);
   }, [rolling, prediction, bet, balance, setBalance, betOptions]);
-
-  // Dot pattern for a single face
-  const dotPositions: Record<number, { top?: string; left?: string; bottom?: string; right?: string }[]> = {
-    1: [{ top: "50%", left: "50%", bottom: "auto", right: "auto" }],
-    2: [{ top: "20%", left: "70%" }, { top: "70%", left: "20%" }],
-    3: [{ top: "20%", left: "70%" }, { top: "50%", left: "50%" }, { top: "70%", left: "20%" }],
-    4: [{ top: "20%", left: "20%" }, { top: "20%", left: "70%" }, { top: "70%", left: "20%" }, { top: "70%", left: "70%" }],
-    5: [{ top: "20%", left: "20%" }, { top: "20%", left: "70%" }, { top: "50%", left: "50%" }, { top: "70%", left: "20%" }, { top: "70%", left: "70%" }],
-    6: [{ top: "20%", left: "20%" }, { top: "20%", left: "70%" }, { top: "50%", left: "20%" }, { top: "50%", left: "70%" }, { top: "70%", left: "20%" }, { top: "70%", left: "70%" }],
-  };
-
-  function DiceFace({ value, size = 64 }: { value: number; size?: number }) {
-    return (
-      <div className="absolute inset-0 flex items-center justify-center" style={{ backfaceVisibility: "hidden" }}>
-        <div className="w-full h-full rounded-md bg-gradient-to-br from-[#faf5eb] to-[#e8dcc8] border border-[#d4af3720] p-1.5" style={{ boxShadow: "inset 0 1px 3px #00000020" }}>
-          <div className="relative w-full h-full">
-            {dotPositions[value]?.map((pos, i) => (
-              <div
-                key={i}
-                className="absolute rounded-full bg-[#2a1a1a]"
-                style={{
-                  width: value === 1 ? "24%" : "18%",
-                  height: value === 1 ? "24%" : "18%",
-                  top: pos.top,
-                  left: pos.left,
-                  bottom: pos.bottom || "auto",
-                  right: pos.right || "auto",
-                  transform: "translate(-50%, -50%)",
-                }}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Rotation to show a given face: { x, y } in degrees
-  // Face layout: +Y=front(1), -Y=back(6), +X=bottom(2), -X=top(5), +Z=right(3), -Z=left(4)
-  const faceRotations: Record<number, { x: number; y: number }> = {
-    1: { x: 0, y: 0 },
-    2: { x: 90, y: 0 },
-    3: { x: 0, y: -90 },
-    4: { x: 0, y: 90 },
-    5: { x: -90, y: 0 },
-    6: { x: 180, y: 0 },
-  };
 
   return (
     <div className="space-y-4">
@@ -1549,10 +1548,11 @@ function DiceGame({ bet, setBet, balance, setBalance }: { bet: number; setBet: (
 function LoungeParticles() {
   const particles = Array.from({ length: 12 }, (_, i) => ({
     id: i,
-    x: Math.random() * 100,
-    size: 1 + Math.random() * 2,
-    dur: 4 + Math.random() * 6,
-    delay: Math.random() * 4,
+    x: (((i * 7 + 3) * 13) % 100),
+    size: 1 + (((i * 3 + 1) * 7) % 3),
+    dur: 4 + (((i * 5 + 2) * 3) % 7),
+    delay: (((i * 11 + 4) * 2) % 5),
+    xDrift: ((i * 6 + 5) % 60) - 30,
   }));
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -1560,7 +1560,7 @@ function LoungeParticles() {
         <motion.div
           key={p.id}
           initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 0.15, 0], y: [-200, -200], x: (Math.random() - 0.5) * 60 }}
+          animate={{ opacity: [0, 0.15, 0], y: [-200, -200], x: p.xDrift }}
           transition={{ duration: p.dur, delay: p.delay, repeat: Infinity, ease: "linear" }}
           className="absolute rounded-full"
           style={{ left: `${p.x}%`, bottom: "-4px", width: p.size, height: p.size, backgroundColor: "#d4af37" }}

@@ -1,11 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import { useState } from "react";
 import { Send, CheckCircle, AlertCircle } from "lucide-react";
 import { getIcon } from "@/lib/icons";
 import { useSectionReveal } from "@/components/section-reveal";
@@ -69,13 +65,13 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="py-24 px-6" ref={ref}>
+    <section id="contact" className="py-20 sm:py-32 px-4 sm:px-6" ref={ref}>
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: REVEAL_DURATION }}
-          className="mb-12"
+          className="mb-10 sm:mb-12"
         >
           {isTerminal ? (
             <div>
@@ -87,13 +83,13 @@ export function Contact() {
                 contact
               </p>
               <h2
-                className="text-2xl sm:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
+                className="text-xl sm:text-2xl md:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
                 style={{ color: terminalPalette.primary }}
               >
                 Establish.Link
               </h2>
               <p
-                className="text-sm font-mono mt-4 max-w-lg"
+                className="text-xs sm:text-sm font-mono mt-4 max-w-lg"
                 style={{ color: terminalPalette.secondary }}
               >
                 Have a project in mind, want to collaborate, or just want to
@@ -104,12 +100,14 @@ export function Contact() {
           ) : isCasino ? (
             <div>
               <p className="casino-label mb-2">CONTACT</p>
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight mb-4">
+              <h2
+                className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif text-white tracking-tight mb-4"
+              >
                 Place Your Hand
               </h2>
               <div className="w-16 h-px bg-gradient-to-r from-[#d4af37] to-transparent mb-4" />
               <p
-                className="font-serif max-w-lg leading-relaxed"
+                className="font-serif max-w-lg leading-relaxed text-sm sm:text-base"
                 style={{ color: "#c8bfb2" }}
               >
                 Have a project in mind, want to collaborate, or just want to
@@ -127,13 +125,13 @@ export function Contact() {
               </p>
               <hr className="newspaper-rule" />
               <h2
-                className="text-3xl sm:text-4xl font-bold font-serif mt-4"
+                className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif mt-4"
                 style={{ color: newspaperPalette.primary }}
               >
                 Let&apos;s Connect
               </h2>
               <p
-                className="font-serif mt-4 max-w-lg leading-relaxed"
+                className="font-serif mt-4 max-w-lg leading-relaxed text-sm sm:text-base"
                 style={{ color: newspaperPalette.body }}
               >
                 Have a project in mind, want to collaborate, or just want to
@@ -141,24 +139,22 @@ export function Contact() {
               </p>
             </div>
           ) : (
-            <>
-              <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
-                Contact
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
+            <div>
+              <p className="section-label mb-3 font-mono">Contact</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight font-mono mb-4">
                 Let&apos;s connect
               </h2>
-              <p className="text-neutral-600 dark:text-neutral-400 max-w-lg leading-relaxed">
+              <p className="text-neutral-600 dark:text-[#A89888] max-w-lg leading-relaxed text-sm sm:text-base">
                 Have a project in mind, want to collaborate, or just want to
                 say hi? Drop me a message and I&apos;ll get back to you.
               </p>
-            </>
+            </div>
           )}
         </motion.div>
 
         <div
           className={cn(
-            "grid md:grid-cols-2 gap-8",
+            "grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8",
             isNewspaper && "md:grid-cols-1",
             isCasino && "md:grid-cols-1",
           )}
@@ -171,34 +167,33 @@ export function Contact() {
               duration: REVEAL_DURATION,
               delay: STAGGER_DELAY,
             }}
-            className="space-y-4"
+            className="space-y-3 sm:space-y-4"
           >
-            <div className="space-y-3">
-              <h3
-                className={cn(
-                  "text-sm font-semibold uppercase tracking-wider text-neutral-400",
-                  isTerminal && "font-mono",
-                  isCasino && "font-serif tracking-[0.2em]",
-                  isNewspaper && "font-serif tracking-[0.15em]",
-                )}
-                style={
-                  isTerminal
-                    ? { color: terminalPalette.secondary }
-                    : isCasino
-                      ? { color: "#d4af37" }
-                      : isNewspaper
-                        ? { color: newspaperPalette.muted }
-                        : undefined
-                }
-              >
-                {isTerminal
-                  ? "$ find --links"
+            <p
+              className={cn(
+                "text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-neutral-400",
+                isTerminal && "font-mono",
+                isCasino && "font-serif tracking-[0.2em]",
+                isNewspaper && "font-serif tracking-[0.15em]",
+              )}
+              style={
+                isTerminal
+                  ? { color: terminalPalette.secondary }
                   : isCasino
-                    ? "Connect"
+                    ? { color: "#d4af37" }
                     : isNewspaper
-                      ? "Find me on"
-                      : "Find me on"}
-              </h3>
+                      ? { color: newspaperPalette.muted }
+                      : undefined
+              }
+            >
+              {isTerminal
+                ? "$ find --links"
+                : isCasino
+                  ? "Connect"
+                  : "Find me on"}
+            </p>
+
+            <div className="space-y-2 sm:space-y-3">
               {contactLinks.map((link, i) => {
                 const Icon = getIcon(link.icon);
                 return (
@@ -208,7 +203,7 @@ export function Contact() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={cn(
-                      "flex items-center gap-3 p-3 rounded-xl border transition-colors group",
+                      "flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-xl transition-all group",
                       isTerminal &&
                         "terminal-card rounded-none",
                       isCasino &&
@@ -218,7 +213,7 @@ export function Contact() {
                       !isTerminal &&
                         !isCasino &&
                         !isNewspaper &&
-                        "border-neutral-200/50 dark:border-neutral-700/50 bg-white/30 dark:bg-neutral-900/30 hover:bg-white/60 dark:hover:bg-neutral-800/60",
+                        "earth-card earth-card-hover",
                     )}
                     style={
                       isTerminal
@@ -230,28 +225,38 @@ export function Contact() {
                             : undefined
                     }
                   >
-                    <Icon
+                    <div
                       className={cn(
-                        "h-5 w-5 transition-colors",
-                        isTerminal && "text-[#00ff41]",
-                        isCasino && "group-hover:text-white",
-                        isNewspaper && "group-hover:text-[#1a1208]",
-                        !isTerminal &&
-                          !isCasino &&
-                          !isNewspaper &&
-                          "text-neutral-400 group-hover:text-foreground",
+                        "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors",
+                        isTerminal && "bg-[#00ff41]/10",
+                        isCasino && "bg-[#d4af37]/10",
+                        isNewspaper && "bg-[#5c2e0e]/10",
+                        !isTerminal && !isCasino && !isNewspaper && "earth-icon-circle",
                       )}
-                      style={
-                        isCasino
-                          ? { color: "#d4af37" }
-                          : isNewspaper
-                            ? { color: "#5c2e0e" }
-                            : undefined
-                      }
-                    />
+                    >
+                      <Icon
+                        className={cn(
+                          "h-4 w-4 sm:h-5 sm:w-5 transition-colors",
+                          isTerminal && "text-[#00ff41]",
+                          isCasino && "group-hover:text-white",
+                          isNewspaper && "group-hover:text-[#1a1208]",
+                          !isTerminal &&
+                            !isCasino &&
+                            !isNewspaper &&
+                            "terracotta-text",
+                        )}
+                        style={
+                          isCasino
+                            ? { color: "#d4af37" }
+                            : isNewspaper
+                              ? { color: "#5c2e0e" }
+                              : undefined
+                        }
+                      />
+                    </div>
                     <span
                       className={cn(
-                        "text-sm font-medium",
+                        "text-xs sm:text-sm font-medium flex-1",
                         isTerminal && "font-mono",
                         isCasino && "font-serif",
                         isNewspaper && "font-serif",
@@ -261,7 +266,7 @@ export function Contact() {
                     </span>
                     <svg
                       className={cn(
-                        "h-3.5 w-3.5 ml-auto transition-colors",
+                        "h-3.5 w-3.5 sm:h-4 sm:w-4 transition-colors",
                         isTerminal &&
                           "group-hover:text-[#00ff41]",
                         isCasino && "group-hover:text-[#d4af37]",
@@ -270,7 +275,7 @@ export function Contact() {
                         !isTerminal &&
                           !isCasino &&
                           !isNewspaper &&
-                          "text-neutral-300 dark:text-neutral-600 group-hover:text-foreground",
+                          "text-neutral-300 dark:text-[#A89888] group-hover:text-terracotta dark:group-hover:text-[#C45D3E]",
                       )}
                       style={
                         isTerminal
@@ -296,42 +301,52 @@ export function Contact() {
                   </a>
                 );
               })}
-              <div className="pt-2">
-                <a
-                  href={`mailto:${contactEmail}`}
+
+              {/* Email link */}
+              <a
+                href={`mailto:${contactEmail}`}
+                className={cn(
+                  "flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-xl transition-all group",
+                  isTerminal &&
+                    "terminal-card rounded-none",
+                  isCasino &&
+                    "casino-card rounded-lg border-[#d4af37]/15 hover:bg-[#1c0c0c]/80",
+                  isNewspaper &&
+                    "newspaper-card rounded-none",
+                  !isTerminal &&
+                    !isCasino &&
+                    !isNewspaper &&
+                    "earth-card earth-card-hover",
+                )}
+                style={
+                  isTerminal
+                    ? { color: terminalPalette.primary }
+                    : isCasino
+                      ? { color: "#c8bfb2" }
+                      : isNewspaper
+                        ? { color: newspaperPalette.primary }
+                        : undefined
+                }
+              >
+                <div
                   className={cn(
-                    "flex items-center gap-3 p-3 rounded-xl border transition-colors group",
-                    isTerminal &&
-                      "terminal-card rounded-none",
-                    isCasino &&
-                      "casino-card rounded-lg border-[#d4af37]/15 hover:bg-[#1c0c0c]/80",
-                    isNewspaper &&
-                      "newspaper-card rounded-none",
-                    !isTerminal &&
-                      !isCasino &&
-                      !isNewspaper &&
-                      "border-neutral-200/50 dark:border-neutral-700/50 bg-white/30 dark:bg-neutral-900/30 hover:bg-white/60 dark:hover:bg-neutral-800/60",
+                    "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors",
+                    isTerminal && "bg-[#00ff41]/10",
+                    isCasino && "bg-[#d4af37]/10",
+                    isNewspaper && "bg-[#5c2e0e]/10",
+                    !isTerminal && !isCasino && !isNewspaper && "earth-icon-circle",
                   )}
-                  style={
-                    isTerminal
-                      ? { color: terminalPalette.primary }
-                      : isCasino
-                        ? { color: "#c8bfb2" }
-                        : isNewspaper
-                          ? { color: newspaperPalette.primary }
-                          : undefined
-                  }
                 >
                   <svg
                     className={cn(
-                      "h-5 w-5 transition-colors",
+                      "h-4 w-4 sm:h-5 sm:w-5 transition-colors",
                       isTerminal && "text-[#00ff41]",
                       isCasino && "group-hover:text-white",
                       isNewspaper && "group-hover:text-[#1a1208]",
                       !isTerminal &&
                         !isCasino &&
                         !isNewspaper &&
-                        "text-neutral-400 group-hover:text-foreground",
+                        "terracotta-text",
                     )}
                     style={
                       isCasino
@@ -352,18 +367,18 @@ export function Contact() {
                       d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                     />
                   </svg>
-                  <span
-                    className={cn(
-                      "text-sm font-medium",
-                      isTerminal && "font-mono",
-                      isCasino && "font-serif",
-                      isNewspaper && "font-serif",
-                    )}
-                  >
-                    {contactEmail}
-                  </span>
-                </a>
-              </div>
+                </div>
+                <span
+                  className={cn(
+                    "text-xs sm:text-sm font-medium flex-1 truncate",
+                    isTerminal && "font-mono",
+                    isCasino && "font-serif",
+                    isNewspaper && "font-serif",
+                  )}
+                >
+                  {contactEmail}
+                </span>
+              </a>
             </div>
           </motion.div>
 
@@ -376,14 +391,18 @@ export function Contact() {
               delay: STAGGER_DELAY * 3,
             }}
             onSubmit={handleSubmit}
-            className="space-y-4"
+            className={cn(
+              "space-y-3 sm:space-y-4",
+              !isTerminal && !isCasino && !isNewspaper && "earth-card p-4 sm:p-6",
+            )}
             aria-label={CONTACT_FORM_LABEL}
             noValidate
           >
-            <div className="space-y-2">
-              <Label
+            <div className="space-y-1.5 sm:space-y-2">
+              <label
                 htmlFor="name"
                 className={cn(
+                  "text-xs sm:text-sm font-medium",
                   isTerminal && "font-mono",
                   isCasino && "font-serif tracking-wider",
                   isNewspaper && "font-serif",
@@ -403,8 +422,8 @@ export function Contact() {
                   : isCasino
                     ? "Your Name"
                     : "Name"}
-              </Label>
-              <Input
+              </label>
+              <input
                 id="name"
                 name="name"
                 placeholder={isTerminal ? "enter_name..." : "Your name"}
@@ -418,7 +437,7 @@ export function Contact() {
                       ? "casino-input font-serif text-[#f5f0e8] placeholder:text-[#8a7e72] focus:border-[#d4af37]"
                       : isNewspaper
                         ? "rounded-none font-serif border-[#c4b59e] bg-[#efe8da] text-[#1a1208] placeholder:text-[#7a6b5a] focus:border-[#5c2e0e]"
-                        : "bg-white/50 dark:bg-neutral-900/50",
+                        : "earth-input",
                 )}
                 style={
                   isTerminal
@@ -427,10 +446,11 @@ export function Contact() {
                 }
               />
             </div>
-            <div className="space-y-2">
-              <Label
+            <div className="space-y-1.5 sm:space-y-2">
+              <label
                 htmlFor="email"
                 className={cn(
+                  "text-xs sm:text-sm font-medium",
                   isTerminal && "font-mono",
                   isCasino && "font-serif tracking-wider",
                   isNewspaper && "font-serif",
@@ -450,8 +470,8 @@ export function Contact() {
                   : isCasino
                     ? "Your Email"
                     : "Email"}
-              </Label>
-              <Input
+              </label>
+              <input
                 id="email"
                 name="email"
                 type="email"
@@ -466,7 +486,7 @@ export function Contact() {
                       ? "casino-input font-serif text-[#f5f0e8] placeholder:text-[#8a7e72] focus:border-[#d4af37]"
                       : isNewspaper
                         ? "rounded-none font-serif border-[#c4b59e] bg-[#efe8da] text-[#1a1208] placeholder:text-[#7a6b5a] focus:border-[#5c2e0e]"
-                        : "bg-white/50 dark:bg-neutral-900/50",
+                        : "earth-input",
                 )}
                 style={
                   isTerminal
@@ -475,10 +495,11 @@ export function Contact() {
                 }
               />
             </div>
-            <div className="space-y-2">
-              <Label
+            <div className="space-y-1.5 sm:space-y-2">
+              <label
                 htmlFor="message"
                 className={cn(
+                  "text-xs sm:text-sm font-medium",
                   isTerminal && "font-mono",
                   isCasino && "font-serif tracking-wider",
                   isNewspaper && "font-serif",
@@ -496,14 +517,14 @@ export function Contact() {
                 {isTerminal
                   ? "> message:"
                   : "Message"}
-              </Label>
-              <Textarea
+              </label>
+              <textarea
                 id="message"
                 name="message"
                 placeholder={
                   isTerminal
                     ? "enter_message..."
-                    : "What&apos;s on your mind?"
+                    : "What's on your mind?"
                 }
                 required
                 rows={5}
@@ -516,7 +537,7 @@ export function Contact() {
                       ? "casino-input font-serif text-[#f5f0e8] placeholder:text-[#8a7e72] focus:border-[#d4af37]"
                       : isNewspaper
                         ? "rounded-none font-serif border-[#c4b59e] bg-[#efe8da] text-[#1a1208] placeholder:text-[#7a6b5a] focus:border-[#5c2e0e]"
-                        : "bg-white/50 dark:bg-neutral-900/50",
+                        : "earth-input",
                 )}
                 style={
                   isTerminal
@@ -533,8 +554,8 @@ export function Contact() {
               className="min-h-[1.5rem]"
             >
               {status === "error" && (
-                <div className="flex items-center gap-2 text-sm">
-                  <AlertCircle className="h-4 w-4 shrink-0" />
+                <div className="flex items-center gap-2 text-xs sm:text-sm">
+                  <AlertCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
                   <span
                     className={cn(
                       isTerminal && "font-mono",
@@ -555,21 +576,21 @@ export function Contact() {
               )}
             </div>
 
-            <Button
+            <button
               type="submit"
               disabled={status === "sending" || status === "sent"}
               className={cn(
-                "w-full",
+                "w-full font-semibold transition-all text-sm sm:text-base",
                 isTerminal &&
-                  "rounded-none font-mono uppercase tracking-wider border bg-transparent hover:bg-[#00ff41] hover:text-black terminal-glow",
+                  "rounded-none font-mono uppercase tracking-wider border bg-transparent hover:bg-[#00ff41] hover:text-black terminal-glow py-2.5",
                 isCasino &&
-                  "casino-btn font-serif uppercase tracking-wider px-8",
+                  "casino-btn font-serif uppercase tracking-wider px-8 py-2.5",
                 isNewspaper &&
-                  "rounded-none font-serif uppercase tracking-wider border-2 bg-transparent hover:bg-[#1a1208] hover:text-[#f7f2ea]",
+                  "rounded-none font-serif uppercase tracking-wider border-2 bg-transparent hover:bg-[#1a1208] hover:text-[#f7f2ea] py-2.5",
                 !isTerminal &&
                   !isCasino &&
                   !isNewspaper &&
-                  "rounded-full",
+                  "earth-btn py-3",
               )}
               style={
                 isTerminal
@@ -588,12 +609,12 @@ export function Contact() {
               {status === "sending" ? (
                 isTerminal ? "[ sending... ]" : "Sending..."
               ) : status === "sent" ? (
-                <>
-                  <CheckCircle className="mr-2 h-3.5 w-3.5" />
+                <span className="flex items-center justify-center gap-2">
+                  <CheckCircle className="h-4 w-4" />
                   {isTerminal ? "message_sent" : "Message sent"}
-                </>
+                </span>
               ) : (
-                <>
+                <span className="flex items-center justify-center gap-2">
                   {isTerminal
                     ? "[ send_message ]"
                     : isCasino
@@ -604,11 +625,11 @@ export function Contact() {
                   {!isTerminal &&
                     !isCasino &&
                     !isNewspaper && (
-                      <Send className="ml-2 h-3.5 w-3.5" />
+                      <Send className="h-4 w-4" />
                     )}
-                </>
+                </span>
               )}
-            </Button>
+            </button>
           </motion.form>
         </div>
       </div>
