@@ -20,7 +20,7 @@ export function Hero() {
             variants={fadeUp}
             className="text-sm sm:text-base font-medium text-blue-600 dark:text-blue-400 mb-4 tracking-wide uppercase"
           >
-            Developer & Creator
+            Software Developer
           </motion.p>
         </ScrollReveal>
 
@@ -31,7 +31,7 @@ export function Hero() {
           >
             Hi, I&apos;m{" "}
             <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 dark:from-blue-400 dark:via-purple-400 dark:to-blue-400 bg-clip-text text-transparent bg-[length:200%_auto] animate-[gradient_3s_linear_infinite]">
-              Lance
+              Lance Abuan
             </span>
           </motion.h1>
         </ScrollReveal>
@@ -41,8 +41,9 @@ export function Hero() {
             variants={fadeUp}
             className="text-lg sm:text-xl text-zinc-600 dark:text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed"
           >
-            I build things for the web and beyond. From full-stack applications
-            to game development, I love turning ideas into reality through code.
+            Full-stack developer and AI enthusiast. I build enterprise-scale
+            systems, chess engines that teach themselves, and everything in
+            between.
           </motion.p>
         </ScrollReveal>
 

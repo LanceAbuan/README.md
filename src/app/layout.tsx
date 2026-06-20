@@ -19,21 +19,24 @@ export const metadata: Metadata = {
     template: "%s | Lance Abuan",
   },
   description:
-    "Developer portfolio of Lance Abuan. Full-stack web development, game development, and AI workflows.",
+    "Lance Abuan — Full-stack developer and AI enthusiast. Enterprise software, chess engines, and machine learning.",
   keywords: [
-    "developer",
+    "Lance Abuan",
+    "full-stack developer",
     "portfolio",
-    "web development",
-    "game development",
     "TypeScript",
     "React",
     "Next.js",
+    "Python",
+    "AI",
+    "machine learning",
+    "chess engine",
   ],
   authors: [{ name: "Lance Abuan" }],
   openGraph: {
     title: "Lance Abuan — Developer & Creator",
     description:
-      "Developer portfolio of Lance Abuan. Full-stack web development, game development, and AI workflows.",
+      "Lance Abuan — Full-stack developer and AI enthusiast. Enterprise software, chess engines, and machine learning.",
     type: "website",
     locale: "en_US",
     siteName: "Lance Abuan",
@@ -42,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Lance Abuan — Developer & Creator",
     description:
-      "Developer portfolio of Lance Abuan. Full-stack web development, game development, and AI workflows.",
+      "Lance Abuan — Full-stack developer and AI enthusiast. Enterprise software, chess engines, and machine learning.",
   },
 };
 

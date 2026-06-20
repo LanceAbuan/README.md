@@ -20,7 +20,7 @@ const socialLinks = [
   },
   {
     icon: IconMail,
-    href: "mailto:lance@lanceabuan.tech",
+    href: "mailto:lance@lanceabuan.com",
     label: "Email",
   },
 ];

@@ -1,18 +1,62 @@
-import type { GitHubRepo, ProjectItem } from "@/types";
+import type { ProjectItem } from "@/types";
 
 const GITHUB_USERNAME = "LanceAbuan";
-const GITHUB_API = `https://api.github.com/users/${GITHUB_USERNAME}/repos`;
 
-const FEATURED_REPOS = [
-  "README.md",
-  "godot-microbe-sim",
-  "web-poker",
+const FEATURED_REPOS: ProjectItem[] = [
+  {
+    name: "TheFoolsGambitPython",
+    description:
+      "An AlphaZero-inspired chess AI that learns entirely through self-play, with a live-training dashboard you can watch in real time. Built with Python, PyTorch, React, and Mantine.",
+    tags: ["Python", "PyTorch", "React", "Mantine", "AI", "Chess"],
+    github: `https://github.com/${GITHUB_USERNAME}/TheFoolsGambitPython`,
+    demo: "https://gambit.lanceabuan.tech",
+    featured: true,
+    language: "Python",
+    stars: 1,
+    updated_at: "2026-06-20T00:00:00Z",
+  },
+  {
+    name: "README.md",
+    description:
+      "This portfolio site — built with Next.js 16, Mantine, Framer Motion, and Tailwind CSS. Features elaborate animations, dark mode, and auto-pulled GitHub projects.",
+    tags: ["Next.js", "TypeScript", "Mantine", "Framer Motion", "Tailwind"],
+    github: `https://github.com/${GITHUB_USERNAME}/README.md`,
+    demo: "https://lanceabuan.com",
+    featured: true,
+    language: "TypeScript",
+    stars: 1,
+    updated_at: "2026-06-20T00:00:00Z",
+  },
+  {
+    name: "SnakeAI",
+    description:
+      "An environment to train a snake AI using reinforcement learning, with a GUI to watch it play and the corresponding trained models.",
+    tags: ["Python", "Reinforcement Learning", "AI", "GUI"],
+    github: `https://github.com/${GITHUB_USERNAME}/SnakeAI`,
+    demo: null,
+    featured: true,
+    language: "Python",
+    stars: 0,
+    updated_at: "2025-03-31T00:00:00Z",
+  },
+  {
+    name: "AICompendium",
+    description:
+      "A collection of multiple AI environments using OpenAI Gym, including custom environments like Tic-Tac-Toe for reinforcement learning research.",
+    tags: ["Python", "OpenAI Gym", "Reinforcement Learning", "AI"],
+    github: `https://github.com/${GITHUB_USERNAME}/AICompendium`,
+    demo: null,
+    featured: false,
+    language: "Python",
+    stars: 0,
+    updated_at: "2025-02-25T00:00:00Z",
+  },
 ];
 
 export async function fetchGitHubRepos(): Promise<ProjectItem[]> {
   try {
     const res = await fetch(
-      `${GITHUB_API}?sort=updated&per_page=30`,
+      `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=30`,
       {
         headers: {
           Accept: "application/vnd.github.v3+json",
@@ -26,72 +70,41 @@ export async function fetchGitHubRepos(): Promise<ProjectItem[]> {
 
     if (!res.ok) throw new Error("GitHub API error");
 
-    const repos: GitHubRepo[] = await res.json();
+    const repos = await res.json();
 
-    return repos
-      .filter((repo) => !repo.fork)
-      .map((repo) => ({
-        name: repo.name,
-        description: repo.description ?? "No description provided.",
-        tags: repo.topics?.length
-          ? repo.topics.slice(0, 5)
-          : [repo.language ?? "Code"].filter(Boolean),
-        github: repo.html_url,
-        demo: repo.homepage || null,
-        featured: FEATURED_REPOS.includes(repo.name),
-        language: repo.language,
-        stars: repo.stargazers_count,
-        updated_at: repo.updated_at,
-      }))
-      .sort((a, b) => {
-        const aFeatured = FEATURED_REPOS.indexOf(a.name);
-        const bFeatured = FEATURED_REPOS.indexOf(b.name);
-        const aIdx = aFeatured === -1 ? 999 : aFeatured;
-        const bIdx = bFeatured === -1 ? 999 : bFeatured;
-        return aIdx - bIdx;
-      });
+    const apiProjects: ProjectItem[] = repos
+      .filter(
+        (r: { fork: boolean; name: string }) =>
+          !r.fork &&
+          !FEATURED_REPOS.some((f) => f.name === r.name)
+      )
+      .map(
+        (r: {
+          name: string;
+          description: string | null;
+          html_url: string;
+          homepage: string | null;
+          topics: string[];
+          language: string | null;
+          stargazers_count: number;
+          updated_at: string;
+        }) => ({
+          name: r.name,
+          description: r.description ?? "No description provided.",
+          tags: r.topics?.length
+            ? r.topics.slice(0, 5)
+            : [r.language ?? "Code"].filter(Boolean),
+          github: r.html_url,
+          demo: r.homepage || null,
+          featured: false,
+          language: r.language,
+          stars: r.stargazers_count,
+          updated_at: r.updated_at,
+        })
+      );
+
+    return [...FEATURED_REPOS, ...apiProjects];
   } catch {
-    return getFallbackProjects();
+    return FEATURED_REPOS;
   }
-}
-
-function getFallbackProjects(): ProjectItem[] {
-  return [
-    {
-      name: "README.md",
-      description:
-        "This portfolio — built with Next.js, Mantine, and Framer Motion. Features multiple theme modes and elaborate animations.",
-      tags: ["Next.js", "Mantine", "Framer Motion", "TypeScript"],
-      github: `https://github.com/${GITHUB_USERNAME}/README.md`,
-      demo: "https://lanceabuan.com",
-      featured: true,
-      language: "TypeScript",
-      stars: 0,
-      updated_at: new Date().toISOString(),
-    },
-    {
-      name: "godot-microbe-sim",
-      description:
-        "Interactive microbiology simulator featuring a hex-grid environment, procedurally generated infinite world, and NPC systems.",
-      tags: ["Godot", "GDScript", "Procedural Generation", "Education"],
-      github: `https://github.com/${GITHUB_USERNAME}/godot-microbe-sim`,
-      demo: null,
-      featured: true,
-      language: "GDScript",
-      stars: 0,
-      updated_at: new Date().toISOString(),
-    },
-    {
-      name: "web-poker",
-      description:
-        "Browser-based Texas Hold'em poker game with real-time multiplayer functionality and AI opponents.",
-      tags: ["TypeScript", "WebSockets", "Game Dev", "Real-time"],
-      github: `https://github.com/${GITHUB_USERNAME}/web-poker`,
-      demo: null,
-      featured: true,
-      language: "TypeScript",
-      stars: 0,
-      updated_at: new Date().toISOString(),
-    },
-  ];
 }

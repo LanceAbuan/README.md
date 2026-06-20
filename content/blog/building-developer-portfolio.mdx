@@ -1,42 +1,51 @@
 ---
-title: "Building a Developer Portfolio from Scratch"
+title: "Building Fool's Gambit: An AlphaZero Chess Engine from Scratch"
 date: "2026-06-20"
-description: "A walkthrough of how I built this developer portfolio using Next.js, Mantine, and Framer Motion with elaborate animations and a focus on developer experience."
-tags: ["Next.js", "Mantine", "Framer Motion", "Portfolio"]
+description: "How I built an AlphaZero-inspired chess AI that learns entirely through self-play, with a live-training dashboard you can watch in real time."
+tags: ["AI", "Machine Learning", "Python", "PyTorch", "Chess"]
 ---
 
-Welcome to my first blog post on this new site! I recently decided to rebuild my developer portfolio from scratch, and I wanted to document the process and the tech choices I made.
+Fool's Gambit is one of my favorite projects — a chess neural network that learns by playing against itself. No Grandmaster games, no human data, no supervised learning. It discovers chess entirely from scratch using Monte Carlo Tree Search guided by a neural network, the same approach behind DeepMind's AlphaZero.
 
-## Why Rebuild?
+## Why Build This?
 
-My previous portfolio had grown complex over time — multiple themes, casino games, synthwave modes — it was fun but it had lost focus. I wanted something clean, professional, and fast, while still showcasing my development skills.
+I've always been fascinated by game-playing AI. After reading the AlphaZero paper, I wanted to understand the internals deeply — not just调用 an API, but implementing every piece from the ground up.
 
-## The Tech Stack
+## The Architecture
 
-I chose a stack that I'm comfortable with but that also lets me experiment:
+The system has three main components:
 
-- **Next.js 16** with the App Router for server-side rendering and great DX
-- **Mantine** for a solid component library with built-in dark mode
-- **Framer Motion** for elaborate animations — page transitions, scroll reveals, hover effects
-- **Tailwind CSS** for utility-first styling alongside Mantine
-- **TypeScript** for type safety
-- **Resend** for the contact form email delivery
+1. **Self-Play Engine** — Generates training data by playing thousands of games against itself
+2. **Neural Network (ChessNet)** — A lightweight ResNet that evaluates positions and suggests moves
+3. **Training Loop** — continuously improves the network from self-play data
 
-## The Animation Philosophy
+The neural network is deliberately small (~200K parameters) so it can train in real-time on a consumer GPU. It takes a 16-channel board tensor as input and outputs both a policy (probability distribution over moves) and a value (who's winning).
 
-I wanted the site to feel alive without being distracting. Here's what I implemented:
+## Monte Carlo Tree Search
 
-1. **Page transitions** — Smooth fade and slide between routes using `AnimatePresence`
-2. **Scroll reveals** — Elements animate in as you scroll down using `useInView`
-3. **Hover effects** — Cards lift and scale subtly on hover
-4. **Navigation indicator** — A sliding underline follows the active nav link
-5. **Theme toggle** — Animated sun/moon morph when switching themes
-6. **Particle background** — A subtle canvas-based particle network
+MCTS is the secret sauce. For each position, the AI runs 500 simulations:
 
-## GitHub Integration
+- **Select** the most promising node using PUCT (a formula balancing exploration vs exploitation)
+- **Expand** the tree with new positions
+- **Evaluate** using a blend of Stockfish analysis and the neural network
+- **Backpropagate** the result up the tree
 
-Instead of maintaining a static list of projects, I'm pulling directly from the GitHub API. This means my project page is always up to date with my latest repositories, complete with stars, language info, and descriptions.
+The visit counts become the training policy — the "improved" version of the initial neural network's suggestions.
 
-## What's Next
+## The Live Dashboard
 
-I plan to write more posts about game development with Godot, AI workflows, and the tools I use daily. Stay tuned!
+What makes this project unique is the real-time dashboard. Using Server-Sent Events, the React frontend streams:
+
+- The current board position and move
+- Stockfish evaluation bars
+- Training metrics (loss, ELO, games played)
+- 9 parallel side games being played simultaneously
+- Move quality classifications (Best/Good/OK/Bad/Blunder)
+
+You can literally watch the AI get better over time.
+
+## Results
+
+After training, the network achieves a measurable ELO rating by playing against Stockfish. Starting from random play, it develops recognizable opening knowledge and tactical awareness within hours.
+
+The whole thing is deployed with a Flask backend and a Vercel-hosted React frontend. Check it out live at [gambit.lanceabuan.tech](https://gambit.lanceabuan.tech).

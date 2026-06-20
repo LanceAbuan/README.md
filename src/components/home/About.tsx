@@ -3,26 +3,37 @@
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { fadeUp, slideInLeft, slideInRight } from "@/lib/animations";
 import { motion } from "framer-motion";
-import { IconCode, IconDeviceGamepad2, IconBrain } from "@tabler/icons-react";
+import {
+  IconBuilding,
+  IconCode,
+  IconBrain,
+  IconSchool,
+} from "@tabler/icons-react";
 
 const highlights = [
+  {
+    icon: IconBuilding,
+    title: "Enterprise Software",
+    description:
+      "3 years at Paycom building enterprise HR platforms — designing custom fields engines, leading front-end migrations across 200+ stakeholders, and engineering data migrations for $1M+ ARR clients.",
+  },
   {
     icon: IconCode,
     title: "Full-Stack Development",
     description:
-      "Building modern web applications with React, Next.js, and TypeScript. I care about clean architecture and great user experiences.",
-  },
-  {
-    icon: IconDeviceGamepad2,
-    title: "Game Development",
-    description:
-      "Creating interactive experiences with Godot and GDScript. From procedurally generated worlds to real-time multiplayer games.",
+      "5+ years with PHP, TypeScript, React, Python, Java, and C#. I work across the stack from scalable backends to polished frontends, with Docker, Kubernetes, and MySQL in between.",
   },
   {
     icon: IconBrain,
-    title: "AI & Agentic Workflows",
+    title: "AI & Machine Learning",
     description:
-      "Exploring the intersection of AI and development. Building tools that leverage language models for real-world productivity.",
+      "Building AlphaZero-style chess engines, reinforcement learning environments, and intelligent systems. I love teaching machines to learn from scratch through self-play.",
+  },
+  {
+    icon: IconSchool,
+    title: "Texas A&M '22",
+    description:
+      "B.S. Computer Science with a minor in Mathematics, graduated magna cum laude. Previously a Lead Research Software Developer at the TAMU Department of Entomology.",
   },
 ];
 
@@ -39,11 +50,11 @@ export function About() {
           </h2>
         </ScrollReveal>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 gap-6">
           {highlights.map((item, i) => (
             <ScrollReveal
               key={item.title}
-              variants={i === 0 ? slideInLeft : i === 2 ? slideInRight : fadeUp}
+              variants={i % 2 === 0 ? slideInLeft : slideInRight}
               delay={i * 0.1}
             >
               <motion.div
