@@ -1,0 +1,42 @@
+---
+title: "Building a Developer Portfolio from Scratch"
+date: "2026-06-20"
+description: "A walkthrough of how I built this developer portfolio using Next.js, Mantine, and Framer Motion with elaborate animations and a focus on developer experience."
+tags: ["Next.js", "Mantine", "Framer Motion", "Portfolio"]
+---
+
+Welcome to my first blog post on this new site! I recently decided to rebuild my developer portfolio from scratch, and I wanted to document the process and the tech choices I made.
+
+## Why Rebuild?
+
+My previous portfolio had grown complex over time — multiple themes, casino games, synthwave modes — it was fun but it had lost focus. I wanted something clean, professional, and fast, while still showcasing my development skills.
+
+## The Tech Stack
+
+I chose a stack that I'm comfortable with but that also lets me experiment:
+
+- **Next.js 16** with the App Router for server-side rendering and great DX
+- **Mantine** for a solid component library with built-in dark mode
+- **Framer Motion** for elaborate animations — page transitions, scroll reveals, hover effects
+- **Tailwind CSS** for utility-first styling alongside Mantine
+- **TypeScript** for type safety
+- **Resend** for the contact form email delivery
+
+## The Animation Philosophy
+
+I wanted the site to feel alive without being distracting. Here's what I implemented:
+
+1. **Page transitions** — Smooth fade and slide between routes using `AnimatePresence`
+2. **Scroll reveals** — Elements animate in as you scroll down using `useInView`
+3. **Hover effects** — Cards lift and scale subtly on hover
+4. **Navigation indicator** — A sliding underline follows the active nav link
+5. **Theme toggle** — Animated sun/moon morph when switching themes
+6. **Particle background** — A subtle canvas-based particle network
+
+## GitHub Integration
+
+Instead of maintaining a static list of projects, I'm pulling directly from the GitHub API. This means my project page is always up to date with my latest repositories, complete with stars, language info, and descriptions.
+
+## What's Next
+
+I plan to write more posts about game development with Godot, AI workflows, and the tools I use daily. Stay tuned!

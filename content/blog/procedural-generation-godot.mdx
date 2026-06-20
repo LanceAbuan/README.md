@@ -1,0 +1,42 @@
+---
+title: "Procedural Generation in Godot: Building Infinite Worlds"
+date: "2026-06-18"
+description: "How I built a procedurally generated microbiology simulator in Godot with hex-grid terrain, infinite world generation, and dynamic NPC systems."
+tags: ["Godot", "Game Dev", "Procedural Generation", "GDScript"]
+---
+
+One of my favorite projects is a microbiology simulator built in Godot. The core challenge was creating an infinite world that feels organic and alive — no two playthroughs should feel the same.
+
+## The Hex-Grid System
+
+Instead of a traditional square grid, I used a hexagonal grid system. Hex grids provide more natural-looking terrain and more interesting movement patterns for organisms. Each hex cell stores:
+
+- Terrain type (water, land, nutrient-rich, toxic)
+- Resource density
+- Organism count
+- Environmental factors
+
+## Infinite World Generation
+
+The world generates on-the-fly as the player explores. I use a combination of:
+
+- **Perlin noise** for large-scale terrain features
+- **Cellular automata** for organic-looking biome boundaries
+- **Seed-based generation** so the same seed always produces the same world
+
+The key insight is generating chunks ahead of time and caching them, while cleaning up chunks that are far from the player.
+
+## Dynamic NPC Systems
+
+Organisms in the simulation follow simple rules but create complex emergent behavior:
+
+- They seek nutrients and avoid toxins
+- They reproduce when well-fed
+- They compete for resources
+- They respond to environmental changes
+
+Watching these simple rules create complex ecosystems is incredibly satisfying.
+
+## Lessons Learned
+
+Building this project taught me a lot about performance optimization in game engines. When you have potentially thousands of entities each making decisions every frame, you need to be smart about computation. I ended up implementing a spatial partitioning system and staggered update cycles to keep things running smoothly.
