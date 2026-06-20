@@ -25,24 +25,24 @@ export function Experience() {
   const isCasino = theme === "casino";
 
   return (
-    <section id="experience" className="py-24 px-6" ref={ref}>
+    <section id="experience" className="py-20 sm:py-32 px-4 sm:px-6" ref={ref}>
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: REVEAL_DURATION }}
-          className={cn(isNewspaper ? "text-center mb-12" : "mb-12")}
+          className={cn(isNewspaper ? "text-center mb-10 sm:mb-12" : "mb-10 sm:mb-12")}
         >
           {isCasino ? (
-            <div className="mb-12">
+            <div className="mb-10 sm:mb-12">
               <p className="casino-label mb-2">
                 TRACK RECORD
               </p>
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif text-white tracking-tight">
                 Career History
               </h2>
               <div className="w-16 h-px bg-gradient-to-r from-[#d4af37] to-transparent mt-4" />
-              <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg">
+              <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg text-sm sm:text-base">
                 A career built on calculated risks and winning plays.
               </p>
             </div>
@@ -56,7 +56,7 @@ export function Experience() {
                 experience
               </p>
               <h2
-                className="text-2xl sm:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
+                className="text-xl sm:text-2xl md:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
                 style={{ color: terminalPalette.primary }}
               >
                 Work.History
@@ -73,7 +73,7 @@ export function Experience() {
               </p>
               <hr className="newspaper-triple-rule mx-auto max-w-sm mt-2" />
               <h2
-                className="text-3xl sm:text-4xl font-bold font-serif mt-4 newspaper-letterpress"
+                className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif mt-4 newspaper-letterpress"
                 style={{ color: newspaperPalette.primary }}
               >
                 Professional History
@@ -84,10 +84,8 @@ export function Experience() {
             </div>
           ) : (
             <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
-                Experience
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              <p className="section-label mb-3 font-mono">Experience</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight font-mono">
                 Where I&apos;ve worked
               </h2>
             </div>
@@ -96,10 +94,10 @@ export function Experience() {
 
         <div
           className={cn(
-            "space-y-4",
+            "space-y-3 sm:space-y-4",
             isTerminal && "terminal-timeline pl-4 relative",
-            isNewspaper && "space-y-8",
-            isCasino && "casino-timeline relative space-y-6",
+            isNewspaper && "space-y-6 sm:space-y-8",
+            isCasino && "casino-timeline relative space-y-4 sm:space-y-6",
           )}
           role="list"
           aria-label="Work experience"
@@ -121,7 +119,7 @@ export function Experience() {
 
         {isTerminal && (
           <motion.div
-            className="mt-12 animate-bounce flex justify-center cursor-pointer"
+            className="mt-10 sm:mt-12 animate-bounce flex justify-center cursor-pointer"
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: SCROLL_ARROW_DURATION, delay: SCROLL_ARROW_DELAY }}
@@ -183,32 +181,32 @@ function ExperienceCard({
         initial={{ opacity: 0, x: -20 }}
         animate={isInView ? { opacity: 1, x: 0 } : {}}
         transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
-        className="flex gap-4 items-center"
+        className="flex gap-3 sm:gap-4 items-center"
         role="listitem"
       >
         <div className="flex flex-col items-center pt-1">
           <div className="casino-timeline-dot" />
         </div>
 
-        <div className="casino-card flex-1 p-5 space-y-3">
-          <h3 className="text-lg font-bold font-serif text-white text-center">
+        <div className="casino-card flex-1 p-4 sm:p-5 space-y-2 sm:space-y-3">
+          <h3 className="text-base sm:text-lg font-bold font-serif text-white text-center">
             {exp.role}
-            <span className="text-xs font-serif whitespace-nowrap ml-2 pt-0.5 align-text-top" style={{ color: "#8a7e72" }}>
+            <span className="text-[10px] sm:text-xs font-serif whitespace-nowrap ml-2 pt-0.5 align-text-top" style={{ color: "#8a7e72" }}>
               {exp.period}
             </span>
           </h3>
-          <div className="flex items-center justify-center gap-2 text-sm font-serif flex-wrap" style={{ color: "#c8bfb2" }}>
-            <Building2 className="h-3.5 w-3.5 flex-shrink-0" style={{ color: "#8b1a1a" }} />
+          <div className="flex items-center justify-center gap-2 text-xs sm:text-sm font-serif flex-wrap" style={{ color: "#c8bfb2" }}>
+            <Building2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 flex-shrink-0" style={{ color: "#8b1a1a" }} />
             <span>{exp.company}</span>
             <span>&#8226;</span>
             <span>{exp.location}</span>
           </div>
-          <p className="text-sm font-serif leading-relaxed max-w-xl mx-auto text-center" style={{ color: "#c8bfb2" }}>
+          <p className="text-xs sm:text-sm font-serif leading-relaxed max-w-xl mx-auto text-center" style={{ color: "#c8bfb2" }}>
             {exp.description}
           </p>
           <div className="flex flex-wrap justify-center gap-1.5">
             {exp.skills.map((skill, j) => (
-              <span key={j} className="casino-chip text-[10px] px-2 py-0.5 rounded-full font-serif">
+              <span key={j} className="casino-chip text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full font-serif">
                 {skill}
               </span>
             ))}
@@ -226,22 +224,22 @@ function ExperienceCard({
         transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
         role="listitem"
       >
-        <div className="terminal-card p-4 space-y-3">
+        <div className="terminal-card p-3 sm:p-4 space-y-2 sm:space-y-3">
           <div className="flex items-center gap-2 mb-2">
             <Terminal className="h-4 w-4" style={{ color: terminalPalette.primary }} />
-            <span className="text-xs font-mono" style={{ color: terminalPalette.secondary }}>
+            <span className="text-[10px] sm:text-xs font-mono" style={{ color: terminalPalette.secondary }}>
               [{exp.period}]
             </span>
           </div>
           <div>
             <h3
-              className="text-base font-bold font-mono terminal-glow"
+              className="text-sm sm:text-base font-bold font-mono terminal-glow"
               style={{ color: terminalPalette.primary }}
             >
               {exp.role}
             </h3>
-            <div className="flex items-center gap-2 text-sm font-mono mt-1" style={{ color: terminalPalette.secondary }}>
-              <Building2 className="h-3.5 w-3.5" />
+            <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-mono flex-wrap" style={{ color: terminalPalette.secondary }}>
+              <Building2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
               <span>{exp.company}</span>
               <span>&bull;</span>
               <span>{exp.location}</span>
@@ -249,14 +247,14 @@ function ExperienceCard({
               <span style={{ color: "#008822" }}>{exp.type}</span>
             </div>
           </div>
-          <p className="text-sm font-mono leading-relaxed" style={{ color: terminalPalette.secondary }}>
+          <p className="text-xs sm:text-sm font-mono leading-relaxed" style={{ color: terminalPalette.secondary }}>
             {exp.description}
           </p>
           <div className="flex flex-wrap gap-1.5">
             {exp.skills.map((skill, j) => (
               <span
                 key={j}
-                className="terminal-badge text-xs px-2 py-0.5 font-mono"
+                className="terminal-badge text-[10px] sm:text-xs px-2 py-0.5 font-mono"
               >
                 {skill}
               </span>
@@ -275,16 +273,16 @@ function ExperienceCard({
         transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
         role="listitem"
       >
-        <article className="newspaper-card space-y-4">
-          <div className="flex items-baseline justify-between">
+        <article className="newspaper-card space-y-3 sm:space-y-4">
+          <div className="flex items-baseline justify-between gap-2">
             <span className="newspaper-kicker">{exp.company}</span>
-            <span className="text-xs font-serif italic" style={{ color: newspaperPalette.muted }}>
+            <span className="text-[10px] sm:text-xs font-serif italic flex-shrink-0" style={{ color: newspaperPalette.muted }}>
               {exp.period}
             </span>
           </div>
 
           <h3
-            className="text-xl font-bold font-serif newspaper-letterpress break-words leading-tight"
+            className="text-lg sm:text-xl font-bold font-serif newspaper-letterpress break-words leading-tight"
             style={{ color: newspaperPalette.primary }}
           >
             {exp.role}
@@ -297,13 +295,13 @@ function ExperienceCard({
           <hr className="newspaper-rule" />
 
           <p
-            className="text-[0.9rem] font-serif leading-relaxed break-words overflow-hidden"
+            className="text-[0.8rem] sm:text-[0.9rem] font-serif leading-relaxed break-words overflow-hidden"
             style={{ color: newspaperPalette.body }}
           >
             {exp.description}
           </p>
 
-          <div className="flex flex-wrap gap-2 pt-1">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1">
             {exp.skills.map((skill, j) => (
               <span key={j} className="newspaper-badge px-2 py-0.5">
                 {skill}
@@ -322,30 +320,30 @@ function ExperienceCard({
       transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
       role="listitem"
     >
-      <div className="group glass-card glass-card-hover p-6 border-l-2 border-l-indigo-500 dark:border-l-indigo-400">
+      <div className="group earth-card earth-card-hover earth-accent-left p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
           <div className="space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-lg font-semibold text-foreground">{exp.role}</h3>
-              <span className="gradient-badge">{exp.type}</span>
+              <h3 className="text-base sm:text-lg font-semibold text-foreground font-mono">{exp.role}</h3>
+              <span className="earth-badge-solid text-[10px] sm:text-xs">{exp.type}</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
-              <Building2 className="h-3.5 w-3.5" />
+            <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-neutral-500 dark:text-[#A89888]">
+              <Building2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
               <span>{exp.company}</span>
               <span>&#8226;</span>
               <span>{exp.location}</span>
             </div>
           </div>
-          <time className="text-xs font-medium text-neutral-400 dark:text-neutral-500 whitespace-nowrap bg-neutral-100 dark:bg-neutral-800 px-3 py-1 rounded-full">
+          <time className="text-[10px] sm:text-xs font-medium text-neutral-400 dark:text-[#A89888] whitespace-earth-pill earth-pill self-start">
             {exp.period}
           </time>
         </div>
-        <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed mb-4">
+        <p className="text-xs sm:text-sm text-neutral-600 dark:text-[#A89888] leading-relaxed mb-3 sm:mb-4">
           {exp.description}
         </p>
         <div className="flex flex-wrap gap-1.5">
           {exp.skills.map((skill, j) => (
-            <span key={j} className="gradient-badge">
+            <span key={j} className="earth-badge text-[10px] sm:text-xs">
               {skill}
             </span>
           ))}

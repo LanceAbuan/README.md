@@ -28,22 +28,22 @@ export function About() {
   const isCasino = theme === "casino";
 
   return (
-    <section id="about" className="py-24 px-6" ref={ref}>
+    <section id="about" className="py-20 sm:py-32 px-4 sm:px-6" ref={ref}>
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: REVEAL_DURATION }}
-          className="mb-12"
+          className="mb-10 sm:mb-12"
         >
           {isCasino ? (
-            <div className="text-center mb-12">
+            <div className="text-center mb-10 sm:mb-12">
               <p className="casino-label mb-2">ABOUT</p>
-              <h2 className="text-3xl sm:text-4xl font-bold font-serif text-white tracking-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif text-white tracking-tight">
                 The Player
               </h2>
               <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto mt-4" />
-              <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg mx-auto">
+              <p className="text-[#c8bfb2] font-serif mt-3 max-w-lg mx-auto text-sm sm:text-base">
                 A brief introduction to the developer behind the code.
               </p>
             </div>
@@ -57,7 +57,7 @@ export function About() {
                 about
               </p>
               <h2
-                className="text-2xl sm:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
+                className="text-xl sm:text-2xl md:text-3xl font-bold font-mono terminal-glow uppercase tracking-wider"
                 style={{ color: terminalPalette.primary }}
               >
                 Who.Am.I
@@ -74,7 +74,7 @@ export function About() {
               </p>
               <hr className="newspaper-triple-rule mx-auto max-w-sm mt-2" />
               <h2
-                className="text-3xl sm:text-4xl font-bold font-serif mt-4 newspaper-letterpress"
+                className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif mt-4 newspaper-letterpress"
                 style={{ color: newspaperPalette.primary }}
               >
                 About the Developer
@@ -85,10 +85,8 @@ export function About() {
             </div>
           ) : (
             <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-3">
-                About
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              <p className="section-label mb-3 font-mono">About</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight font-mono">
                 About Me
               </h2>
             </div>
@@ -98,8 +96,8 @@ export function About() {
         {/* Content card */}
         <motion.div
           className={cn(
-            "mb-12",
-            !isTerminal && !isNewspaper && !isCasino && "glass-card p-8",
+            "mb-10 sm:mb-12",
+            !isTerminal && !isNewspaper && !isCasino && "earth-card p-5 sm:p-8",
             isNewspaper && "max-w-2xl mx-auto",
           )}
           initial={{ opacity: 0, y: REVEAL_Y_OFFSET }}
@@ -111,11 +109,11 @@ export function About() {
               <p
                 key={i}
                 className={cn(
-                  "text-base sm:text-lg leading-relaxed last:mb-0",
+                  "text-sm sm:text-base md:text-lg leading-relaxed last:mb-0",
                   isCasino && "text-[#c8bfb2] font-serif",
-                  isTerminal && "text-sm font-mono",
+                  isTerminal && "text-xs sm:text-sm font-mono",
                   isNewspaper && "font-serif leading-relaxed",
-                  !isTerminal && !isNewspaper && !isCasino && "text-neutral-600 dark:text-neutral-400",
+                  !isTerminal && !isNewspaper && !isCasino && "text-neutral-600 dark:text-[#A89888]",
                 )}
                 style={
                   isTerminal
@@ -131,9 +129,9 @@ export function About() {
           </div>
         </motion.div>
 
-        {/* Stats grid */}
+        {/* Stats grid — 2 cols on mobile, 4 on desktop */}
         <div className={cn(isNewspaper && "max-w-2xl mx-auto")}>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             {aboutData.stats.map((stat, i) => {
               const Icon = statIcons[stat.icon];
               return (
@@ -143,41 +141,41 @@ export function About() {
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 2 + i * STAGGER_DELAY }}
                   className={cn(
-                    "text-center p-5 rounded-xl transition-all duration-300",
+                    "text-center p-4 sm:p-5 rounded-xl transition-all duration-300",
                     isCasino && "bg-[#1c0c0c]/60 border border-[#d4af37]/10",
                     isTerminal && "bg-[#0a0f0a] border border-[#00ff4120]",
                     isNewspaper && "bg-[#efe8da]/50 border border-[#c4b59e]/30",
-                    !isTerminal && !isNewspaper && !isCasino && "glass-card glass-card-hover",
+                    !isTerminal && !isNewspaper && !isCasino && "earth-card earth-card-hover",
                   )}
                 >
                   {Icon && (
                     <div
                       className={cn(
-                        "w-10 h-10 mx-auto mb-3 rounded-full flex items-center justify-center",
+                        "w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-2 sm:mb-3 rounded-full flex items-center justify-center",
                         isCasino && "bg-[#d4af37]/10",
                         isTerminal && "bg-[#00ff41]/10",
                         isNewspaper && "bg-[#5c2e0e]/10",
-                        !isTerminal && !isNewspaper && !isCasino && "gradient-icon-circle",
+                        !isTerminal && !isNewspaper && !isCasino && "earth-icon-circle",
                       )}
                     >
                       <Icon
                         className={cn(
-                          "h-5 w-5",
+                          "h-4 w-4 sm:h-5 sm:w-5",
                           isCasino && "text-[#d4af37]",
                           isTerminal && "text-[#00ff41]",
                           isNewspaper && "text-[#5c2e0e]",
-                          !isTerminal && !isNewspaper && !isCasino && "text-indigo-500 dark:text-indigo-400",
+                          !isTerminal && !isNewspaper && !isCasino && "terracotta-text",
                         )}
                       />
                     </div>
                   )}
                   <p
                     className={cn(
-                      "text-xs uppercase tracking-wider mb-1",
+                      "text-[10px] sm:text-xs uppercase tracking-wider mb-1",
                       isCasino && "font-serif text-[#8a7e72]",
                       isTerminal && "font-mono",
                       isNewspaper && "font-serif text-[#7a6b5a]",
-                      !isTerminal && !isNewspaper && !isCasino && "text-neutral-400 dark:text-neutral-500 font-medium",
+                      !isTerminal && !isNewspaper && !isCasino && "section-label",
                     )}
                     style={
                       isTerminal
@@ -189,11 +187,11 @@ export function About() {
                   </p>
                   <p
                     className={cn(
-                      "text-sm font-semibold",
+                      "text-xs sm:text-sm font-semibold",
                       isCasino && "font-serif text-white",
                       isTerminal && "font-mono",
                       isNewspaper && "font-serif newspaper-letterpress",
-                      !isTerminal && !isNewspaper && !isCasino && "text-neutral-700 dark:text-neutral-300",
+                      !isTerminal && !isNewspaper && !isCasino && "text-neutral-700 dark:text-foreground",
                     )}
                     style={
                       isTerminal

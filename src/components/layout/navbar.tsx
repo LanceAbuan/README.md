@@ -85,7 +85,7 @@ export function Navbar() {
         isTerminal && "font-mono text-[#00aa30] hover:text-[#00ff41]",
         isNewspaper && "font-serif text-[#5c2e0e] hover:text-[#1a1208]",
         isCasino && "font-serif text-[#d4af37] hover:text-white",
-        !isTerminal && !isNewspaper && !isCasino && "text-neutral-600 dark:text-neutral-400",
+        !isTerminal && !isNewspaper && !isCasino && "text-[#6B5E52] dark:text-[#A89888]",
       )}
       onClick={onClick}
     >
@@ -122,8 +122,8 @@ export function Navbar() {
               : isCasino
                 ? "border-[#d4af37]/15 bg-[#1c0c0c]/90 rounded-lg"
                 : scrolled
-                  ? "bg-white/80 dark:bg-neutral-900/80 border-neutral-200/50 dark:border-neutral-700/50 shadow-lg shadow-neutral-200/20 dark:shadow-neutral-800/20"
-                  : "bg-white/50 dark:bg-neutral-900/50 border-neutral-200/50 dark:border-neutral-700/50",
+                  ? "bg-[#F5F0E8]/80 dark:bg-[#1A1714]/80 border-[rgba(26,23,20,0.1)] dark:border-[rgba(245,240,232,0.08)] shadow-lg shadow-[rgba(196,93,62,0.05)] dark:shadow-[rgba(0,0,0,0.3)]"
+                  : "bg-[#F5F0E8]/50 dark:bg-[#1A1714]/50 border-[rgba(26,23,20,0.1)] dark:border-[rgba(245,240,232,0.08)]",
         )}
       >
         <Link
@@ -152,7 +152,7 @@ export function Navbar() {
               ? "text-[#00ff41] hover:bg-[#0d1a0d]"
               : isCasino
                 ? "text-[#d4af37] hover:bg-[#2a1a10]"
-                : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800",
+                : "text-[#6B5E52] dark:text-[#A89888] hover:bg-[#F5F0E8] dark:hover:bg-[#242019]",
           )}
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label={mobileOpen ? MOBILE_MENU_CLOSE_LABEL : MOBILE_MENU_LABEL}
@@ -195,7 +195,7 @@ export function Navbar() {
                 ? "border-[#c4b59e] bg-[#efe8da]/95 rounded-none"
                 : isCasino
                   ? "border-[#d4af37]/15 bg-[#1c0c0c]/95 rounded-lg"
-                  : "bg-white/90 dark:bg-neutral-900/90 border-neutral-200/50 dark:border-neutral-700/50",
+                  : "bg-[#F5F0E8]/90 dark:bg-[#1A1714]/90 border-[rgba(26,23,20,0.1)] dark:border-[rgba(245,240,232,0.08)]",
           )}
           style={{ maxHeight: `${MOBILE_MENU_MAX_HEIGHT}px` }}
         >
@@ -210,7 +210,7 @@ export function Navbar() {
                     isTerminal && "font-mono text-[#00aa30] hover:text-[#00ff41]",
                     isNewspaper && "font-serif text-[#5c2e0e] hover:text-[#1a1208]",
                     isCasino && "font-serif text-[#d4af37] hover:text-white",
-                    !isTerminal && !isNewspaper && !isCasino && "text-neutral-600 dark:text-neutral-400 hover:text-foreground",
+                    !isTerminal && !isNewspaper && !isCasino && "text-[#6B5E52] dark:text-[#A89888] hover:text-foreground",
                   )}
                   onClick={() => setMobileOpen(false)}
                 >
@@ -226,7 +226,7 @@ export function Navbar() {
               }
               return mobileLink;
             })}
-            <div className="pt-2 border-t border-neutral-200/50 dark:border-neutral-700/50">
+            <div className="pt-2 border-t border-[rgba(26,23,20,0.1)] dark:border-[rgba(245,240,232,0.08)]">
               <ThemeSelector />
             </div>
           </div>

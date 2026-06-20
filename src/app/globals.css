@@ -57,78 +57,79 @@
 }
 
 /* ============================================================
-   LIGHT THEME (default)
+   LIGHT THEME (earth tones)
    ============================================================ */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --background: #F5F0E8;
+  --foreground: #1A1714;
+  --card: #FDFBF9;
+  --card-foreground: #1A1714;
+  --popover: #FDFBF9;
+  --popover-foreground: #1A1714;
+  --primary: #B84C30;
+  --primary-foreground: #F5F0E8;
+  --secondary: #5A6B42;
+  --secondary-foreground: #F5F0E8;
+  --muted: #EDE8DF;
+  --muted-foreground: #6B5E52;
+  --accent: #B8935C;
+  --accent-foreground: #1A1714;
+  --destructive: #B84C30;
+  --border: rgba(26, 23, 20, 0.1);
+  --input: rgba(26, 23, 20, 0.1);
+  --ring: #B84C30;
+  --chart-1: #B84C30;
+  --chart-2: #5A6B42;
+  --chart-3: #B8935C;
+  --chart-4: #6B5E52;
+  --chart-5: #1A1714;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #FDFBF9;
+  --sidebar-foreground: #1A1714;
+  --sidebar-primary: #B84C30;
+  --sidebar-primary-foreground: #F5F0E8;
+  --sidebar-accent: #EDE8DF;
+  --sidebar-accent-foreground: #1A1714;
+  --sidebar-border: rgba(26, 23, 20, 0.1);
+  --sidebar-ring: #B84C30;
 }
 
 /* ============================================================
-   DARK THEME
+   DARK THEME (earth tones — default)
    ============================================================ */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #0F0D0B;
+  --foreground: #F5F0E8;
+  --card: #1A1714;
+  --card-foreground: #F5F0E8;
+  --popover: #1A1714;
+  --popover-foreground: #F5F0E8;
+  --primary: #C45D3E;
+  --primary-foreground: #F5F0E8;
+  --secondary: #7C8C5E;
+  --secondary-foreground: #F5F0E8;
+  --muted: #1A1714;
+  --muted-foreground: #A89888;
+  --accent: #D4A574;
+  --accent-foreground: #0F0D0B;
+  --destructive: #C45D3E;
+  --border: rgba(245, 240, 232, 0.08);
+  --input: rgba(245, 240, 232, 0.08);
+  --ring: #C45D3E;
+  --chart-1: #C45D3E;
+  --chart-2: #7C8C5E;
+  --chart-3: #D4A574;
+  --chart-4: #A89888;
+  --chart-5: #F5F0E8;
+  --radius: 0.625rem;
+  --sidebar: #1A1714;
+  --sidebar-foreground: #F5F0E8;
+  --sidebar-primary: #C45D3E;
+  --sidebar-primary-foreground: #F5F0E8;
+  --sidebar-accent: #242019;
+  --sidebar-accent-foreground: #F5F0E8;
+  --sidebar-border: rgba(245, 240, 232, 0.08);
+  --sidebar-ring: #C45D3E;
 }
 
 /* ============================================================
@@ -2084,196 +2085,363 @@
 .casino .casino-card-corner--br { bottom: 0.75rem; right: 1rem; transform: rotate(-90deg); }
 
 /* ============================================================
-   GLASSMORPHISM UTILITIES — Default theme only
-   Modern frosted glass cards, gradient accents, backdrop blur
+   EARTH TONE UTILITIES — Default theme
+   Terracotta, olive, sand, cream palette
    ============================================================ */
 
-/* Glass card — frosted glass effect */
-.glass-card {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 1rem;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.05),
-    0 2px 4px -2px rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-}
-
-.dark .glass-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Elevated card — pops off the background */
+.earth-card {
+  background: #1A1714;
+  border: 1px solid rgba(245, 240, 232, 0.08);
+  border-radius: 0.75rem;
   box-shadow:
     0 4px 6px -1px rgba(0, 0, 0, 0.3),
     0 2px 4px -2px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-/* Glass card with hover effect */
-.glass-card-hover {
+    0 0 20px rgba(196, 93, 62, 0.05);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.glass-card-hover:hover {
+:root .earth-card {
+  background: #FDFBF9;
+  border-color: rgba(26, 23, 20, 0.1);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -2px rgba(0, 0, 0, 0.03),
+    0 0 20px rgba(184, 76, 48, 0.03);
+}
+
+/* Elevated card with hover lift */
+.earth-card-hover:hover {
   transform: translateY(-2px);
+  border-color: rgba(245, 240, 232, 0.15);
   box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.08),
-    0 8px 10px -6px rgba(0, 0, 0, 0.05);
-  border-color: rgba(99, 102, 241, 0.3);
+    0 10px 15px -3px rgba(0, 0, 0, 0.4),
+    0 4px 6px -4px rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(196, 93, 62, 0.08);
 }
 
-.dark .glass-card-hover:hover {
+:root .earth-card-hover:hover {
+  border-color: rgba(26, 23, 20, 0.15);
   box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.4),
-    0 8px 10px -6px rgba(0, 0, 0, 0.3),
-    0 0 20px rgba(99, 102, 241, 0.1);
-  border-color: rgba(99, 102, 241, 0.3);
+    0 10px 15px -3px rgba(0, 0, 0, 0.08),
+    0 4px 6px -4px rgba(0, 0, 0, 0.05),
+    0 0 30px rgba(184, 76, 48, 0.05);
 }
 
-/* Gradient accent strip (top of card) */
-.gradient-accent {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
+/* Terracotta accent text */
+.terracotta-text {
+  color: #C45D3E;
 }
 
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+:root .terracotta-text {
+  color: #B84C30;
 }
 
-/* Gradient badge */
-.gradient-badge {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08));
-  border: 1px solid rgba(99, 102, 241, 0.15);
-  border-radius: 0.5rem;
+/* Section label — moderate caps, spaced */
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #A89888;
+}
+
+:root .section-label {
+  color: #6B5E52;
+}
+
+/* Gradient divider — terracotta fade */
+.gradient-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C45D3E, transparent);
+  border: none;
+}
+
+:root .gradient-divider {
+  background: linear-gradient(90deg, transparent, #B84C30, transparent);
+}
+
+/* Filled badge — terracotta bg, cream text */
+.earth-badge {
+  display: inline-flex;
+  align-items: center;
   padding: 0.25rem 0.625rem;
+  border-radius: 0.375rem;
   font-size: 0.75rem;
   font-weight: 500;
-  color: #6366f1;
-  transition: all 0.2s;
+  background: rgba(196, 93, 62, 0.15);
+  color: #C45D3E;
+  border: 1px solid rgba(196, 93, 62, 0.2);
 }
 
-.dark .gradient-badge {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
-  border-color: rgba(99, 102, 241, 0.25);
-  color: #a78bfa;
+:root .earth-badge {
+  background: rgba(184, 76, 48, 0.1);
+  color: #B84C30;
+  border-color: rgba(184, 76, 48, 0.15);
 }
 
-.gradient-badge:hover {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.12));
-  border-color: rgba(99, 102, 241, 0.3);
+/* Solid filled badge — terracotta bg, cream text */
+.earth-badge-solid {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: #C45D3E;
+  color: #F5F0E8;
+}
+
+:root .earth-badge-solid {
+  background: #B84C30;
+  color: #F5F0E8;
+}
+
+/* Olive badge */
+.earth-badge-olive {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(124, 140, 94, 0.15);
+  color: #7C8C5E;
+  border: 1px solid rgba(124, 140, 94, 0.2);
+}
+
+:root .earth-badge-olive {
+  background: rgba(90, 107, 66, 0.1);
+  color: #5A6B42;
+  border-color: rgba(90, 107, 66, 0.15);
+}
+
+/* Sand badge */
+.earth-badge-sand {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(212, 165, 116, 0.15);
+  color: #D4A574;
+  border: 1px solid rgba(212, 165, 116, 0.2);
+}
+
+:root .earth-badge-sand {
+  background: rgba(184, 147, 92, 0.1);
+  color: #B8935C;
+  border-color: rgba(184, 147, 92, 0.15);
 }
 
 /* Gradient icon circle */
-.gradient-icon-circle {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+.earth-icon-circle {
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 9999px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(196, 93, 62, 0.15);
 }
 
-.dark .gradient-icon-circle {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+:root .earth-icon-circle {
+  background: rgba(184, 76, 48, 0.1);
 }
 
-/* Gradient border button */
-.gradient-btn {
-  position: relative;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
-  font-weight: 600;
-  border-radius: 0.75rem;
+/* Primary button — terracotta */
+.earth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   padding: 0.625rem 1.5rem;
-  transition: all 0.3s;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
-}
-
-.gradient-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
-}
-
-.gradient-btn:active {
-  transform: translateY(0);
-}
-
-/* Gradient outline button */
-.gradient-outline-btn {
-  position: relative;
-  background: transparent;
-  color: #6366f1;
+  border-radius: 0.5rem;
   font-weight: 600;
-  border-radius: 0.75rem;
-  padding: 0.625rem 1.5rem;
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  transition: all 0.3s;
-}
-
-.dark .gradient-outline-btn {
-  color: #a78bfa;
-  border-color: rgba(139, 92, 246, 0.3);
-}
-
-.gradient-outline-btn:hover {
-  background: rgba(99, 102, 241, 0.08);
-  border-color: rgba(99, 102, 241, 0.5);
-}
-
-/* Glass input */
-.glass-input {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 0.75rem;
-  padding: 0.625rem 1rem;
   font-size: 0.875rem;
+  background: #C45D3E;
+  color: #F5F0E8;
+  border: none;
+  cursor: pointer;
   transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(196, 93, 62, 0.3);
+}
+
+:root .earth-btn {
+  background: #B84C30;
+  box-shadow: 0 2px 8px rgba(184, 76, 48, 0.2);
+}
+
+.earth-btn:hover {
+  background: #D46A4A;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(196, 93, 62, 0.4);
+}
+
+:root .earth-btn:hover {
+  background: #C45D3E;
+  box-shadow: 0 4px 12px rgba(184, 76, 48, 0.3);
+}
+
+/* Outline button — olive */
+.earth-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  background: transparent;
+  color: #7C8C5E;
+  border: 1px solid rgba(124, 140, 94, 0.4);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+:root .earth-btn-outline {
+  color: #5A6B42;
+  border-color: rgba(90, 107, 66, 0.3);
+}
+
+.earth-btn-outline:hover {
+  background: rgba(124, 140, 94, 0.1);
+  border-color: rgba(124, 140, 94, 0.6);
+}
+
+:root .earth-btn-outline:hover {
+  background: rgba(90, 107, 66, 0.08);
+  border-color: rgba(90, 107, 66, 0.5);
+}
+
+/* Form input — earth tone */
+.earth-input {
   width: 100%;
+  padding: 0.625rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  background: #242019;
+  border: 1px solid rgba(245, 240, 232, 0.08);
+  color: #F5F0E8;
+  transition: all 0.2s;
 }
 
-.dark .glass-input {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.1);
-  color: white;
+:root .earth-input {
+  background: #FDFBF9;
+  border-color: rgba(26, 23, 20, 0.1);
+  color: #1A1714;
 }
 
-.glass-input:focus {
+.earth-input:focus {
   outline: none;
-  border-color: rgba(99, 102, 241, 0.5);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: #C45D3E;
+  box-shadow: 0 0 0 3px rgba(196, 93, 62, 0.15);
 }
 
-.glass-input::placeholder {
-  color: rgba(156, 163, 175, 0.7);
+:root .earth-input:focus {
+  border-color: #B84C30;
+  box-shadow: 0 0 0 3px rgba(184, 76, 48, 0.1);
 }
 
-.dark .glass-input::placeholder {
-  color: rgba(156, 163, 175, 0.5);
+.earth-input::placeholder {
+  color: #A89888;
 }
 
-/* Section divider — gradient line */
-.gradient-divider {
+:root .earth-input::placeholder {
+  color: #6B5E52;
+}
+
+/* Left accent bar — terracotta */
+.earth-accent-left {
+  border-left: 2px solid #C45D3E;
+}
+
+:root .earth-accent-left {
+  border-left-color: #B84C30;
+}
+
+/* Top accent strip — terracotta gradient */
+.earth-accent-top {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
-  margin: 3rem 0;
+  background: linear-gradient(90deg, #C45D3E, #7C8C5E);
 }
 
-/* Floating gradient orb — decorative background element */
-.gradient-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.15;
-  pointer-events: none;
+:root .earth-accent-top {
+  background: linear-gradient(90deg, #B84C30, #5A6B42);
 }
 
-.dark .gradient-orb {
-  opacity: 0.1;
+/* Period pill — sand */
+.earth-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(212, 165, 116, 0.1);
+  color: #D4A574;
+}
+
+:root .earth-pill {
+  background: rgba(184, 147, 92, 0.08);
+  color: #B8935C;
+}
+
+/* Social link card */
+.earth-social-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: #1A1714;
+  border: 1px solid rgba(245, 240, 232, 0.08);
+  color: #F5F0E8;
+  transition: all 0.2s;
+}
+
+:root .earth-social-card {
+  background: #FDFBF9;
+  border-color: rgba(26, 23, 20, 0.1);
+  color: #1A1714;
+}
+
+.earth-social-card:hover {
+  border-color: rgba(245, 240, 232, 0.15);
+  background: #242019;
+}
+
+:root .earth-social-card:hover {
+  border-color: rgba(26, 23, 20, 0.15);
+  background: #FFFFFF;
+}
+
+/* Footer social icon */
+.earth-footer-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(196, 93, 62, 0.1);
+  color: #C45D3E;
+  transition: all 0.2s;
+}
+
+:root .earth-footer-icon {
+  background: rgba(184, 76, 48, 0.08);
+  color: #B84C30;
+}
+
+.earth-footer-icon:hover {
+  background: rgba(196, 93, 62, 0.2);
+}
+
+:root .earth-footer-icon:hover {
+  background: rgba(184, 76, 48, 0.15);
 }
 
 /* CSS containment for theme overlays — prevents repaint propagation */

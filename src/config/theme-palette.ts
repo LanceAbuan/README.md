@@ -3,6 +3,21 @@
  * Keeps magic hex values out of components.
  */
 
+/** Earth tone (terracotta/olive/sand) palette — default dark mode. */
+export const earthTonePalette = {
+  background: "#0F0D0B",
+  surface: "#1A1714",
+  surfaceRaised: "#242019",
+  foreground: "#F5F0E8",
+  muted: "#A89888",
+  primary: "#C45D3E",
+  primaryHover: "#D46A4A",
+  secondary: "#7C8C5E",
+  tertiary: "#D4A574",
+  border: "rgba(245, 240, 232, 0.08)",
+  borderHover: "rgba(245, 240, 232, 0.15)",
+} as const;
+
 /** Terminal (green-on-black) palette. */
 export const terminalPalette = {
   primary: "#00ff41",
