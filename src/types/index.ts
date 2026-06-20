@@ -1,29 +1,3 @@
-export interface Stat {
-  icon: string;
-  label: string;
-  value: string;
-}
-
-export interface AboutParagraph {
-  text: string;
-  highlights?: string[];
-}
-
-export interface AboutData {
-  paragraphs: AboutParagraph[];
-  stats: Stat[];
-}
-
-export interface ExperienceItem {
-  company: string;
-  role: string;
-  period: string;
-  type: string;
-  location: string;
-  description: string;
-  skills: string[];
-}
-
 export interface ProjectItem {
   name: string;
   description: string;
@@ -31,15 +5,33 @@ export interface ProjectItem {
   github: string;
   demo: string | null;
   featured: boolean;
+  language: string | null;
+  stars: number;
+  updated_at: string;
 }
 
-export interface SkillCategory {
+export interface BlogPost {
+  slug: string;
+  title: string;
+  date: string;
+  description: string;
+  tags: string[];
+}
+
+export interface ContactFormData {
   name: string;
-  items: string[];
+  email: string;
+  message: string;
 }
 
-export interface ContactLink {
-  icon: string;
-  label: string;
-  href: string;
+export interface GitHubRepo {
+  name: string;
+  description: string | null;
+  html_url: string;
+  homepage: string | null;
+  topics: string[];
+  language: string | null;
+  stargazers_count: number;
+  updated_at: string;
+  fork: boolean;
 }

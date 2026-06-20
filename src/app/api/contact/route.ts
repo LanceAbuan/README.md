@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
-/** Module-scoped Resend singleton — avoids re-instantiating per request. */
 const resend = new Resend(process.env.RESEND_API_KEY ?? "re_fake");
 
-/** Simple token-bucket rate limiter keyed by IP (memory-based, not cross-instance). */
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT_MAX = 5;
-const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 
 function checkRateLimit(ip: string): boolean {
   const now = Date.now();
@@ -18,23 +16,23 @@ function checkRateLimit(ip: string): boolean {
     return true;
   }
 
-  if (entry.count >= RATE_LIMIT_MAX) {
-    return false;
-  }
+  if (entry.count >= RATE_LIMIT_MAX) return false;
 
   entry.count += 1;
   return true;
 }
 
-/** Basic email format validation (server-side). */
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 export async function POST(req: NextRequest) {
   try {
-    // Rate limiting by IP (NextRequest has no .ip — use headers only)
-    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? req.headers.get("x-real-ip") ?? "unknown";
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      req.headers.get("x-real-ip") ??
+      "unknown";
+
     if (!checkRateLimit(ip)) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },

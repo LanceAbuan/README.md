@@ -1,0 +1,51 @@
+---
+title: "Building Fool's Gambit: An AlphaZero Chess Engine from Scratch"
+date: "2026-06-20"
+description: "How I built an AlphaZero-inspired chess AI that learns entirely through self-play, with a live-training dashboard you can watch in real time."
+tags: ["AI", "Machine Learning", "Python", "PyTorch", "Chess"]
+---
+
+Fool's Gambit is one of my favorite projects — a chess neural network that learns by playing against itself. No Grandmaster games, no human data, no supervised learning. It discovers chess entirely from scratch using Monte Carlo Tree Search guided by a neural network, the same approach behind DeepMind's AlphaZero.
+
+## Why Build This?
+
+I've always been fascinated by game-playing AI. After reading the AlphaZero paper, I wanted to understand the internals deeply — not just调用 an API, but implementing every piece from the ground up.
+
+## The Architecture
+
+The system has three main components:
+
+1. **Self-Play Engine** — Generates training data by playing thousands of games against itself
+2. **Neural Network (ChessNet)** — A lightweight ResNet that evaluates positions and suggests moves
+3. **Training Loop** — continuously improves the network from self-play data
+
+The neural network is deliberately small (~200K parameters) so it can train in real-time on a consumer GPU. It takes a 16-channel board tensor as input and outputs both a policy (probability distribution over moves) and a value (who's winning).
+
+## Monte Carlo Tree Search
+
+MCTS is the secret sauce. For each position, the AI runs 500 simulations:
+
+- **Select** the most promising node using PUCT (a formula balancing exploration vs exploitation)
+- **Expand** the tree with new positions
+- **Evaluate** using a blend of Stockfish analysis and the neural network
+- **Backpropagate** the result up the tree
+
+The visit counts become the training policy — the "improved" version of the initial neural network's suggestions.
+
+## The Live Dashboard
+
+What makes this project unique is the real-time dashboard. Using Server-Sent Events, the React frontend streams:
+
+- The current board position and move
+- Stockfish evaluation bars
+- Training metrics (loss, ELO, games played)
+- 9 parallel side games being played simultaneously
+- Move quality classifications (Best/Good/OK/Bad/Blunder)
+
+You can literally watch the AI get better over time.
+
+## Results
+
+After training, the network achieves a measurable ELO rating by playing against Stockfish. Starting from random play, it develops recognizable opening knowledge and tactical awareness within hours.
+
+The whole thing is deployed with a Flask backend and a Vercel-hosted React frontend. Check it out live at [gambit.lanceabuan.tech](https://gambit.lanceabuan.tech).

@@ -1,126 +1,67 @@
-import type { Metadata, Viewport } from "next";
-import {
-  Inter,
-  JetBrains_Mono,
-  Playfair_Display,
-  Source_Serif_4,
-} from "next/font/google";
-import { Providers } from "@/components/layout/providers";
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
-import { SynthwaveBackground } from "@/components/synthwave-background";
-import { siteConfig } from "@/data/site";
-import { personSchema, websiteSchema } from "@/config/seo";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { Providers } from "@/components/Providers";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap", preload: true });
-
-const jetBrainsMono = JetBrains_Mono({
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-terminal",
-  display: "swap",
-  preload: false,
 });
 
-const playfairDisplay = Playfair_Display({
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
-  weight: ["400", "700", "900"],
-  variable: "--font-newspaper-heading",
-  display: "swap",
-  preload: false,
 });
-
-const sourceSerif4 = Source_Serif_4({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-newspaper-body",
-  display: "swap",
-  preload: false,
-});
-
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
-  ],
-  width: "device-width",
-  initialScale: 1,
-};
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
   title: {
-    default: siteConfig.title,
-    template: `%s — ${siteConfig.name}`,
+    default: "Lance Abuan — Developer & Creator",
+    template: "%s | Lance Abuan",
   },
-  description: siteConfig.description,
-  keywords: siteConfig.keywords,
-  authors: [{ name: siteConfig.author.name }],
+  description:
+    "Lance Abuan — Full-stack developer and AI enthusiast. Enterprise software, chess engines, and machine learning.",
+  keywords: [
+    "Lance Abuan",
+    "full-stack developer",
+    "portfolio",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Python",
+    "AI",
+    "machine learning",
+    "chess engine",
+  ],
+  authors: [{ name: "Lance Abuan" }],
   openGraph: {
+    title: "Lance Abuan — Developer & Creator",
+    description:
+      "Lance Abuan — Full-stack developer and AI enthusiast. Enterprise software, chess engines, and machine learning.",
     type: "website",
-    locale: siteConfig.locale,
-    url: siteConfig.url,
-    title: siteConfig.title,
-    description: siteConfig.description,
-    siteName: siteConfig.name,
-    images: [{ url: siteConfig.ogImage, width: 1200, height: 630 }],
+    locale: "en_US",
+    siteName: "Lance Abuan",
   },
   twitter: {
     card: "summary_large_image",
-    title: siteConfig.title,
-    description: siteConfig.description,
-    images: [siteConfig.ogImage],
-    creator: "@lanceabuan",
-  },
-  alternates: {
-    canonical: "https://lanceabuan.com",
+    title: "Lance Abuan — Developer & Creator",
+    description:
+      "Lance Abuan — Full-stack developer and AI enthusiast. Enterprise software, chess engines, and machine learning.",
   },
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="Lance Abuan" />
-        <meta name="theme-color" content="#ffffff" />
-        {/* JSON-LD structured data for SEO */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-        />
-      </head>
-      <body
-        className={`${inter.variable} ${jetBrainsMono.variable} ${playfairDisplay.variable} ${sourceSerif4.variable} font-sans antialiased`}
-      >
-        <Providers>
-          <a
-            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:dark:bg-neutral-800 focus:text-foreground focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg"
-            href="#main-content"
-          >
-            Skip to main content
-          </a>
-          <Navbar />
-          <main id="main-content" role="main">
-            {children}
-          </main>
-          <Footer />
-          <SynthwaveBackground />
-        </Providers>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <body className="min-h-full flex flex-col">
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
