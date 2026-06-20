@@ -10,7 +10,7 @@ import {
   REVEAL_Y_OFFSET,
   STAGGER_DELAY,
 } from "@/config/animations";
-import { terminalPalette, newspaperPalette, casinoPalette } from "@/config/theme-palette";
+import { terminalPalette, newspaperPalette } from "@/config/theme-palette";
 
 export function About() {
   const { ref, isInView } = useSectionReveal();

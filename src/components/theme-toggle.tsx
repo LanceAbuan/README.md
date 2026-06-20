@@ -2,25 +2,27 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { Button } from "@mantine/core";
+import { useSyncExternalStore } from "react";
+
+function useHydrated() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+}
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  // Defer rendering until client mount to avoid hydration mismatch.
-  // A minimal placeholder prevents the SSR/client theme mismatch.
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHydrated();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return <Button variant="ghost" size="icon" disabled />;
+  if (!mounted) return <Button variant="subtle" size="compact-sm" disabled />;
 
   return (
     <Button
-      variant="ghost"
-      size="icon"
+      variant="subtle"
+      size="compact-sm"
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
       className="size-9 transition-opacity hover:opacity-70"
       aria-label="Toggle theme"

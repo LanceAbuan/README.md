@@ -41,6 +41,11 @@ const nextConfig: NextConfig = {
     ];
   },
 
+  // Mantine tree-shaking with app router
+  experimental: {
+    optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
+  },
+
   // Turbopack code splitting is automatic in Next.js 16
   turbopack: {},
 };

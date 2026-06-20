@@ -1,11 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { Button, Textarea, Input } from "@mantine/core";
 import { Send, CheckCircle, AlertCircle } from "lucide-react";
 import { getIcon } from "@/lib/icons";
 import { useSectionReveal } from "@/components/section-reveal";
@@ -381,9 +378,10 @@ export function Contact() {
             noValidate
           >
             <div className="space-y-2">
-              <Label
+              <label
                 htmlFor="name"
                 className={cn(
+                  "text-sm font-medium",
                   isTerminal && "font-mono",
                   isCasino && "font-serif tracking-wider",
                   isNewspaper && "font-serif",
@@ -403,7 +401,7 @@ export function Contact() {
                   : isCasino
                     ? "Your Name"
                     : "Name"}
-              </Label>
+              </label>
               <Input
                 id="name"
                 name="name"
@@ -428,9 +426,10 @@ export function Contact() {
               />
             </div>
             <div className="space-y-2">
-              <Label
+              <label
                 htmlFor="email"
                 className={cn(
+                  "text-sm font-medium",
                   isTerminal && "font-mono",
                   isCasino && "font-serif tracking-wider",
                   isNewspaper && "font-serif",
@@ -450,7 +449,7 @@ export function Contact() {
                   : isCasino
                     ? "Your Email"
                     : "Email"}
-              </Label>
+              </label>
               <Input
                 id="email"
                 name="email"
@@ -476,9 +475,10 @@ export function Contact() {
               />
             </div>
             <div className="space-y-2">
-              <Label
+              <label
                 htmlFor="message"
                 className={cn(
+                  "text-sm font-medium",
                   isTerminal && "font-mono",
                   isCasino && "font-serif tracking-wider",
                   isNewspaper && "font-serif",
@@ -496,14 +496,14 @@ export function Contact() {
                 {isTerminal
                   ? "> message:"
                   : "Message"}
-              </Label>
+              </label>
               <Textarea
                 id="message"
                 name="message"
                 placeholder={
                   isTerminal
                     ? "enter_message..."
-                    : "What&apos;s on your mind?"
+                    : "What's on your mind?"
                 }
                 required
                 rows={5}
@@ -558,8 +558,8 @@ export function Contact() {
             <Button
               type="submit"
               disabled={status === "sending" || status === "sent"}
+              fullWidth
               className={cn(
-                "w-full",
                 isTerminal &&
                   "rounded-none font-mono uppercase tracking-wider border bg-transparent hover:bg-[#00ff41] hover:text-black terminal-glow",
                 isCasino &&

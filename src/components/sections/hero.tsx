@@ -2,9 +2,8 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { Button } from "@mantine/core";
 import { useTheme } from "next-themes";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import {
   REVEAL_DURATION,
   REVEAL_Y_OFFSET,
@@ -16,8 +15,6 @@ import {
   casinoPalette,
 } from "@/config/theme-palette";
 import { SCROLL_ARROW_LABEL } from "@/config/accessibility";
-
-const HERO_TRANSITION_BASE = { duration: REVEAL_DURATION, y: REVEAL_Y_OFFSET };
 
 export function Hero() {
   const { theme } = useTheme();
@@ -74,12 +71,12 @@ function HeroDefault() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 4 }}
         >
-          <Link href="#projects" className={buttonVariants({ className: "rounded-full px-6" })}>
+          <Button component={Link} href="#projects" variant="filled" radius="xl" px="lg">
             View Projects
-          </Link>
-          <Link href="#contact" className={buttonVariants({ variant: "outline", className: "rounded-full px-6" })}>
+          </Button>
+          <Button component={Link} href="#contact" variant="outline" radius="xl" px="lg">
             Get In Touch
-          </Link>
+          </Button>
         </motion.div>
 
         <ScrollArrow
@@ -148,43 +145,48 @@ function HeroTerminal() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: STAGGER_DELAY * 4 }}
         >
-          <Link
+          <Button
+            component={Link}
             href="#projects"
-            className={cn(
-              buttonVariants({
-                className: cn(
-                  "rounded-none px-6 font-mono uppercase tracking-wider bg-transparent hover:text-black",
-                ),
-              }),
-            )}
+            variant="outline"
+            radius={0}
+            px="md"
             style={{
               borderColor: terminalPalette.primary,
               color: terminalPalette.primary,
+              fontFamily: "var(--font-terminal), monospace",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+              background: "transparent",
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = terminalPalette.primary;
+              (e.currentTarget as unknown as HTMLElement).style.backgroundColor = terminalPalette.primary;
+              (e.currentTarget as unknown as HTMLElement).style.color = "#000";
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "transparent";
+              (e.currentTarget as unknown as HTMLElement).style.backgroundColor = "transparent";
+              (e.currentTarget as unknown as HTMLElement).style.color = terminalPalette.primary;
             }}
           >
             ./view_projects
-          </Link>
-          <Link
+          </Button>
+          <Button
+            component={Link}
             href="#contact"
-            className={cn(
-              buttonVariants({
-                variant: "outline",
-                className: "rounded-none px-6 font-mono uppercase tracking-wider bg-transparent hover:bg-transparent",
-              }),
-            )}
+            variant="outline"
+            radius={0}
+            px="md"
             style={{
               borderColor: terminalPalette.glowBorder,
               color: terminalPalette.secondary,
+              fontFamily: "var(--font-terminal), monospace",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+              background: "transparent",
             }}
           >
             ./get_in_touch
-          </Link>
+          </Button>
         </motion.div>
 
         <ScrollArrow
@@ -275,35 +277,43 @@ function HeroNewspaper() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 4.5 }}
         >
-          <Link
+          <Button
+            component={Link}
             href="#projects"
-            className={cn(
-              buttonVariants({
-                className: "rounded-none px-8 font-serif text-xs uppercase tracking-[0.15em] bg-transparent text-[#1a1208] hover:text-[#f7f2ea] transition-colors",
-              }),
-            )}
+            variant="outline"
+            radius={0}
+            px="xl"
             style={{
               borderColor: newspaperPalette.primary,
               borderWidth: 2,
+              color: newspaperPalette.primary,
+              fontFamily: "var(--font-newspaper-heading), serif",
+              fontSize: "0.75rem",
+              textTransform: "uppercase",
+              letterSpacing: "0.15em",
+              background: "transparent",
             }}
           >
             View Projects
-          </Link>
-          <Link
+          </Button>
+          <Button
+            component={Link}
             href="#contact"
-            className={cn(
-              buttonVariants({
-                variant: "outline",
-                className: "rounded-none px-8 font-serif text-xs uppercase tracking-[0.15em] bg-transparent transition-colors",
-              }),
-            )}
+            variant="outline"
+            radius={0}
+            px="xl"
             style={{
               borderColor: newspaperPalette.accent,
               color: newspaperPalette.secondary,
+              fontFamily: "var(--font-newspaper-heading), serif",
+              fontSize: "0.75rem",
+              textTransform: "uppercase",
+              letterSpacing: "0.15em",
+              background: "transparent",
             }}
           >
             Get In Touch
-          </Link>
+          </Button>
         </motion.div>
 
         <ScrollArrow
@@ -392,20 +402,31 @@ function HeroCasino() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: REVEAL_DURATION, delay: STAGGER_DELAY * 3.5 }}
         >
-          <Link href="#projects" className={cn(buttonVariants({ className: "casino-btn px-10 py-3" }))}>
+          <Button
+            component={Link}
+            href="#projects"
+            className="casino-btn"
+            px="xl"
+            py="md"
+          >
             ♠ View Projects
-          </Link>
-          <Link
+          </Button>
+          <Button
+            component={Link}
             href="#contact"
-            className={cn(
-              buttonVariants({
-                variant: "outline",
-                className: "rounded-lg px-10 py-3 text-sm font-serif tracking-wider bg-transparent transition-all",
-              }),
-            )}
+            variant="outline"
+            radius="md"
+            px="xl"
+            py="md"
+            size="sm"
+            style={{
+              fontFamily: "serif",
+              letterSpacing: "0.05em",
+              background: "transparent",
+            }}
           >
             ♦ Get In Touch
-          </Link>
+          </Button>
         </motion.div>
 
         <ScrollArrow

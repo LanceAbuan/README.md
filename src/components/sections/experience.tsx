@@ -1,8 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, Badge, Text, Group } from "@mantine/core";
 import { Building2, Terminal } from "lucide-react";
 import { useSectionReveal, SectionScrollArrow } from "@/components/section-reveal";
 import { useTheme } from "next-themes";
@@ -324,15 +323,15 @@ function ExperienceCard({
       transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
       role="listitem"
     >
-      <Card className="group bg-white/50 dark:bg-neutral-900/50 border-neutral-200/50 dark:border-neutral-700/50 hover:border-neutral-300 dark:hover:border-neutral-600 transition-colors">
-        <CardHeader className="pb-3">
+      <Card className="group bg-white/50 dark:bg-neutral-900/50 border-neutral-200/50 dark:border-neutral-700/50 hover:border-neutral-300 dark:hover:border-neutral-600 transition-colors" padding="lg" radius="md" withBorder>
+        <Card.Section className="pb-3">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h3 className="text-lg font-semibold">{exp.role}</h3>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500">
+                <Text fw={600} size="lg">{exp.role}</Text>
+                <Badge variant="light" size="xs" radius="xl">
                   {exp.type}
-                </span>
+                </Badge>
               </div>
               <div className="flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
                 <Building2 className="h-3.5 w-3.5" />
@@ -345,19 +344,19 @@ function ExperienceCard({
               {exp.period}
             </time>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
+        </Card.Section>
+        <Card.Section className="space-y-3">
+          <Text size="sm" c="dimmed" className="leading-relaxed">
             {exp.description}
-          </p>
-          <div className="flex flex-wrap gap-1.5">
+          </Text>
+          <Group gap="xs">
             {exp.skills.map((skill, j) => (
-              <Badge key={j} variant="secondary" className="text-xs font-normal">
+              <Badge key={j} variant="light" size="xs" radius="sm">
                 {skill}
               </Badge>
             ))}
-          </div>
-        </CardContent>
+          </Group>
+        </Card.Section>
       </Card>
     </motion.div>
   );

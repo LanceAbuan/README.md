@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView, Variants } from "framer-motion";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useRef, useSyncExternalStore, type ReactNode } from "react";
 
 /** Framer-motion uses this type for the `margin` option but does not export it. */
 type MarginType = `${number}${"px" | "%"}` | `${number}${"px" | "%"} ${number}${"px" | "%"}` | `${number}${"px" | "%"} ${number}${"px" | "%"} ${number}${"px" | "%"}` | `${number}${"px" | "%"} ${number}${"px" | "%"} ${number}${"px" | "%"} ${number}${"px" | "%"}`;
@@ -46,17 +46,15 @@ const DEFAULT_MARGIN = "-100px" as MarginType;
  * Returns `true` when reduced motion is preferred.
  */
 function useReducedMotion() {
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
-
-  return reducedMotion;
+  return useSyncExternalStore(
+    (callback) => {
+      const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+      mq.addEventListener("change", callback);
+      return () => mq.removeEventListener("change", callback);
+    },
+    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => false,
+  );
 }
 
 /**

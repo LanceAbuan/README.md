@@ -2,9 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { Card, Badge, Button, Text, Group } from "@mantine/core";
 import { ExternalLink, GitFork, ArrowUpRight, Terminal } from "lucide-react";
 import Link from "next/link";
 import { useSectionReveal, SectionScrollArrow } from "@/components/section-reveal";
@@ -102,21 +100,18 @@ export function Projects() {
             )}
           </div>
           {!isNewspaper && (
-            <Link
+            <Button
+              component={Link}
               href={githubProfileUrl}
               target="_blank"
               rel="noopener noreferrer"
+              variant="subtle"
+              size="sm"
               className={cn(
-                buttonVariants({
-                  variant: "ghost",
-                  className: "hidden sm:flex items-center gap-1 text-sm",
-                }),
-                isTerminal &&
-                  "rounded-none font-mono hover:bg-[#0d1a0d]",
-                isNewspaper &&
-                  "rounded-none font-serif hover:bg-[#ddd2be]",
-                isCasino &&
-                  "rounded-md font-serif border border-[#d4af37]/20 hover:bg-[#8b1a1a]/60",
+                "hidden sm:flex items-center gap-1",
+                isTerminal && "rounded-none font-mono",
+                isNewspaper && "rounded-none font-serif",
+                isCasino && "rounded-md font-serif border border-[#d4af37]/20",
               )}
               style={
                 isTerminal
@@ -129,7 +124,7 @@ export function Projects() {
               }
             >
               View all <ArrowUpRight className="h-3.5 w-3.5" />
-            </Link>
+            </Button>
           )}
         </motion.div>
 
@@ -478,64 +473,61 @@ function ProjectCard({
       transition={{ duration: REVEAL_DURATION, delay: transitionDelay }}
       role="listitem"
     >
-      <Card className="group h-full bg-white/50 dark:bg-neutral-900/50 border-neutral-200/50 dark:border-neutral-700/50 hover:border-neutral-300 dark:hover:border-neutral-600 transition-all duration-300 hover:shadow-lg hover:shadow-neutral-200/50 dark:hover:shadow-neutral-800/50">
-        <CardHeader className="pb-3">
+      <Card className="group h-full bg-white/50 dark:bg-neutral-900/50 border-neutral-200/50 dark:border-neutral-700/50 hover:border-neutral-300 dark:hover:border-neutral-600 transition-all duration-300 hover:shadow-lg hover:shadow-neutral-200/50 dark:hover:shadow-neutral-800/50" padding="lg" radius="md" withBorder>
+        <Card.Section className="pb-3">
           <div className="flex items-start justify-between mb-2">
-            <CardTitle className="text-base font-semibold flex items-center gap-2">
+            <Text fw={600} size="sm" className="flex items-center gap-2">
               {project.name}
               {project.featured && (
                 <Badge
-                  variant="secondary"
-                  className="text-[10px] px-1.5 py-0 font-normal"
+                  variant="light"
+                  size="xs"
+                  radius="sm"
                 >
                   Featured
                 </Badge>
               )}
-            </CardTitle>
+            </Text>
             <div className="flex items-center gap-1">
               {project.demo && (
-                <Link
+                <Button
+                  component={Link}
                   href={project.demo}
-                  className={buttonVariants({
-                    variant: "ghost",
-                    size: "icon",
-                    className: "h-7 w-7",
-                  })}
+                  variant="subtle"
+                  size="compact-xs"
                   aria-label={LIVE_DEMO_LABEL}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
-                </Link>
+                </Button>
               )}
-              <Link
+              <Button
+                component={Link}
                 href={project.github}
-                className={buttonVariants({
-                  variant: "ghost",
-                  size: "icon",
-                  className: "h-7 w-7",
-                })}
+                variant="subtle"
+                size="compact-xs"
                 aria-label={GITHUB_REPO_LABEL}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <GitFork className="h-3.5 w-3.5" />
-              </Link>
+              </Button>
             </div>
           </div>
-          <CardDescription className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
+          <Text size="sm" c="dimmed" className="leading-relaxed">
             {project.description}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-1.5">
+          </Text>
+        </Card.Section>
+        <Card.Section>
+          <Group gap="xs">
             {project.tags.map((tag, i) => (
-              <Badge key={i} variant="secondary" className="text-xs font-normal">
+              <Badge key={i} variant="light" size="xs" radius="sm">
                 {tag}
               </Badge>
             ))}
-          </div>
-        </CardContent>
+          </Group>
+        </Card.Section>
       </Card>
     </motion.div>
   );

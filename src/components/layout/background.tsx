@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useState } from "react";
+import { useEffect, useRef, useCallback, useState, useSyncExternalStore } from "react";
 
 /** Duration of the theme-switch fade transition (ms). */
 const TRANSITION_DURATION = 400;
@@ -32,8 +32,8 @@ type ThemedParticle = {
   rotation: number;
 };
 
-const CONNECTION_DIST = 160;
-const MOUSE_RADIUS = 120;
+const CONNECTION_DIST = 120;
+const MOUSE_RADIUS = 100;
 const MOUSE_FORCE = 0.8;
 
 /** Theme-specific characters used as particles. */
@@ -48,17 +48,18 @@ const THEME_CHARS: Record<string, string[]> = {
 
 /**
  * Adaptive particle count based on screen width and DPR.
+ * Reduced counts to improve main-thread performance.
  */
 function getParticleCount(): number {
-  if (typeof window === "undefined") return 60;
+  if (typeof window === "undefined") return 30;
   const width = window.innerWidth;
   const dpr = window.devicePixelRatio || 1;
   // Very low-end or mobile
-  if (width < 640 || dpr < 2) return 25;
+  if (width < 640 || dpr < 2) return 15;
   // Tablet
-  if (width < 1024) return 50;
-  // Desktop
-  return 80;
+  if (width < 1024) return 30;
+  // Desktop — capped at 50 for performance
+  return 50;
 }
 
 /** Check if the user prefers reduced motion. */
@@ -213,7 +214,12 @@ export function AnimatedBackground() {
   const isRunningRef = useRef(false);
   const lastThemeRef = useRef<string>("dark");
   const ensureParticlesRef = useRef<(theme: string) => void>(() => {});
-  const [mounted, setMounted] = useState(false);
+  const drawRef = useRef<((ts: number) => void) | null>(null);
+  const mountedRef = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   const [opacity, setOpacity] = useState(1);
 
   const THEME_CHARS_REF = THEME_CHARS;
@@ -232,7 +238,7 @@ export function AnimatedBackground() {
       const tc = THEME_COLORS[theme] ?? THEME_COLORS.dark;
 
       // Sync lastThemeRef on first frame so observer doesn't fire on init
-      if (lastThemeRef.current === "dark" && mounted) {
+      if (lastThemeRef.current === "dark" && mountedRef) {
         lastThemeRef.current = theme;
       }
 
@@ -408,17 +414,13 @@ export function AnimatedBackground() {
         }
       }
 
-      if (isRunningRef.current) {
-        animRef.current = requestAnimationFrame(draw);
+      if (isRunningRef.current && drawRef.current) {
+        animRef.current = requestAnimationFrame(drawRef.current);
       }
     },
     [],
   );
-
-  /* ── Mount canvas after hydration to avoid SSR mismatch ── */
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { drawRef.current = draw; });
 
   // Lazily create particles for a theme — called on first frame or on theme switch
   const ensureParticles = useCallback(
@@ -521,7 +523,7 @@ export function AnimatedBackground() {
   }, [ensureParticles]);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!mountedRef) return;
     if (prefersReducedMotion()) return;
 
     const canvas = canvasRef.current;
@@ -594,10 +596,10 @@ export function AnimatedBackground() {
       particlesRef.current = [];
       themedRef.current = [];
     };
-  }, [mounted, draw, rebuildForTheme]);
+  }, [mountedRef, draw, rebuildForTheme]);
 
   /* ── SSR / pre-mount: render nothing to avoid hydration mismatch ── */
-  if (!mounted) {
+  if (!mountedRef) {
     return null;
   }
 

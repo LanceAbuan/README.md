@@ -1,22 +1,26 @@
 import type { Metadata } from "next";
+import NextDynamic from "next/dynamic";
 import Script from "next/script";
 import { getBlogPost, getBlogSlugs } from "@/lib/blog";
 import { siteConfig } from "@/data/site";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@mantine/core";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
-import { useMDXComponents } from "@/mdx-components";
+import { getMDXComponents } from "@/mdx-components";
 import type { MDXComponents } from "mdx/types";
-import { AnimatedBackground } from "@/components/layout/background";
+
+// Defer animated background — renders after initial paint
+const AnimatedBackground = NextDynamic(
+  () => import("@/components/layout/background").then(m => ({ default: m.AnimatedBackground })),
+);
 
 /**
  * MDX component map — created at module scope to avoid
  * calling hooks inside an async Server Component.
  */
-const mdxComponents: MDXComponents = useMDXComponents({});
+const mdxComponents: MDXComponents = getMDXComponents({});
 
 /** Generate static params for all blog slugs. */
 export async function generateStaticParams() {
@@ -64,10 +68,8 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
       <AnimatedBackground />
       <div className="pt-24 pb-16 px-6">
           <div className="max-w-2xl mx-auto">
-            <Link href="/blogs">
-              <Button variant="ghost" size="sm" className="mb-8 -ml-3 gap-1">
-                <ArrowLeft className="h-3.5 w-3.5" /> Back to Blog
-              </Button>
+            <Link href="/blogs" className="inline-flex items-center gap-1 text-sm text-neutral-600 dark:text-neutral-400 hover:text-foreground mb-8 -ml-3 transition-colors">
+              <ArrowLeft className="h-3.5 w-3.5" /> Back to Blog
             </Link>
 
             {/* Post header: title, date, reading time, tags */}
@@ -94,7 +96,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                     <span>·</span>
                     <div className="flex gap-1.5">
                       {meta.tags.map((tag, i) => (
-                        <Badge key={i} variant="secondary" className="text-xs font-normal">
+                        <Badge key={i} variant="light" size="xs" radius="sm">
                           {tag}
                         </Badge>
                       ))}

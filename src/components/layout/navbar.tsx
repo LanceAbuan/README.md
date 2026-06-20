@@ -35,26 +35,27 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const scrollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevScrollY = useRef(0);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    let rafId: number;
+    let ticking = false;
+
     const onScroll = () => {
-      const currentScrollY = window.scrollY;
-      const isScrollingDown = currentScrollY > prevScrollY.current;
-      const shouldHide =
-        isScrollingDown && currentScrollY > NAVBAR_SCROLL_THRESHOLD;
+      if (ticking) return;
+      ticking = true;
 
-      if (hideTimerRef.current) {
-        clearTimeout(hideTimerRef.current);
-      }
+      rafId = requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY;
+        const isScrollingDown = currentScrollY > prevScrollY.current;
+        const shouldHide =
+          isScrollingDown && currentScrollY > NAVBAR_SCROLL_THRESHOLD;
 
-      if (scrollRef.current) {
-        clearTimeout(scrollRef.current);
-      }
+        if (hideTimerRef.current) {
+          clearTimeout(hideTimerRef.current);
+        }
 
-      scrollRef.current = setTimeout(() => {
         if (shouldHide) {
           hideTimerRef.current = setTimeout(() => {
             setVisible(false);
@@ -64,13 +65,14 @@ export function Navbar() {
         }
         setScrolled(currentScrollY > 10);
         prevScrollY.current = currentScrollY;
-      }, 0);
+        ticking = false;
+      });
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
-      if (scrollRef.current) clearTimeout(scrollRef.current);
+      cancelAnimationFrame(rafId);
       if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
     };
   }, []);
