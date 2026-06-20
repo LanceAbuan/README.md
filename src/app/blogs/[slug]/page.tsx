@@ -3,7 +3,7 @@ import NextDynamic from "next/dynamic";
 import Script from "next/script";
 import { getBlogPost, getBlogSlugs } from "@/lib/blog";
 import { siteConfig } from "@/data/site";
-import { Badge, Title, Text, Container } from "@mantine/core";
+import { Badge, Title, Container } from "@mantine/core";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";

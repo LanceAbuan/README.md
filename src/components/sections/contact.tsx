@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Button, Textarea, Input, Anchor, UnstyledButton, Group, Text, Stack, Container, Title } from "@mantine/core";
+import { Button, Textarea, Input, Anchor, Group, Text, Stack, Container, Title } from "@mantine/core";
 import { Send, CheckCircle, AlertCircle } from "lucide-react";
 import { getIcon } from "@/lib/icons";
 import { useSectionReveal } from "@/components/section-reveal";

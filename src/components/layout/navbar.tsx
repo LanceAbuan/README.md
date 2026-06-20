@@ -16,7 +16,6 @@ import {
   MOBILE_MENU_LABEL,
   MOBILE_MENU_CLOSE_LABEL,
 } from "@/config/accessibility";
-import { Burger, Drawer, Group, Anchor, Box, Paper, Stack, Text } from "@mantine/core";
 
 const NAV_LINKS = [
   { href: "#about", label: "About", section: "about" },
@@ -79,10 +78,8 @@ export function Navbar() {
   }, []);
 
   const NavLinkContent = ({ item, onClick }: { item: { href: string; label: string; section?: string }; onClick?: () => void }) => (
-    <Anchor
-      component={Link}
+    <Link
       href={item.href}
-      underline="never"
       className={cn(
         "text-sm font-medium transition-colors hover:text-foreground",
         isTerminal && "font-mono text-[#00aa30] hover:text-[#00ff41]",
@@ -93,7 +90,7 @@ export function Navbar() {
       onClick={onClick}
     >
       {item.label}
-    </Anchor>
+    </Link>
   );
 
   const navItems = NAV_LINKS.map((item) => {
@@ -115,7 +112,7 @@ export function Navbar() {
         visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none",
       )}
     >
-      <Paper
+      <div
         className={cn(
           "rounded-full px-6 py-3 flex items-center justify-between backdrop-blur-xl border transition-all",
           isTerminal
@@ -128,12 +125,9 @@ export function Navbar() {
                   ? "bg-white/80 dark:bg-neutral-900/80 border-neutral-200/50 dark:border-neutral-700/50 shadow-lg shadow-neutral-200/20 dark:shadow-neutral-800/20"
                   : "bg-white/50 dark:bg-neutral-900/50 border-neutral-200/50 dark:border-neutral-700/50",
         )}
-        withBorder={false}
       >
-        <Anchor
-          component={Link}
+        <Link
           href="/"
-          underline="never"
           className={cn(
             "text-lg font-bold tracking-tight",
             isTerminal && "font-mono text-[#00ff41] terminal-glow",
@@ -142,66 +136,86 @@ export function Navbar() {
           )}
         >
           Lance Abuan
-        </Anchor>
+        </Link>
 
         {/* Desktop nav */}
-        <Group className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-6">
           {navItems}
           <ThemeSelector />
-        </Group>
+        </div>
 
         {/* Mobile menu button */}
-        <Burger
-          opened={mobileOpen}
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden"
-          aria-label={mobileOpen ? MOBILE_MENU_CLOSE_LABEL : MOBILE_MENU_LABEL}
-          color={
-            isTerminal
-              ? "#00ff41"
-              : isCasino
-                ? "#d4af37"
-                : isNewspaper
-                  ? "#1a1208"
-                  : undefined
-          }
-        />
-      </Paper>
-
-      {/* Mobile menu - using Mantine Drawer */}
-      <Drawer
-        opened={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-        position="top"
-        size="auto"
-        withCloseButton={false}
-        styles={{
-          inner: { top: 70, padding: 0 },
-          body: { padding: 0 },
-          overlay: { background: 'rgba(0,0,0,0.2)', backdropFilter: 'blur(4px)' },
-        }}
-        className="md:hidden"
-        zIndex={40}
-      >
-        <Box
+        <button
           className={cn(
+            "md:hidden p-2 rounded-full transition-colors",
             isTerminal
-              ? "border-[#00ff4130] bg-black/90"
+              ? "text-[#00ff41] hover:bg-[#0d1a0d]"
+              : isCasino
+                ? "text-[#d4af37] hover:bg-[#2a1a10]"
+                : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800",
+          )}
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label={mobileOpen ? MOBILE_MENU_CLOSE_LABEL : MOBILE_MENU_LABEL}
+          aria-expanded={mobileOpen}
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            {mobileOpen ? (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            ) : (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            )}
+          </svg>
+        </button>
+      </div>
+
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div
+          className={cn(
+            "mt-2 rounded-2xl backdrop-blur-xl border overflow-hidden",
+            isTerminal
+              ? "border-[#00ff4130] bg-black/90 rounded-none"
               : isNewspaper
-                ? "border-[#c4b59e] bg-[#efe8da]/95"
+                ? "border-[#c4b59e] bg-[#efe8da]/95 rounded-none"
                 : isCasino
-                  ? "border-[#d4af37]/15 bg-[#1c0c0c]/95"
+                  ? "border-[#d4af37]/15 bg-[#1c0c0c]/95 rounded-lg"
                   : "bg-white/90 dark:bg-neutral-900/90 border-neutral-200/50 dark:border-neutral-700/50",
           )}
+          style={{ maxHeight: `${MOBILE_MENU_MAX_HEIGHT}px` }}
         >
-          <Stack className="px-6 py-4 gap-4">
+          <div className="px-6 py-4 space-y-4">
             {NAV_LINKS.map((item) => {
               const mobileLink = (
-                <NavLinkContent
+                <Link
                   key={item.href}
-                  item={item}
+                  href={item.href}
+                  className={cn(
+                    "block text-sm font-medium transition-colors",
+                    isTerminal && "font-mono text-[#00aa30] hover:text-[#00ff41]",
+                    isNewspaper && "font-serif text-[#5c2e0e] hover:text-[#1a1208]",
+                    isCasino && "font-serif text-[#d4af37] hover:text-white",
+                    !isTerminal && !isNewspaper && !isCasino && "text-neutral-600 dark:text-neutral-400 hover:text-foreground",
+                  )}
                   onClick={() => setMobileOpen(false)}
-                />
+                >
+                  {item.label}
+                </Link>
               );
               if (isCasino && item.section) {
                 return (
@@ -212,12 +226,22 @@ export function Navbar() {
               }
               return mobileLink;
             })}
-            <Box className="pt-2 border-t border-neutral-200/50 dark:border-neutral-700/50">
+            <div className="pt-2 border-t border-neutral-200/50 dark:border-neutral-700/50">
               <ThemeSelector />
-            </Box>
-          </Stack>
-        </Box>
-      </Drawer>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 -z-10 bg-black/20 backdrop-blur-sm md:hidden"
+          onClick={() => setMobileOpen(false)}
+          style={{ transition: `opacity ${MOBILE_MENU_BACKDROP_DELAY}s` }}
+          aria-hidden="true"
+        />
+      )}
     </nav>
   );
 }

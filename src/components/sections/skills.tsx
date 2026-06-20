@@ -15,7 +15,7 @@ import {
 } from "@/config/animations";
 import { terminalPalette, newspaperPalette, casinoPalette } from "@/config/theme-palette";
 import { SCROLL_BEHAVIOR } from "@/config/accessibility";
-import { Container, Title, Text, Card, Badge, Group, Stack, SimpleGrid } from "@mantine/core";
+import { Container, Title, Text, Card, Badge, Group, SimpleGrid } from "@mantine/core";
 
 export function Skills() {
   const { ref, isInView } = useSectionReveal();

@@ -61,8 +61,16 @@ async function main() {
         await tab.waitForSelector(page.waitFor, { timeout: 10000 }).catch(() => {});
       }
 
-      // Wait for animations to settle
-      await tab.waitForTimeout(2000);
+      // Scroll through the entire page to trigger all scroll-reveal animations
+      const scrollHeight = await tab.evaluate(() => document.body.scrollHeight);
+      const viewportHeight = 900;
+      for (let y = 0; y <= scrollHeight; y += viewportHeight) {
+        await tab.evaluate((scrollY) => window.scrollTo(0, scrollY), y);
+        await tab.waitForTimeout(400);
+      }
+      // Scroll back to top for full-page screenshot
+      await tab.evaluate(() => window.scrollTo(0, 0));
+      await tab.waitForTimeout(500);
 
       const screenshotPath = join(OUTPUT_DIR, `${page.name}.png`);
       await tab.screenshot({ path: screenshotPath, fullPage: true });
